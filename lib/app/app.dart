@@ -12,6 +12,7 @@ import '../features/onboarding/onboarding_screen.dart';
 import '../features/prayers/prayers_screen.dart';
 import '../features/settings/settings_screen.dart';
 import 'theme.dart';
+import 'web_navigation_insets.dart';
 import '../features/qibla/qibla_screen.dart';
 import '../features/calendar/calendar_screen.dart';
 import '../features/ramadan/ramadan_screen.dart';
@@ -129,6 +130,7 @@ class _AppShellState extends ConsumerState<AppShell>
         ],
       ),
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             if (reminderError != null)
@@ -159,7 +161,8 @@ class _AppShellState extends ConsumerState<AppShell>
           ],
         ),
       ),
-      bottomNavigationBar: NavigationBar(
+      bottomNavigationBar: WebNavigationInsets(
+        child: NavigationBar(
         selectedIndex: index,
         onDestinationSelected: (value) => setState(() => index = value),
         destinations: [
@@ -189,6 +192,7 @@ class _AppShellState extends ConsumerState<AppShell>
             label: context.tr('Настройки'),
           ),
         ],
+        ),
       ),
     );
   }

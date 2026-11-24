@@ -26,17 +26,24 @@
   <title>MIHRAB</title>
   <link rel="manifest" href="manifest.json">
   <style>
-    /* Splash while Flutter loads — mosque green */
+    /* Let Flutter occupy the entire standalone viewport. Do not apply
+       CSS safe-area padding: Flutter's MediaQuery owns the insets. */
     html, body {
       margin: 0;
       padding: 0;
+      width: 100%;
       height: 100%;
+      overflow: hidden;
       background-color: #071F1B;
     }
     body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      display: block;
+      overscroll-behavior: none;
     }
   </style>
 </head>

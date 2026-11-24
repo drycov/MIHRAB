@@ -16,3 +16,6 @@ Test on Vercel and Pages: manifest scope, icon, install, offline reload, Quran c
 
 ## In-app controls
 Settings → PWA exposes network status (navigator.onLine is only a connectivity hint), current service worker control, browser installation and update check. Safari and browsers without beforeinstallprompt show instructions. Waiting updates activate after all old app windows close; no forced reload. Native builds use a stub. Web Push is not enabled: it needs a subscription backend, VAPID keys, explicit consent, scheduled delivery, unsubscribe and privacy review. No backend or secrets are provisioned.
+
+## iOS standalone viewport
+The HTML shell uses a fixed full-width body with dynamic viewport height (100dvh, 100% fallback), without extra CSS safe-area padding. AppShell delegates bottom padding to its navigation bar; WebNavigationInsets clamps excessive iOS-web bottom padding to 34 logical pixels as a defensive heuristic, not a measured device inset. Android and native navigation insets are untouched. Verify installed Safari PWA in portrait/landscape, keyboard open/closed, and both themes. Close existing windows to activate the updated cached shell. Device reproduction and Flutter tests pending.
