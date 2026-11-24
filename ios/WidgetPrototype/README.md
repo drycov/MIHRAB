@@ -1,2 +1,2 @@
-# iOS follow-up
-Not an installed widget extension. Xcode must create a Widget Extension target, embed it in Runner, configure a shared App Group on both signed targets, and register a Flutter method channel on the implicit engine. Use the same version-1 snapshot JSON as Android, store in App Group UserDefaults, and call WidgetCenter reloadTimelines. Timeline entries at prayer boundaries and civil midnight should use the selected city's timezone. Do not display diary counts after the snapshot first day. Validate on signed iOS device. No App Group identifier or provisioning profile has been assumed.
+# WidgetKit
+The integrated extension is now in ../PrayerWidget. See ../../docs/ios-widgets.md for signing setup and outstanding verification.
