@@ -27,12 +27,12 @@ class SettingsController extends Notifier<Settings> {
   }
   Future<void> city(int value) async {
     if (value < 0 || value >= City.all.length) return;
+    if (!await ref.read(preferencesProvider).setInt('city', value)) throw StateError('City save failed');
     state = state.copyWith(cityIndex: value);
-    await ref.read(preferencesProvider).setInt('city', value);
   }
   Future<void> hanafi(bool value) async {
+    if (!await ref.read(preferencesProvider).setBool('hanafi', value)) throw StateError('Madhab save failed');
     state = state.copyWith(hanafi: value);
-    await ref.read(preferencesProvider).setBool('hanafi', value);
   }
   Future<void> light(bool value) async {
     state = state.copyWith(light: value);
