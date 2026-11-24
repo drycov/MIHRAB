@@ -1,0 +1,2 @@
+# Prayer statistics
+Access via diary toolbar. Seven or thirty civil days ending yesterday by default; today optional. One inclusive SQLite range query, no schema change. Missing rows are unmarked. Completion = (onTime + qada) / (days * 5); this measures recorded completion, not inferred religious observance. Per-prayer breakdown, full days and daily history with drill-down to diary. Updating a diary invalidates statistics. No network or new dependencies. Domain tests added; execution, SQLite integration and device build not verified.

@@ -6,21 +6,25 @@ import '../../application/schedule.dart';
 import '../../domain/prayer_diary.dart';
 import '../../domain/prayer_schedule.dart';
 import '../../shared/format.dart';
+import 'statistics_screen.dart';
 
 class DiaryScreen extends ConsumerStatefulWidget {
-  const DiaryScreen({super.key});
+  const DiaryScreen({super.key,this.initialDate});
+  final DateTime? initialDate;
   @override
   ConsumerState<DiaryScreen> createState()=>_DiaryScreenState();
 }
 class _DiaryScreenState extends ConsumerState<DiaryScreen>{
   DateTime? selected;
   bool busy=false;
+  @override
+  void initState(){super.initState();selected=widget.initialDate;}
   Future<void> mark(DateTime date,PrayerKind kind,PrayerStatus status)async{
     if(busy)return;
     setState(()=>busy=true);
     try{
       await ref.read(diaryRepositoryProvider).mark(date,kind,status);
-      if(mounted)ref.invalidate(diaryDayProvider(date));
+      if(mounted){ref.invalidate(diaryDayProvider(date));ref.invalidate(prayerStatisticsProvider);}
     }catch(_){
       if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Не удалось сохранить запись')));
     }finally{if(mounted)setState(()=>busy=false);}
@@ -33,7 +37,7 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen>{
     final supported=!kIsWeb&&(defaultTargetPlatform==TargetPlatform.android||defaultTargetPlatform==TargetPlatform.iOS||defaultTargetPlatform==TargetPlatform.macOS);
     if(!supported)return Scaffold(appBar:AppBar(title:const Text('Дневник намазов')),body:const Center(child:Text('Локальный дневник недоступен на этой платформе')));
     final day=ref.watch(diaryDayProvider(date));
-    return Scaffold(appBar:AppBar(title:const Text('Дневник намазов')),
+    return Scaffold(appBar:AppBar(title:const Text('Дневник намазов'),actions:[IconButton(tooltip:'Статистика',icon:const Icon(Icons.bar_chart),onPressed:busy?null:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const StatisticsScreen())))]),
       body:SafeArea(child:ListView(padding:const EdgeInsets.all(16),children:[
         Row(mainAxisAlignment:MainAxisAlignment.spaceBetween,children:[
           IconButton(tooltip:'Предыдущий день',onPressed:busy||!date.isAfter(DateTime.utc(2000))?null:()=>setState(()=>selected=date.subtract(const Duration(days:1))),icon:const Icon(Icons.chevron_left)),
