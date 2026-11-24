@@ -1,0 +1,2 @@
+# First-run setup
+Three steps: introduction, city/Asr method/theme, optional prayer notifications with exact alarm and sound profile. Permissions are requested only through explicit completion with notifications enabled. Skipping notification configuration preserves existing reminder settings. Completion is persisted; installations with a saved city or reminder configuration bypass first-run setup. Settings offers manual reopening. Locale selection is deferred until localization exists. Gradle configuration is unchanged. Tests added but not run.
