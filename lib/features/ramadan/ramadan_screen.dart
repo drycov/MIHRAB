@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/clock.dart';
 import '../../application/hijri_settings.dart';
@@ -48,10 +49,10 @@ class RamadanScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('РАМАДАН'),
+        title: Text(context.tr('Рамадан').toUpperCase()),
         actions: [
           IconButton(
-            tooltip: 'Напоминания Рамадана',
+            tooltip: context.tr('Напоминания Рамадана'),
             icon: Icon(
               Icons.notifications_outlined,
               color: dark ? MihrabTokens.gold : MihrabTokens.emerald,
@@ -68,13 +69,13 @@ class RamadanScreen extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
         children: [
           Text(
-            city.name,
+            context.tr(city.name),
             textAlign: TextAlign.center,
             style: theme.textTheme.titleMedium,
           ),
           const SizedBox(height: 4),
           Text(
-            'Рамадан ${days.first.hijri.year} г.х.',
+            '${context.tr("Рамадан")} ${days.first.hijri.year} ${context.tr("г.х.")}',
             textAlign: TextAlign.center,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w600,
@@ -97,7 +98,7 @@ class RamadanScreen extends ConsumerWidget {
                   const IslamicStar(size: 22, color: MihrabTokens.gold),
                   const SizedBox(height: 12),
                   Text(
-                    'ДЕНЬ ${current.hijri.day} ИЗ ${days.length}',
+                    '${context.tr("День")} ${current.hijri.day} ${context.tr("из")} ${days.length}',
                     style: TextStyle(
                       color: MihrabTokens.gold.withValues(alpha: 0.9),
                       letterSpacing: 2,
@@ -124,21 +125,21 @@ class RamadanScreen extends ConsumerWidget {
           else
             IslamicCard(
               child: ListTile(
-                title: const Text('До расчётного начала Рамадана'),
+                title: Text(context.tr('До расчётного начала Рамадана')),
                 subtitle: Text(
-                  '${days.first.date.difference(today).inDays} дней',
+                  '${days.first.date.difference(today).inDays}',
                 ),
               ),
             ),
           const SizedBox(height: 12),
           Text(
-            'Сухур завершается к Фаджру; ифтар начинается с Магриба. Даты предварительные, сверяйте с ДУМК.',
+            context.tr('Сухур завершается к Фаджру; ифтар начинается с Магриба. Даты предварительные, сверяйте с ДУМК.'),
             style: theme.textTheme.bodySmall?.copyWith(
               color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
               height: 1.4,
             ),
           ),
-          const IslamicSectionTitle('Календарь поста'),
+          IslamicSectionTitle(context.tr('Календарь поста')),
           IslamicCard(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Row(
@@ -146,7 +147,7 @@ class RamadanScreen extends ConsumerWidget {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    'Дата',
+                    context.tr('Дата'),
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
@@ -157,7 +158,7 @@ class RamadanScreen extends ConsumerWidget {
                 ),
                 Expanded(
                   child: Text(
-                    'Фаджр',
+                    context.tr('Фаджр'),
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
@@ -167,7 +168,7 @@ class RamadanScreen extends ConsumerWidget {
                 ),
                 Expanded(
                   child: Text(
-                    'Ифтар',
+                    context.tr('Ифтар'),
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
@@ -177,7 +178,7 @@ class RamadanScreen extends ConsumerWidget {
                 ),
                 Expanded(
                   child: Text(
-                    'Пост',
+                    context.tr('Пост'),
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
@@ -207,7 +208,7 @@ class RamadanScreen extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          'День ${day.hijri.day} · ${day.source == ScheduleSource.dumkCache ? "ДУМК" : "MWL"}',
+                          '${context.tr("День")} ${day.hijri.day} · ${day.source == ScheduleSource.dumkCache ? "ДУМК" : "MWL"}',
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: day.date == today
                                 ? MihrabTokens.goldSoft
@@ -269,7 +270,7 @@ class FastingCountdown extends ConsumerWidget {
     return Column(
       children: [
         Text(
-          next?.label ?? 'Ифтар наступил',
+          context.tr(next?.label ?? 'Ифтар наступил'),
           style: TextStyle(
             color: MihrabTokens.goldSoft.withValues(alpha: 0.9),
             letterSpacing: 1.2,
@@ -291,7 +292,7 @@ class FastingCountdown extends ConsumerWidget {
         ],
         const SizedBox(height: 10),
         Text(
-          'Фаджр: ${formatTime(day.fajr)}  ·  Ифтар: ${formatTime(day.maghrib)}',
+          '${context.tr("Фаджр")}: ${formatTime(day.fajr)}  ·  ${context.tr("Ифтар")}: ${formatTime(day.maghrib)}',
           style: TextStyle(
             color: MihrabTokens.gold.withValues(alpha: 0.8),
             fontSize: 13,

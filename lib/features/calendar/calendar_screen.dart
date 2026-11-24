@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/hijri_settings.dart';
 import '../../application/schedule.dart';
@@ -54,7 +55,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         ),
         const SizedBox(height: 4),
         Text(
-          'исламский календарь',
+          context.tr('исламский календарь'),
           textAlign: TextAlign.center,
           style: theme.textTheme.labelMedium?.copyWith(
             letterSpacing: 1.6,
@@ -68,7 +69,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                tooltip: 'Предыдущий месяц',
+                tooltip: context.tr('Предыдущий месяц'),
                 onPressed: offset <= -120
                     ? null
                     : () => setState(() {
@@ -81,13 +82,13 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 ),
               ),
               Text(
-                '${months[month.month - 1]} ${month.year}',
+                '${context.tr(months[month.month - 1])} ${month.year}',
                 style: theme.textTheme.titleMedium?.copyWith(
                   letterSpacing: 0.5,
                 ),
               ),
               IconButton(
-                tooltip: 'Следующий месяц',
+                tooltip: context.tr('Следующий месяц'),
                 onPressed: offset >= 120
                     ? null
                     : () => setState(() {
@@ -108,7 +109,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               offset = 0;
               selected = null;
             }),
-            child: const Text('Сегодня'),
+            child: Text(context.tr('Сегодня')),
           ),
         const SizedBox(height: 8),
         Row(
@@ -117,7 +118,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               Expanded(
                 child: Center(
                   child: Text(
-                    name,
+                    context.tr(name),
                     style: theme.textTheme.labelSmall?.copyWith(
                       letterSpacing: 0.5,
                       color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
@@ -218,7 +219,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                hijri.label,
+                context.hijriLabel(hijri),
                 style: TextStyle(
                   color: MihrabTokens.goldSoft.withValues(alpha: 0.95),
                   fontSize: 15,
@@ -227,7 +228,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               if (hijri.event != null) ...[
                 const SizedBox(height: 8),
                 Text(
-                  '${hijri.event} (расчётная дата)',
+                  '${context.tr(hijri.event!)} (${context.tr("расчётная дата")})',
                   style: TextStyle(
                     color: MihrabTokens.gold.withValues(alpha: 0.9),
                     fontSize: 13,
@@ -237,7 +238,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             ],
           ),
         ),
-        const IslamicSectionTitle('Намазы дня'),
+        IslamicSectionTitle(context.tr('Намазы дня')),
         for (final slot in schedule.slots)
           IslamicCard(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -248,7 +249,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        slot.kind.label,
+                        context.tr(slot.kind.label),
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       Text(
@@ -276,11 +277,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               ],
             ),
           ),
-        const IslamicSectionTitle('Корректировка'),
+        IslamicSectionTitle(context.tr('Корректировка')),
         IslamicCard(
           padding: EdgeInsets.zero,
           child: ListTile(
-            title: const Text('Смещение Хиджры'),
+            title: Text(context.tr('Смещение Хиджры')),
             trailing: DropdownButton<int>(
               value: adjustment,
               underline: const SizedBox.shrink(),

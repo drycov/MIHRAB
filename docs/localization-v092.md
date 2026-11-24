@@ -1,0 +1,2 @@
+# Localization v0.9.2
+Expands RU/KK/AR/EN coverage for onboarding, Qibla, calendar and Ramadan; Hijri labels localized in UI. Retains shared components, token palette, existing providers and calculation rules. System notification payloads, native widgets and other detailed feature labels remain pending. No new dependencies. Native speaker review, Flutter analyze/test and device checks pending.

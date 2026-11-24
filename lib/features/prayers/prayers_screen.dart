@@ -37,7 +37,7 @@ class _PrayersScreenState extends ConsumerState<PrayersScreen> {
     final next = ref.watch(nextPrayerProvider.select((p) => p.time));
     return ListView(padding: const EdgeInsets.all(MihrabTokens.space), children: [
       Row(children: [const Icon(Icons.location_on_outlined), const SizedBox(width: 8), Expanded(child: Text(context.tr(city.name)))]),
-      Text(HijriCalendar.fromGregorian(DateTime(key.year,key.month,key.day), adjustment: ref.watch(hijriAdjustmentProvider)).label, textAlign: TextAlign.center),
+      Text(context.hijriLabel(HijriCalendar.fromGregorian(DateTime(key.year,key.month,key.day), adjustment: ref.watch(hijriAdjustmentProvider))), textAlign: TextAlign.center),
       const SizedBox(height: 24),
       const CountdownCard(),
       ListTile(leading: const Icon(Icons.fact_check_outlined), title: Text(context.tr('Дневник намазов')), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DiaryScreen()))),

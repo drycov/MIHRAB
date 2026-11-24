@@ -112,7 +112,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
                 children: [
                   Text(
-                    'ШАГ ${step + 1} ИЗ 3',
+                    '${context.tr("Шаг")} ${step + 1} ${context.tr("из")} 3',
                     style: theme.textTheme.labelMedium?.copyWith(
                       letterSpacing: 2,
                       fontWeight: FontWeight.w600,
@@ -143,8 +143,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    Text(
-                      'Добро пожаловать\nв MIHRAB',
+                    Text(context.tr('Добро пожаловать\nв MIHRAB'),
                       textAlign: TextAlign.center,
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w600,
@@ -152,8 +151,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Text(
-                      'Время намазов, направление Киблы, исламский календарь и напоминания — в одном спокойном приложении.',
+                    Text(context.tr('Время намазов, направление Киблы, исламский календарь и напоминания — в одном спокойном приложении.'),
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: dark
@@ -177,8 +175,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     ),
                   ],
                   if (step == 1) ...[
-                    Text(
-                      'Город и настройки',
+                    Text(context.tr('Город и настройки'),
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -210,7 +207,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           const Divider(height: 1, indent: 16, endIndent: 16),
                           SwitchListTile(
                             title: Text(context.tr('Ханафитский Аср')),
-                            subtitle: const Text('Метод определения времени Асра'),
+                            subtitle: Text(context.tr('Метод определения времени Асра')),
                             value: hanafi,
                             onChanged: busy
                                 ? null
@@ -220,7 +217,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           SwitchListTile(
                             title: Text(context.tr('Светлая тема')),
                             subtitle: Text(
-                              light ? 'Пергамент и изумруд' : 'Ночная мечеть',
+                              context.tr(light ? 'Пергамент и изумруд' : 'Ночная мечеть'),
                             ),
                             value: light,
                             onChanged: busy
@@ -233,7 +230,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   ],
                   if (step == 2) ...[
                     Text(
-                      'Напоминания',
+                      context.tr('Напоминания'),
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -241,8 +238,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     const SizedBox(height: 12),
                     if (!service.supported)
                       IslamicCard(
-                        child: Text(
-                          'На этой платформе системные уведомления недоступны.',
+                        child: Text(context.tr('На этой платформе системные уведомления недоступны.'),
                           style: theme.textTheme.bodyMedium,
                         ),
                       ),
@@ -251,7 +247,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       child: Column(
                         children: [
                           SwitchListTile(
-                            title: const Text('Напоминать о пяти намазах'),
+                            title: Text(context.tr('Напоминать о пяти намазах')),
                             value: notifications,
                             onChanged: busy || !service.supported
                                 ? null
@@ -262,9 +258,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               const Divider(
                                   height: 1, indent: 16, endIndent: 16),
                               SwitchListTile(
-                                title: const Text('Точные уведомления'),
-                                subtitle: const Text(
-                                  'Android может запросить дополнительное разрешение',
+                                title: Text(context.tr('Точные уведомления')),
+                                subtitle: Text(context.tr('Android может запросить дополнительное разрешение'),
                                 ),
                                 value: exact,
                                 onChanged: busy
@@ -275,7 +270,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             const Divider(
                                 height: 1, indent: 16, endIndent: 16),
                             ListTile(
-                              title: const Text('Звук'),
+                              title: Text(context.tr('Звук')),
                               trailing: DropdownButton<PrayerSound>(
                                 value: sound,
                                 underline: const SizedBox.shrink(),
@@ -288,7 +283,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                   ])
                                     DropdownMenuItem(
                                       value: s,
-                                      child: Text(s.label),
+                                      child: Text(context.tr(s.label)),
                                     ),
                                 ],
                                 onChanged: busy
@@ -305,8 +300,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Text(
-                      'Разрешение будет запрошено только после завершения настройки. Записи азана можно добавить позже.',
+                    Text(context.tr('Разрешение будет запрошено только после завершения настройки. Записи азана можно добавить позже.'),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: dark
                             ? MihrabTokens.goldSoft
@@ -315,11 +309,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     ),
                   ],
                   if (step == 2)
-                    const Text('Если пропустить уведомления, существующие настройки не изменятся.'),
+                    Text(context.tr('Если пропустить уведомления, существующие настройки не изменятся.')),
                   if (message != null) ...[
                     const SizedBox(height: 12),
                     Text(
-                      message!,
+                      context.tr(message!),
                       style: TextStyle(color: theme.colorScheme.error),
                     ),
                   ],
@@ -351,7 +345,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             BorderRadius.circular(MihrabTokens.radius),
                       ),
                     ),
-                    child: Text(step < 2 ? 'Далее' : 'Завершить'),
+                    child: Text(context.tr(step < 2 ? 'Далее' : 'Завершить')),
                   ),
                   if (step > 0)
                     TextButton(
@@ -361,15 +355,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                 step--;
                                 message = null;
                               }),
-                      child: const Text('Назад'),
+                      child: Text(context.tr('Назад')),
                     ),
                   if (step == 2 && notifications)
                     TextButton(
                       onPressed: busy
                           ? null
                           : () => finish(skipNotifications: true),
-                      child: const Text(
-                        'Продолжить без настройки уведомлений',
+                      child: Text(context.tr('Продолжить без настройки уведомлений'),
                       ),
                     ),
                 ],

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:geolocator/geolocator.dart';
@@ -45,7 +46,7 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
       );
       if (mounted) setState(() => position = result);
     } catch (e) {
-      if (mounted) setState(() => error = e.toString());
+      if (mounted) setState(() => error = e is StateError ? e.message.toString() : 'Не удалось определить местоположение');
     } finally {
       if (mounted) setState(() => loading = false);
     }
@@ -67,7 +68,7 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
       children: [
         Text(
-          'КИБЛА',
+          context.tr('Кибла').toUpperCase(),
           textAlign: TextAlign.center,
           style: TextStyle(
             letterSpacing: 3.5,
@@ -78,7 +79,7 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
         ),
         const SizedBox(height: 4),
         Text(
-          position == null ? city.name : 'Координаты GPS',
+          context.tr(position == null ? city.name : 'Координаты GPS'),
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.titleMedium,
         ),
@@ -100,7 +101,7 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
         FilledButton.icon(
           onPressed: loading ? null : locate,
           icon: const Icon(Icons.my_location),
-          label: Text(loading ? 'Определение…' : 'Использовать GPS'),
+          label: Text(context.tr(loading ? 'Определение…' : 'Использовать GPS')),
           style: FilledButton.styleFrom(
             backgroundColor: dark ? MihrabTokens.gold : MihrabTokens.emerald,
             foregroundColor:
@@ -114,13 +115,13 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
         if (position != null)
           TextButton(
             onPressed: loading ? null : () => setState(() => position = null),
-            child: const Text('Использовать город'),
+            child: Text(context.tr('Использовать город')),
           ),
         if (error != null)
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              error!,
+              context.tr(error!),
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
@@ -153,7 +154,7 @@ class _Dial extends StatelessWidget {
             ),
           ),
           Text(
-            'азимут Киблы',
+            context.tr('азимут Киблы'),
             style: TextStyle(
               color: MihrabTokens.goldSoft.withValues(alpha: 0.85),
               letterSpacing: 1.5,
@@ -170,8 +171,8 @@ class _Dial extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             heading == null
-                ? 'Статический азимут · датчик недоступен'
-                : 'Ориентировочное направление по датчику',
+                ? context.tr('Статический азимут · датчик недоступен')
+                : context.tr('Ориентировочное направление по датчику'),
             style: TextStyle(
               color: MihrabTokens.paper.withValues(alpha: 0.85),
               fontSize: 13,
