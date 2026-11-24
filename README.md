@@ -27,7 +27,7 @@ Optional env in Vercel project:
 
 | Name | Default | Meaning |
 |------|---------|---------|
-| `FLUTTER_VERSION` | `stable` | Flutter channel/branch to clone |
+| `FLUTTER_VERSION` | `3.50.1` | Flutter channel/branch to clone |
 
 ### CLI (optional)
 
@@ -70,6 +70,10 @@ Calculated MWL times are not official DUMK timetables; verify with a local mosqu
 flutter pub get
 flutter run
 ```
+
+## Build toolchain
+
+CI and Vercel default to Flutter 3.50.1 (Dart 3.14.0); use the same SDK locally. This version resolved dependencies in the reported Vercel build, but successful release compilation remains a release gate. Android uses JDK 17.
 
 ## Design
 
