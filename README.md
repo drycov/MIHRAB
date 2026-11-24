@@ -78,3 +78,13 @@ CI and Vercel default to Flutter 3.50.1 (Dart 3.14.0); use the same SDK locally.
 ## Design
 
 UI rules: [docs/UI_GUIDE.md](docs/UI_GUIDE.md).
+
+## Privacy and store preparation
+
+[Privacy policy](docs/privacy-policy.md) · [Store listing draft and release gates](docs/store-metadata.md). Web deployments include `privacy.html`; verify the live HTTPS URL before submission.
+
+Publication assets (separate from Flutter runtime): [store-assets/](store-assets/README.md).
+
+## Install as PWA
+
+Use the browser install option or Safari Share → Add to Home Screen. Release deployment generates an offline shell. See [PWA build and test guide](docs/pwa.md).

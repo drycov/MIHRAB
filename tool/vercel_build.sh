@@ -27,6 +27,7 @@ flutter pub get
 
 echo "==> build web (release, base-href=/)"
 flutter build web --release --no-pub --base-href /
+python3 tool/build_pwa.py build/web
 
 echo "==> build/web ready"
 test -s build/web/index.html

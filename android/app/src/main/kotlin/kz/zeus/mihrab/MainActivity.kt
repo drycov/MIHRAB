@@ -1,4 +1,4 @@
-package kz.mihrab.mihrab
+package kz.zeus.mihrab
 
 import android.content.Intent
 import kz.mihrab.scheduler.AdhanPlaybackService

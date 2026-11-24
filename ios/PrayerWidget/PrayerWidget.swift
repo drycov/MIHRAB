@@ -23,7 +23,7 @@ private struct Snapshot: Decodable {
     let generated: Double
     let days: [PrayerDay]
     static func load() -> Snapshot? {
-        guard let raw = UserDefaults(suiteName: "group.kz.mihrab.mihrab.widgets")?.string(forKey: "snapshot"),
+        guard let raw = UserDefaults(suiteName: "group.kz.zeus.mihrab.widgets")?.string(forKey: "snapshot"),
               let data = raw.data(using: .utf8), data.count <= 65536,
               let value = try? JSONDecoder().decode(Snapshot.self, from: data),
               value.version == 1, (1...7).contains(value.days.count),

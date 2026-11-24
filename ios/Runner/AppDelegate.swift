@@ -20,8 +20,8 @@ import WidgetKit
             let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
             json["version"] as? Int == 1,
             let days = json["days"] as? [[String: Any]], (1...7).contains(days.count),
-            let defaults = UserDefaults(suiteName: "group.kz.mihrab.mihrab.widgets"),
-            FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.kz.mihrab.mihrab.widgets") != nil else {
+            let defaults = UserDefaults(suiteName: "group.kz.zeus.mihrab.widgets"),
+            FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.kz.zeus.mihrab.widgets") != nil else {
         result(FlutterError(code: "widget_publish_failed", message: "App Group unavailable or invalid snapshot", details: nil))
         return
       }
