@@ -8,6 +8,7 @@ import '../../application/settings.dart';
 import '../../domain/prayer_schedule.dart';
 import '../../app/theme.dart';
 import '../../shared/format.dart';
+import '../diary/diary_screen.dart';
 
 class PrayersScreen extends ConsumerStatefulWidget {
   const PrayersScreen({super.key});
@@ -32,147 +33,23 @@ class _PrayersScreenState extends ConsumerState<PrayersScreen> {
     )));
     final slots = schedule.slots;
     final next = ref.watch(nextPrayerProvider.select((p) => p.time));
-    final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
-
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        MihrabTokens.space,
-        MihrabTokens.spaceSm,
-        MihrabTokens.space,
-        MihrabTokens.spaceLg,
-      ),
-      children: [
-        // Location + Hijri
-        Row(
-          children: [
-            Icon(
-              Icons.location_on_outlined,
-              size: 18,
-              color: dark ? MihrabTokens.goldSoft : MihrabTokens.emerald,
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: Text(
-                city.name,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        Text(
-          HijriCalendar.fromGregorian(
-            DateTime(key.year, key.month, key.day),
-            adjustment: ref.watch(hijriAdjustmentProvider),
-          ).label,
-          textAlign: TextAlign.center,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
-            letterSpacing: 0.4,
-          ),
-        ),
-        const SizedBox(height: MihrabTokens.space),
-
-        // Mihrab hero
-        const CountdownCard(),
-        const SizedBox(height: MihrabTokens.space),
-
-        // Day navigator
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-          decoration: BoxDecoration(
-            color: dark
-                ? MihrabTokens.emerald.withValues(alpha: 0.4)
-                : Colors.white.withValues(alpha: 0.7),
-            borderRadius: BorderRadius.circular(MihrabTokens.radius),
-            border: Border.all(
-              color: dark
-                  ? MihrabTokens.gold.withValues(alpha: 0.12)
-                  : MihrabTokens.emerald.withValues(alpha: 0.08),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                tooltip: 'Предыдущий день',
-                onPressed: () => setState(() => offset--),
-                icon: Icon(
-                  Icons.chevron_left,
-                  color: dark ? MihrabTokens.gold : MihrabTokens.emerald,
-                ),
-              ),
-              Column(
-                children: [
-                  Text(
-                    formatDate(date),
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      letterSpacing: 0.6,
-                    ),
-                  ),
-                  if (offset == 0)
-                    Text(
-                      'сегодня',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                ],
-              ),
-              IconButton(
-                tooltip: 'Следующий день',
-                onPressed: () => setState(() => offset++),
-                icon: Icon(
-                  Icons.chevron_right,
-                  color: dark ? MihrabTokens.gold : MihrabTokens.emerald,
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (offset != 0) ...[
-          const SizedBox(height: 8),
-          Center(
-            child: TextButton.icon(
-              onPressed: () => setState(() => offset = 0),
-              icon: const Icon(Icons.today_outlined, size: 18),
-              label: const Text('Сегодня'),
-              style: TextButton.styleFrom(
-                foregroundColor: dark ? MihrabTokens.gold : MihrabTokens.emerald,
-              ),
-            ),
-          ),
-        ],
-        const SizedBox(height: MihrabTokens.spaceSm),
-
-        // Ornamental divider
-        const _IslamicDivider(),
-        const SizedBox(height: MihrabTokens.spaceSm),
-
-        // Prayer list
-        for (final slot in slots)
-          PrayerTile(slot: slot, active: slot.time == next),
-
-        const SizedBox(height: MihrabTokens.space),
-        Text(
-          'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.rtl,
-          style: TextStyle(
-            color: dark
-                ? MihrabTokens.gold.withValues(alpha: 0.45)
-                : MihrabTokens.emerald.withValues(alpha: 0.35),
-            fontSize: 14,
-            height: 1.6,
-            letterSpacing: 1,
-          ),
-        ),
-      ],
-    );
+    return ListView(padding: const EdgeInsets.all(MihrabTokens.space), children: [
+      Row(children: [const Icon(Icons.location_on_outlined), const SizedBox(width: 8), Expanded(child: Text(city.name))]),
+      Text(HijriCalendar.fromGregorian(DateTime(key.year,key.month,key.day), adjustment: ref.watch(hijriAdjustmentProvider)).label, textAlign: TextAlign.center),
+      const SizedBox(height: 24),
+      const CountdownCard(),
+      ListTile(leading: const Icon(Icons.fact_check_outlined), title: const Text('Дневник намазов'), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DiaryScreen()))),
+      const SizedBox(height: 24),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        IconButton(tooltip: 'Предыдущий день', onPressed: () => setState(() => offset--), icon: const Icon(Icons.chevron_left)),
+        Text(formatDate(date), style: Theme.of(context).textTheme.titleMedium),
+        IconButton(tooltip: 'Следующий день', onPressed: () => setState(() => offset++), icon: const Icon(Icons.chevron_right)),
+      ]),
+      if (offset != 0) TextButton(onPressed: () => setState(() => offset = 0), child: const Text('Сегодня')),
+      for (final slot in slots) PrayerTile(slot: slot, active: slot.time == next),
+      const SizedBox(height: 16),
+      Text(schedule.source == ScheduleSource.dumkCache ? 'ДУМК · сохранённое расписание' : 'Расчёт MWL. Не официальное расписание ДУМК. Сверяйте время с местной мечетью.', textAlign: TextAlign.center),
+    ]);
   }
 }
 
