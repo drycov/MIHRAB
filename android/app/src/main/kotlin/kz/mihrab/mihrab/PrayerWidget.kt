@@ -41,6 +41,11 @@ class PrayerWidget : AppWidgetProvider() {
                 val raw=context.getSharedPreferences(PREF,Context.MODE_PRIVATE).getString("snapshot",null)
                 if(raw!=null){
                     val data=JSONObject(raw)
+                    val labels=data.optJSONObject("labels")
+                    fun label(key:String, fallback:String)=labels?.optString(key,fallback) ?: fallback
+                    val rtl=data.optString("language")=="ar"
+                    views.setInt(R.id.widget_root,"setLayoutDirection",if(rtl) 1 else 0)
+                    views.setTextViewText(R.id.widget_schedule,label("refresh","Обновите расписание"))
                     val zone=TimeZone.getTimeZone(data.getString("zone"))
                     val now=System.currentTimeMillis()
                     val dayFormat=SimpleDateFormat("yyyy-MM-dd",Locale.US).apply{timeZone=zone}
@@ -58,16 +63,16 @@ class PrayerWidget : AppWidgetProvider() {
                             val epoch=prayer.getLong("epoch")
                             val label=prayer.getString("name")+" "+clock.format(Date(epoch))
                             lines.add(label)
-                            if(next==null && epoch>now)next=label+(if(date!=today)" · завтра" else "")
+                            if(next==null && epoch>now)next=label+(if(date!=today)" · "+label("tomorrow","Завтра") else "")
                         }
                         if(date==today){
                             views.setTextViewText(R.id.widget_city,data.getString("city")+" · "+day.getString("source"))
                             views.setTextViewText(R.id.widget_hijri,day.getString("hijri"))
                             views.setTextViewText(R.id.widget_schedule,lines.joinToString("  •  "))
-                            if(day.has("completed"))views.setTextViewText(R.id.widget_diary,"Дневник: "+day.getInt("completed")+"/5")
+                            if(day.has("completed"))views.setTextViewText(R.id.widget_diary,label("diary","Дневник")+": "+day.getInt("completed")+"/5")
                         }
                     }
-                    views.setTextViewText(R.id.widget_next,next?.let{"Следующий: "+it}?:"Откройте приложение для обновления")
+                    views.setTextViewText(R.id.widget_next,next?.let{label("next","Следующий")+": "+it}?:label("stale","Откройте приложение для обновления"))
                 }
             } catch (_: Exception) {
                 views.setTextViewText(R.id.widget_next,"Откройте приложение для обновления")

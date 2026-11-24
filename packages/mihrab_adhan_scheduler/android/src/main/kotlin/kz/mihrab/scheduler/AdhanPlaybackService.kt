@@ -39,8 +39,9 @@ class AdhanPlaybackService : Service() {
         if (profile != "standard" && profile != "fajr") { stopSelf(); return START_NOT_STICKY }
         releasePlayback()
         try {
+            val strings = AdhanStrings(this)
             if (Build.VERSION.SDK_INT >= 26) {
-                manager.createNotificationChannel(NotificationChannel(CHANNEL, "Воспроизведение азана", NotificationManager.IMPORTANCE_LOW).apply {
+                manager.createNotificationChannel(NotificationChannel(CHANNEL, strings.playback, NotificationManager.IMPORTANCE_LOW).apply {
                     setSound(null, null)
                 })
             }
@@ -58,10 +59,10 @@ class AdhanPlaybackService : Service() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             val builder = if (Build.VERSION.SDK_INT >= 26) Notification.Builder(this, CHANNEL) else Notification.Builder(this)
             val notification = builder.setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-                .setContentTitle(if (profile == "fajr") "Азан Фаджра" else "Азан")
-                .setContentText("MIHRAB · Воспроизведение")
+                .setContentTitle(if (profile == "fajr") strings.fajr else strings.adhan)
+                .setContentText("MIHRAB · "+strings.playing)
                 .setOngoing(true).setOnlyAlertOnce(true)
-                .addAction(Notification.Action.Builder(android.R.drawable.ic_media_pause, "Остановить", stop).build())
+                .addAction(Notification.Action.Builder(android.R.drawable.ic_media_pause, strings.stop, stop).build())
                 .setStyle(Notification.MediaStyle().setMediaSession(session!!.sessionToken).setShowActionsInCompactView(0))
                 .build()
             startForeground(ID, notification)
