@@ -1,0 +1,2 @@
+# Scheduler ownership
+Foreground refreshes and manual updates use a tested serialized queue. No background isolate is registered yet. This is not an interprocess mutex. Before introducing WorkManager, move Android scheduling ownership to a single native component or use an interprocess lock covering preference reads, plan creation and all platform mutations. Validate plugin cache coherence across engines. Do not run both schedulers concurrently.
