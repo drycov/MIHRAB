@@ -1,6 +1,4 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:material_ui/material_ui.dart';
 import '../application/locale.dart';
 import '../l10n/mihrab_strings.dart';
 import '../application/reminder_coordinator.dart';
