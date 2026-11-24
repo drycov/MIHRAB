@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/clock.dart';
+import '../../application/hijri_settings.dart';
+import '../../domain/hijri.dart';
 import '../../application/schedule.dart';
 import '../../application/settings.dart';
 import '../../domain/prayer_schedule.dart';
@@ -26,6 +28,7 @@ class _PrayersScreenState extends ConsumerState<PrayersScreen> {
     final next = ref.watch(nextPrayerProvider.select((p) => p.time));
     return ListView(padding: const EdgeInsets.all(MihrabTokens.space), children: [
       Row(children: [const Icon(Icons.location_on_outlined), const SizedBox(width: 8), Expanded(child: Text(city.name))]),
+      Text(HijriCalendar.fromGregorian(DateTime(key.year,key.month,key.day), adjustment: ref.watch(hijriAdjustmentProvider)).label, textAlign: TextAlign.center),
       const SizedBox(height: 24),
       const CountdownCard(),
       const SizedBox(height: 24),
