@@ -47,7 +47,7 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Уведомления')),
-    body: ListView(padding: const EdgeInsets.all(20), children: [
+    body: SafeArea(child: ListView(padding: const EdgeInsets.all(20), children: [
       for (final p in PrayerKind.values.where((p) => p.obligatory))
         SwitchListTile(title: Text(p.label), value: enabled.contains(p), onChanged: busy ? null : (v) => setState(() { if (v) { enabled.add(p); } else { enabled.remove(p); } })),
       const SizedBox(height: 16),
@@ -57,8 +57,18 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
       DropdownButton<int>(value: lead, items: [for (final m in [0,5,10,15,30]) DropdownMenuItem(value: m, child: Text(m == 0 ? 'Нет' : 'За $m мин.'))], onChanged: busy ? null : (v) { if (v != null) setState(() => lead = v); }),
       FilledButton(onPressed: busy ? null : save, child: Text(busy ? 'Сохранение…' : 'Применить')),
       if (status != null) Text(status!),
-      ListTile(leading: const Icon(Icons.monitor_heart_outlined), title: const Text('Диагностика уведомлений'), onTap: busy ? null : () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const ReminderDiagnosticsScreen()))),
+      ListTile(leading: const Icon(Icons.monitor_heart_outlined), title: const Text('Диагностика уведомлений'), onTap: busy ? null : () async {
+        await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const ReminderDiagnosticsScreen()));
+        if (!mounted) return;
+        final prefs = ref.read(preferencesProvider);
+        await prefs.reload();
+        if (!mounted) return;
+        try {
+          final config = ReminderPreferences.read(prefs);
+          if (config != null) setState(() { enabled = config.enabled.toSet(); lead = config.lead; preferExact = config.exact; });
+        } catch (_) { if (mounted) setState(() => status = 'Не удалось прочитать настройки.'); }
+      }),
       const Text('Расписание на шесть календарных дней обновляется при открытии приложения. Android может задерживать доставку. Используется системный звук, не запись азана.'),
-    ]),
+    ])),
   );
 }
