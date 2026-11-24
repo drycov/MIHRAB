@@ -1,4 +1,4 @@
-package kz.mihrab.mihrab
+package kz.zeus.mihrab
 
 import android.content.ContentProvider
 import android.content.ContentValues

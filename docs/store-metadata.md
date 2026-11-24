@@ -17,5 +17,5 @@ Description: Daily prayer companion with supported Kazakhstan cities, Qibla dire
 - Review exact-alarm and foreground-media-playback declarations and demonstrate user-visible reminder/adhan functionality.
 - Obtain evidence of distribution rights for Quran editions (quran-uthmani, ru.kuliev, en.pickthall), recitations (Alafasy, Sudais), DUMK timetable API and any included religious text, translations, icons and fonts. API availability does not establish distribution rights. Do not submit unverified content.
 - Confirm age rating, screenshots, support URL, territories, translations and publisher details.
-- Android application ID remains kz.mihrab.mihrab. iOS signing and App Group verification remain pending.
+- Android application ID remains kz.zeus.mihrab. iOS signing and App Group verification remain pending.
 - No store account, upload, policy approval or legal compliance certification has been performed.
