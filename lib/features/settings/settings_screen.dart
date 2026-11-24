@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
 import '../../domain/prayer_schedule.dart';
 import '../../app/theme.dart';
+import '../../shared/islamic_ornaments.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -20,33 +21,8 @@ class SettingsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final dark = theme.brightness == Brightness.dark;
 
-    Widget sectionTitle(String text) => Padding(
-          padding: const EdgeInsets.fromLTRB(4, 16, 4, 8),
-          child: Text(
-            text.toUpperCase(),
-            style: theme.textTheme.labelMedium?.copyWith(
-              letterSpacing: 1.6,
-              fontWeight: FontWeight.w600,
-              color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
-            ),
-          ),
-        );
-
-    Widget card(List<Widget> children) => Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          decoration: BoxDecoration(
-            color: dark
-                ? MihrabTokens.emerald.withValues(alpha: 0.4)
-                : Colors.white,
-            borderRadius: BorderRadius.circular(MihrabTokens.radius),
-            border: Border.all(
-              color: dark
-                  ? MihrabTokens.gold.withValues(alpha: 0.1)
-                  : MihrabTokens.emerald.withValues(alpha: 0.07),
-            ),
-          ),
-          child: Column(children: children),
-        );
+    Widget sectionTitle(String text) => IslamicSectionTitle(text);
+    Widget card(List<Widget> children) => IslamicCard(padding: EdgeInsets.zero, child: Column(children: children));
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(
@@ -64,7 +40,7 @@ class SettingsScreen extends ConsumerWidget {
               DropdownMenuItem(value:'system',child:Text(context.tr('Системный язык'))),
               const DropdownMenuItem(value:'ru',child:Text('Русский')),
               const DropdownMenuItem(value:'kk',child:Text('Қазақша')),
-              const DropdownMenuItem(value:'ar',child:Text('العربية')),
+              const DropdownMenuItem(value:'ar',child:Text('العربية', textDirection: TextDirection.rtl)),
               const DropdownMenuItem(value:'en',child:Text('English')),
             ],
             onChanged:(value) async {

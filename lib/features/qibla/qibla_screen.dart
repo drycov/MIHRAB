@@ -173,7 +173,7 @@ class _Dial extends StatelessWidget {
                 ? 'Статический азимут · датчик недоступен'
                 : 'Ориентировочное направление по датчику',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: MihrabTokens.paper.withValues(alpha: 0.85),
               fontSize: 13,
             ),
             textAlign: TextAlign.center,
@@ -229,7 +229,7 @@ class _CompassPainter extends CustomPainter {
         text: TextSpan(
           text: e.value,
           style: TextStyle(
-            color: e.key == 0 ? MihrabTokens.gold : Colors.white,
+            color: e.key == 0 ? MihrabTokens.gold : MihrabTokens.paper,
             fontSize: 13,
             fontWeight: FontWeight.w600,
             letterSpacing: 1,

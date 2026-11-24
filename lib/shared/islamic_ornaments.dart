@@ -149,7 +149,7 @@ class IslamicCard extends StatelessWidget {
             ? MihrabTokens.emerald
             : (dark
                 ? MihrabTokens.emerald.withValues(alpha: 0.4)
-                : Colors.white),
+                : MihrabTokens.paper),
         borderRadius: BorderRadius.circular(MihrabTokens.radius),
         border: Border.all(
           color: highlighted
