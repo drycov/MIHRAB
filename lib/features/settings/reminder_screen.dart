@@ -17,6 +17,7 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
   late Set<PrayerKind> enabled;
   late int lead;
   bool busy = false;
+  bool preferExact = false;
   String? status;
   @override
   void initState() {
@@ -24,6 +25,7 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
     final prefs = ref.read(preferencesProvider);
     final saved = prefs.getStringList('reminder_prayers') ?? [];
     enabled = PrayerKind.values.where((p) => p.obligatory && saved.contains(p.name)).toSet();
+    preferExact = prefs.getBool('reminder_exact') ?? false;
     final stored = prefs.getInt('reminder_lead') ?? 0;
     lead = [0,5,10,15,30].contains(stored) ? stored : 0;
   }
@@ -35,13 +37,17 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
       if (enabled.isNotEmpty && !await service.requestPermission()) {
         throw StateError('Нет разрешения на уведомления.');
       }
+      if (enabled.isNotEmpty && preferExact && service.isAndroid) {
+        await service.requestExactPermission();
+      }
       final settings = ref.read(settingsProvider);
       final plan = ReminderPlanner.plan(settings.city, DateTime.now(), hanafi: settings.hanafi, enabled: enabled, minutesBefore: lead, repository: ref.read(scheduleRepositoryProvider));
-      await service.replace(plan);
+      final exact = await service.replace(plan, preferExact: preferExact);
       final prefs = ref.read(preferencesProvider);
       await prefs.setStringList('reminder_prayers', enabled.map((p) => p.name).toList());
       await prefs.setInt('reminder_lead', lead);
-      if (mounted) setState(() => status = 'Запланировано уведомлений: ${plan.length}');
+      await prefs.setBool('reminder_exact', preferExact);
+      if (mounted) setState(() => status = 'Запланировано уведомлений: ${plan.length}${service.isAndroid ? (exact ? ' · точный режим' : ' · приблизительный режим') : ''}');
     } catch (e) {
       if (mounted) setState(() => status = e.toString());
     } finally {
@@ -55,6 +61,8 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
       for (final p in PrayerKind.values.where((p) => p.obligatory))
         SwitchListTile(title: Text(p.label), value: enabled.contains(p), onChanged: busy ? null : (v) => setState(() { if (v) { enabled.add(p); } else { enabled.remove(p); } })),
       const SizedBox(height: 16),
+      if (ref.watch(notificationsProvider).isAndroid)
+        SwitchListTile(title: const Text('Точные уведомления'), subtitle: const Text('При отказе используется приблизительное время'), value: preferExact, onChanged: busy ? null : (v) => setState(() => preferExact = v)),
       const Text('Дополнительное напоминание'),
       DropdownButton<int>(value: lead, items: [for (final m in [0,5,10,15,30]) DropdownMenuItem(value: m, child: Text(m == 0 ? 'Нет' : 'За $m мин.'))], onChanged: busy ? null : (v) { if (v != null) setState(() => lead = v); }),
       FilledButton(onPressed: busy ? null : save, child: Text(busy ? 'Сохранение…' : 'Применить')),

@@ -18,6 +18,22 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
-      - run: |
-          flutter create --platforms=web --org kz.mihrab --project-name mihrab .
-          flutter build web --release
+      - run: flutter build web --release
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter build apk --debug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mihrab-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
