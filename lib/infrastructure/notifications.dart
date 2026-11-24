@@ -44,9 +44,8 @@ class Notifications {
     await initialize();
     if (!supported) return false;
     var exact = preferExact && await canScheduleExact();
-    for (final item in await plugin.pendingNotificationRequests()) {
-      if (item.id >= 1000 && item.id < 1120) await plugin.cancel(item.id);
-    }
+    final desiredIds = reminders.where((item) => item.time.isAfter(DateTime.now())).map((item) => item.id).toSet();
+    final previous = await plugin.pendingNotificationRequests();
     for (final item in reminders) {
       if (!item.time.isAfter(DateTime.now())) continue;
       Future<void> schedule(AndroidScheduleMode mode) => plugin.zonedSchedule(
@@ -65,6 +64,11 @@ class Notifications {
         if (!exact || error.code != 'exact_alarms_not_permitted') rethrow;
         exact = false;
         await schedule(AndroidScheduleMode.inexactAllowWhileIdle);
+      }
+    }
+    for (final item in previous) {
+      if (item.id >= 1000 && item.id < 1120 && !desiredIds.contains(item.id)) {
+        await plugin.cancel(item.id);
       }
     }
     return exact;
