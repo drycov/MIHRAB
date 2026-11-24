@@ -1,7 +1,7 @@
 name: mihrab
 description: Daily prayer companion.
 publish_to: none
-version: 0.6.4+19
+version: 0.6.5+20
 environment:
   sdk: '>=3.7.0 <4.0.0'
   flutter: '>=3.38.0'
@@ -18,6 +18,9 @@ dependencies:
   http: ^1.2.2
   workmanager: ^0.10.10
   sqflite: ^2.4.2
+  audioplayers: ^6.4.0
+  file_picker: ^10.3.0
+  path_provider: ^2.1.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
