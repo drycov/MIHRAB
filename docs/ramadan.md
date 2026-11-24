@@ -1,0 +1,2 @@
+# Ramadan mode
+Access through the moon icon in the main app bar. Displays the current or upcoming tabular Ramadan season, daily Fajr and Maghrib from the shared repository, fasting duration, and countdown during Ramadan. The Hijri correction affects season dates but not prayer calculation. No independent suhoor cutoff or official holiday assertion. Existing Fajr/Maghrib notifications can be enabled; separate Ramadan notification profiles are not implemented. Device and build validation pending.

@@ -8,6 +8,7 @@ import '../features/settings/settings_screen.dart';
 import 'theme.dart';
 import '../features/qibla/qibla_screen.dart';
 import '../features/calendar/calendar_screen.dart';
+import '../features/ramadan/ramadan_screen.dart';
 
 class MihrabApp extends ConsumerWidget {
   const MihrabApp({super.key});
@@ -55,7 +56,7 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
   Widget build(BuildContext context) {
     ref.listen(localDayProvider, (previous, next) { if (previous != next) refreshReminders(); });
     return Scaffold(
-    appBar: AppBar(title: const Text('MIHRAB', style: TextStyle(letterSpacing: 4, fontWeight: FontWeight.w600))),
+    appBar: AppBar(title: const Text('MIHRAB', style: TextStyle(letterSpacing: 4, fontWeight: FontWeight.w600)), actions: [IconButton(tooltip: 'Рамадан', icon: const Icon(Icons.nightlight_round), onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const RamadanScreen())))]),
     body: SafeArea(child: Column(children: [
       if (reminderError != null) ListTile(title: Text(reminderError!), trailing: IconButton(icon: const Icon(Icons.refresh), onPressed: refreshReminders)),
       Expanded(child: switch (index) {0 => const PrayersScreen(), 1 => const QiblaScreen(), 2 => const CalendarScreen(), _ => const SettingsScreen()}),
