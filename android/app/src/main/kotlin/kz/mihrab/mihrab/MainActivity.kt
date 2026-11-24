@@ -9,6 +9,7 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        flutterEngine.plugins.add(AdhanSchedulerPlugin())
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "mihrab/adhan_media")
             .setMethodCallHandler { call, result ->
                 try {

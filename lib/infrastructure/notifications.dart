@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -83,15 +84,24 @@ class Notifications {
   }
 
   Future<bool> replace(List<PrayerReminder> reminders, {bool preferExact = false,
-    Map<PrayerKind, PrayerSound> sounds = const {}}) async {
+    Map<PrayerKind, PrayerSound> sounds = const {}, bool foregroundNative = false}) async {
     await initialize();
     if (!supported) return false;
     var exact = preferExact && await canScheduleExact();
     final desiredIds = reminders.where((item) => item.time.isAfter(DateTime.now())).map((item) => item.id).toSet();
     final previous = await plugin.pendingNotificationRequests();
+    var nativeIds = <int>{};
+    if (isAndroid && foregroundNative) {
+      final rows = [for (final item in reminders)
+        if (exact && item.minutesBefore == 0 && sounds[item.kind] == PrayerSound.adhan && item.time.isAfter(DateTime.now()))
+          {'id': item.id, 'time': item.time.millisecondsSinceEpoch, 'profile': item.kind == PrayerKind.fajr ? 'fajr' : 'standard'}];
+      final ids = await const MethodChannel('mihrab/adhan_scheduler').invokeListMethod<int>('replace', jsonEncode(rows));
+      nativeIds = (ids ?? []).toSet();
+    }
+
     for (final item in reminders) {
       if (!item.time.isAfter(DateTime.now())) continue;
-      final notification = await details(item.kind, sounds[item.kind] ?? PrayerSound.system, early: item.minutesBefore > 0);
+      final notification = await details(item.kind, nativeIds.contains(item.id) ? PrayerSound.silent : (sounds[item.kind] ?? PrayerSound.system), early: item.minutesBefore > 0);
       Future<void> schedule(AndroidScheduleMode mode) => plugin.zonedSchedule(
         item.id, item.kind.label,
         item.minutesBefore == 0 ? 'Наступило время намаза' : 'До намаза ${item.minutesBefore} мин.',
