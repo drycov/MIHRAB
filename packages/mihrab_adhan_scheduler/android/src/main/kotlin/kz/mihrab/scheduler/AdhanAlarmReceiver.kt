@@ -1,4 +1,4 @@
-package kz.mihrab.mihrab
+package kz.mihrab.scheduler
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -22,6 +22,7 @@ class AdhanAlarmReceiver : BroadcastReceiver() {
         val time = intent.getLongExtra("time", 0)
         val profile = intent.getStringExtra("profile") ?: return
         if (!AdhanAlarms.consume(context, id, time, profile)) return
+        if (!AdhanAlarms.hasRecording(context, profile)) { AdhanAlarms.fallback(context, id); return }
         val service = Intent(context, AdhanPlaybackService::class.java)
             .setAction(AdhanPlaybackService.PLAY).putExtra("profile", profile)
         try {
@@ -49,7 +50,7 @@ object AdhanAlarms {
     private fun allowed(c: Context): Boolean =
         Build.VERSION.SDK_INT < 31 || manager(c).canScheduleExactAlarms()
 
-    private fun validFile(c: Context, profile: String): Boolean {
+    fun hasRecording(c: Context, profile: String): Boolean {
         if (profile != "standard" && profile != "fajr") return false
         val f = File(c.filesDir, "adhan_$profile.audio")
         return f.isFile && f.length() in 1L..15728640L
@@ -66,7 +67,7 @@ object AdhanAlarms {
                 val time = row.getLong("time")
                 val profile = row.getString("profile")
                 if (id !in 100000000..199999999 || time <= System.currentTimeMillis() ||
-                    !validFile(c, profile) || !ids.add(id)) continue
+                    !hasRecording(c, profile) || !ids.add(id)) continue
                 val pi = pending(c, id, time, profile, PendingIntent.FLAG_UPDATE_CURRENT)!!
                 try {
                     manager(c).setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, pi)
@@ -99,7 +100,7 @@ object AdhanAlarms {
         if (!found) return false
         if (!prefs(c).edit().putString(KEY, remaining.toString()).commit()) return false
         val late = System.currentTimeMillis() - time
-        return late in 0..MAX_LATE && validFile(c, profile)
+        return late in 0..MAX_LATE
     }
 
     fun fallback(c: Context, id: Int) {
@@ -110,7 +111,7 @@ object AdhanAlarms {
             channel, "Напоминания азана", android.app.NotificationManager.IMPORTANCE_DEFAULT))
         val builder = if (Build.VERSION.SDK_INT >= 26) android.app.Notification.Builder(c, channel)
             else android.app.Notification.Builder(c)
-        nm.notify(id, builder.setSmallIcon(R.drawable.ic_notification).setContentTitle("Время намаза")
+        nm.notify(id, builder.setSmallIcon(android.R.drawable.ic_lock_idle_alarm).setContentTitle("Время намаза")
             .setContentText("Воспроизведение азана недоступно").setAutoCancel(true).build())
     }
 }

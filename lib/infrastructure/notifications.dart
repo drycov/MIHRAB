@@ -84,24 +84,27 @@ class Notifications {
   }
 
   Future<bool> replace(List<PrayerReminder> reminders, {bool preferExact = false,
-    Map<PrayerKind, PrayerSound> sounds = const {}, bool foregroundNative = false}) async {
+    Map<PrayerKind, PrayerSound> sounds = const {}}) async {
     await initialize();
     if (!supported) return false;
     var exact = preferExact && await canScheduleExact();
     final desiredIds = reminders.where((item) => item.time.isAfter(DateTime.now())).map((item) => item.id).toSet();
     final previous = await plugin.pendingNotificationRequests();
     var nativeIds = <int>{};
-    if (isAndroid && foregroundNative) {
+    if (isAndroid) {
       final rows = [for (final item in reminders)
         if (exact && item.minutesBefore == 0 && sounds[item.kind] == PrayerSound.adhan && item.time.isAfter(DateTime.now()))
           {'id': item.id, 'time': item.time.millisecondsSinceEpoch, 'profile': item.kind == PrayerKind.fajr ? 'fajr' : 'standard'}];
+      // Cancel legacy audible requests before arming a native alarm. The existing
+      // reminder lock serializes foreground and headless schedule replacement.
+      for (final row in rows) { await plugin.cancel(row['id'] as int); }
       final ids = await const MethodChannel('mihrab/adhan_scheduler').invokeListMethod<int>('replace', jsonEncode(rows));
       nativeIds = (ids ?? []).toSet();
     }
 
     for (final item in reminders) {
       if (!item.time.isAfter(DateTime.now())) continue;
-      final notification = await details(item.kind, nativeIds.contains(item.id) ? PrayerSound.silent : (sounds[item.kind] ?? PrayerSound.system), early: item.minutesBefore > 0);
+      final notification = await details(item.kind, nativeIds.contains(item.id) ? PrayerSound.silent : (sounds[item.kind] == PrayerSound.adhan ? PrayerSound.system : (sounds[item.kind] ?? PrayerSound.system)), early: item.minutesBefore > 0);
       Future<void> schedule(AndroidScheduleMode mode) => plugin.zonedSchedule(
         item.id, item.kind.label,
         item.minutesBefore == 0 ? 'Наступило время намаза' : 'До намаза ${item.minutesBefore} мин.',
@@ -114,7 +117,14 @@ class Notifications {
       } on PlatformException catch (error) {
         if (!exact || error.code != 'exact_alarms_not_permitted') rethrow;
         exact = false;
-        await schedule(AndroidScheduleMode.inexactAllowWhileIdle);
+        // Reconcile native alarms on the next refresh; exact permission revocation
+        // also cancels OS exact alarms. Use an audible system fallback for this request.
+        if (nativeIds.contains(item.id)) {
+          await plugin.zonedSchedule(item.id, item.kind.label, 'Наступило время намаза', item.time,
+            await details(item.kind, PrayerSound.system), androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle);
+        } else {
+          await schedule(AndroidScheduleMode.inexactAllowWhileIdle);
+        }
       }
     }
     for (final item in previous) {

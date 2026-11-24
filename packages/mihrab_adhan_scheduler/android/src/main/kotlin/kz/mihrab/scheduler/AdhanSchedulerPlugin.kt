@@ -1,4 +1,4 @@
-package kz.mihrab.mihrab
+package kz.mihrab.scheduler
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
