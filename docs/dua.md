@@ -1,0 +1,2 @@
+# Dua and adhkar
+Offline starter catalog of eight entries, five categories, Arabic text, approximate Russian transliteration and original Russian meaning gloss, hadith references, session-only repetition counter. Sources: Sahih Muslim 2692 and 597a; Sahih al-Bukhari 6324. The post-prayer sequence is the 33+33+33+1 variant. Sources can be copied from details. Access via Quran toolbar. Not a complete Hisn al-Muslim collection. Religious editorial review and device tests pending. No added dependencies.
