@@ -94,6 +94,7 @@ Use `MihrabFrame` for the main focal metric (next prayer, Qibla dial, fasting co
 
 ### Forms / settings
 - Group controls inside `IslamicCard(padding: EdgeInsets.zero)` with internal `Divider`s.
+- Interactive tiles need a local Material above any opaque decoration. IslamicCard provides a transparent, rounded, clipped Material inside its decorated surface; retain it when editing the component.
 - Section headers: `IslamicSectionTitle('...')`.
 - Primary CTA: `FilledButton` with
   - dark: `backgroundColor: gold`, `foregroundColor: background`
