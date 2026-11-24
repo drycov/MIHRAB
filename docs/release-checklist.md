@@ -5,3 +5,6 @@ Local Windows verification (2026-11-24): dependency resolution and web release s
 
 
 v0.9.6: configure release upload-key signing, remove debug fallback, add local signing documentation and ignored secret paths. PR #44 merged; repeat test result not yet supplied. Signed build, iOS signing and store publication remain pending.
+
+
+v0.9.7: privacy policy RU/EN, public web privacy page, draft store metadata and permission/rights review gates. iOS foreground location purpose string added. Publisher/contact, actual merged manifests, SDK privacy manifests, network verification, content rights and live page deployment remain unverified. Store declarations must not be submitted until reviewed.
