@@ -42,11 +42,14 @@ class AdhanSoundProvider : ContentProvider() {
         val file = resolve(uri)
         val columns = projection ?: arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE)
         return MatrixCursor(columns).apply {
-            addRow(columns.map { when(it) {
-                OpenableColumns.DISPLAY_NAME -> file.name
-                OpenableColumns.SIZE -> file.length()
-                else -> null
-            } }.toTypedArray())
+            val row = Array<Any?>(columns.size) { index ->
+                when (columns[index]) {
+                    OpenableColumns.DISPLAY_NAME -> file.name
+                    OpenableColumns.SIZE -> file.length()
+                    else -> null
+                }
+            }
+            addRow(row)
         }
     }
 
