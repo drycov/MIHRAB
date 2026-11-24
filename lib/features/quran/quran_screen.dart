@@ -8,6 +8,7 @@ import '../bookmarks/bookmarks_screen.dart';
 import '../tasbih/tasbih_screen.dart';
 import '../../domain/quran.dart';
 import 'quran_audio_screen.dart';
+import 'quran_offline_screen.dart';
 import '../../infrastructure/quran_repository.dart';
 
 final quranRepositoryProvider=Provider<QuranRepository>((ref){
@@ -34,6 +35,7 @@ class _QuranScreenState extends ConsumerState<QuranScreen>{
         Padding(padding:const EdgeInsets.all(16),child:TextField(
           decoration:const InputDecoration(prefixIcon:Icon(Icons.search),hintText:'Название или номер суры'),
           onChanged:(v)=>setState(()=>query=v.trim().toLowerCase()))),
+        ListTile(leading:const Icon(Icons.download_for_offline_outlined),title:const Text('Офлайн-библиотека'),onTap:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const QuranOfflineScreen()))),
         Expanded(child:catalog.when(
           loading:()=>const Center(child:CircularProgressIndicator()),
           error:(e,s)=>Center(child:Column(mainAxisSize:MainAxisSize.min,children:[
@@ -56,9 +58,10 @@ class _QuranScreenState extends ConsumerState<QuranScreen>{
 }
 
 class SurahScreen extends ConsumerStatefulWidget{
-  const SurahScreen({super.key,required this.surah,this.initialVerse=1});
+  const SurahScreen({super.key,required this.surah,this.initialVerse=1,this.initialTranslation});
   final Surah surah;
   final int initialVerse;
+  final QuranTranslation? initialTranslation;
   @override
   ConsumerState<SurahScreen> createState()=>_SurahScreenState();
 }
@@ -71,7 +74,7 @@ class _SurahScreenState extends ConsumerState<SurahScreen>{
   void initState(){
     super.initState();
     final saved=ref.read(preferencesProvider).getString('quran_translation');
-    translation=QuranTranslation.values.firstWhere((t)=>t.id==saved,orElse:()=>QuranTranslation.russian);
+    translation=widget.initialTranslation??QuranTranslation.values.firstWhere((t)=>t.id==saved,orElse:()=>QuranTranslation.russian);
     verse=widget.initialVerse.clamp(1,widget.surah.count).toInt();
     future=ref.read(quranRepositoryProvider).verses(widget.surah,translation);
   }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import '../domain/quran_audio.dart';
+import 'quran_disk.dart';
 
 class QuranAudioRepository {
   QuranAudioRepository({http.Client? client}):_client=client??http.Client();
@@ -26,8 +27,9 @@ class QuranAudioRepository {
     if(bytes!=null)_cache[k]=bytes;
     return bytes;
   }
+  Future<Uint8List?> local(int surah,int verse,QuranReciter reciter)async=>cached(surah,verse,reciter)??await QuranDisk.read(key(surah,verse,reciter));
   Future<void> cache(int surah,int verse,QuranReciter reciter)async{
-    if(cached(surah,verse,reciter)!=null)return;
+    if(await local(surah,verse,reciter)!=null)return;
     final uri=await resolve(surah,verse,reciter);
     final request=http.Request('GET',uri)..followRedirects=false;
     final response=await _client.send(request).timeout(const Duration(seconds:20));
@@ -43,6 +45,7 @@ class QuranAudioRepository {
     final bytes=builder.takeBytes();
     if(bytes.isEmpty)throw const FormatException('Empty audio');
     final k=key(surah,verse,reciter);
+    await QuranDisk.write(k,bytes);
     _size-= _cache.remove(k)?.length??0;
     while(_size+bytes.length>cacheBytes&&_cache.isNotEmpty){
       _size-=_cache.remove(_cache.keys.first)!.length;

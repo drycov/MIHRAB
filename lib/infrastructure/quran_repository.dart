@@ -20,11 +20,22 @@ class QuranRepository {
       if(envelope['code']!=200)throw StateError('Quran API error');
       final data=envelope['data'];
       final result=decode(data);
-      await prefs.setString(key,jsonEncode(data));
+      if(!await prefs.setString(key,jsonEncode(data)))throw StateError('Cache write failed');
       return result;
     }catch(_){
       if(cached!=null)return decode(jsonDecode(cached));
       rethrow;
+    }
+  }
+  List<Surah>? cachedCatalog(){
+    try{return QuranCodec.catalog(jsonDecode(prefs.getString('quran_catalog_v1')!));}catch(_){return null;}
+  }
+  List<Ayah>? cachedVerses(Surah surah,QuranTranslation translation){
+    try{return QuranCodec.verses(jsonDecode(prefs.getString('quran_v1_${surah.number}_${translation.id}')!),surah,translation);}catch(_){return null;}
+  }
+  Future<void> removeTranslation(QuranTranslation translation)async{
+    for(var n=1;n<=114;n++){
+      if(!await prefs.remove('quran_v1_${n}_${translation.id}'))throw StateError('Cache removal failed');
     }
   }
   Future<List<Surah>> catalog({bool refresh=false})=>_read('quran_catalog_v1','surah',QuranCodec.catalog,refresh:refresh);
