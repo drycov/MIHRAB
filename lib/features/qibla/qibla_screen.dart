@@ -56,7 +56,6 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
       FilledButton.icon(onPressed: loading ? null : locate, icon: const Icon(Icons.my_location), label: Text(loading ? 'Определение…' : 'Использовать GPS')),
       if (position != null) TextButton(onPressed: loading ? null : () => setState(() => position = null), child: const Text('Использовать город')),
       if (error != null) Text(error!),
-      const Text('Расчёт азимута от истинного севера. Датчик может показывать магнитный север; точность наведения не гарантируется. Держите устройство горизонтально вдали от металла.'),
     ]);
   }
 }

@@ -62,7 +62,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       ListTile(title:const Text('Корректировка Хиджры'),trailing:DropdownButton<int>(value:adjustment,
         items:[for(var i=-2;i<=2;i++) DropdownMenuItem(value:i,child:Text(i>0?'+$i':'$i'))],
         onChanged:(v) async {if(v==null)return;try{await ref.read(hijriAdjustmentProvider.notifier).change(v);}catch(e){if(context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(e.toString())));}})),
-      const Text('Арифметический календарь по гражданской дате. Начало исламского дня после заката здесь не учитывается. Даты праздников предварительные; сверяйте с ДУМК. Корректировка не меняет время намаза.'),
     ]);
   }
 }

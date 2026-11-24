@@ -40,7 +40,6 @@ class _PrayersScreenState extends ConsumerState<PrayersScreen> {
       if (offset != 0) TextButton(onPressed: () => setState(() => offset = 0), child: const Text('Сегодня')),
       for (final slot in slots) PrayerTile(slot: slot, active: slot.time == next),
       const SizedBox(height: 16),
-      Text(schedule.source == ScheduleSource.dumkCache ? 'ДУМК · сохранённое расписание' : 'Расчёт MWL. Не официальное расписание ДУМК. Сверяйте время с местной мечетью.', textAlign: TextAlign.center),
     ]);
   }
 }

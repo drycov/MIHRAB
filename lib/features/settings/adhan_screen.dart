@@ -38,7 +38,6 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Записи азана')),
     body: SafeArea(child: ListView(padding: const EdgeInsets.all(16), children: [
-      const Text('Выберите собственные записи MP3, WAV или M4A. До 15 МБ на запись. Файлы сохраняются в приватном каталоге приложения.'),
       if (!audio.supported) const ListTile(title: Text('Импорт доступен только на Android и iOS')),
       for (final profile in AdhanProfile.values) Card(child: Padding(
         padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,children:[
@@ -57,7 +56,6 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
       )),
       if(busy) const LinearProgressIndicator(),
       if(status!=null) Text(status!,style:TextStyle(color:Theme.of(context).colorScheme.error)),
-      const Text('На Android можно выбрать профиль «Локальный азан» в настройках уведомлений. После импорта или удаления записи перепланируйте уведомления. Доставка звука зависит от Android и настроек канала; полное воспроизведение не гарантируется.'),
     ])),
   );
 }
