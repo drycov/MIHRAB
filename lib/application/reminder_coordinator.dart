@@ -46,14 +46,17 @@ class ReminderCoordinator {
   ) {
     return _queue.run(() async {
       final service = ref.read(notificationsProvider);
-      if (!service.supported) return 'Уведомления недоступны на этой платформе';
+      if (!service.supported) {
+        return 'Уведомления недоступны на этой платформе';
+      }
       final prefs = ref.read(preferencesProvider);
-      // Permission prompts must happen outside the database transaction.
       if (update != null && update.enabled.isNotEmpty) {
-        if (!await service.requestPermission())
+        if (!await service.requestPermission()) {
           throw StateError('Нет разрешения на уведомления.');
-        if (update.exact && service.isAndroid)
+        }
+        if (update.exact && service.isAndroid) {
           await service.requestExactPermission();
+        }
       }
       return ReminderLock.run(() async {
         await prefs.reload();
@@ -77,10 +80,10 @@ class ReminderCoordinator {
         final enabled = config?.enabled ?? <PrayerKind>{};
         final lead = config?.lead ?? 0;
         final preferExact = config?.exact ?? false;
-        // Persist desired state before scheduling so a retry can recover after failure.
         if (config != null &&
-            (update != null || !prefs.containsKey(ReminderPreferences.key)))
+            (update != null || !prefs.containsKey(ReminderPreferences.key))) {
           await config.save(prefs);
+        }
         final settings = ref.read(settingsProvider);
         final plan = ReminderPlanner.plan(
           settings.city,
@@ -110,6 +113,9 @@ class ReminderCoordinator {
           'reminder_last_success',
           DateTime.now().toUtc().toIso8601String(),
         );
+        if (service.isWeb) {
+          return 'Запланировано в PWA: ${plan.length} · сработают, пока вкладка/приложение открыты';
+        }
         return 'Запланировано: ${plan.length}${service.isAndroid && plan.isNotEmpty ? (exact ? ' · точный режим' : ' · приблизительный режим') : ''}';
       });
     });
