@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'settings.dart';
+import 'reminder_coordinator.dart';
 
 final hijriAdjustmentProvider = NotifierProvider<HijriAdjustment, int>(HijriAdjustment.new);
 class HijriAdjustment extends Notifier<int> {
@@ -11,5 +12,6 @@ class HijriAdjustment extends Notifier<int> {
       throw StateError('Не удалось сохранить корректировку');
     }
     state = value;
+    await ref.read(reminderCoordinatorProvider).refresh();
   }
 }

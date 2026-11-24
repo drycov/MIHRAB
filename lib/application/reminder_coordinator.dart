@@ -8,6 +8,8 @@ import 'schedule.dart';
 import 'settings.dart';
 import 'reminder_preferences.dart';
 import 'reminder_queue.dart';
+import 'ramadan_reminder_preferences.dart';
+import '../domain/ramadan_reminders.dart';
 
 final notificationsProvider = Provider<Notifications>((ref) => Notifications());
 final reminderCoordinatorProvider = Provider<ReminderCoordinator>((ref) => ReminderCoordinator(ref));
@@ -36,16 +38,22 @@ class ReminderCoordinator {
       await prefs.reload();
       final config = update == null ? ReminderPreferences.read(prefs) :
           ReminderPreferences(enabled: update.enabled, lead: update.lead, exact: update.exact, sounds: update.sounds ?? ReminderPreferences.read(prefs)?.sounds ?? const {});
-      if (config == null) return 'Уведомления не настроены';
-      final enabled = config.enabled;
-      final lead = config.lead;
-      final preferExact = config.exact;
+      final ramadan = RamadanReminderPreferences.read(prefs);
+      if (config == null && !ramadan.enabled) {
+        await service.replace([]);
+        return 'Уведомления не настроены';
+      }
+      final enabled = config?.enabled ?? <PrayerKind>{};
+      final lead = config?.lead ?? 0;
+      final preferExact = config?.exact ?? false;
       // Persist desired state before scheduling so a retry can recover after failure.
-      if (update != null || !prefs.containsKey(ReminderPreferences.key)) await config.save(prefs);
+      if (config != null && (update != null || !prefs.containsKey(ReminderPreferences.key))) await config.save(prefs);
       final settings = ref.read(settingsProvider);
       final plan = ReminderPlanner.plan(settings.city, DateTime.now(), hanafi: settings.hanafi,
         enabled: enabled, minutesBefore: lead, repository: ref.read(scheduleRepositoryProvider));
-      final exact = await service.replace(plan, preferExact: preferExact, sounds: config.sounds);
+      plan.addAll(RamadanReminderPlanner.plan(settings.city, DateTime.now(), hanafi: settings.hanafi,
+        config: ramadan, adjustment: (prefs.getInt('hijri_adjustment') ?? 0).clamp(-2,2).toInt(), repository: ref.read(scheduleRepositoryProvider)));
+      final exact = await service.replace(plan, preferExact: preferExact, sounds: config?.sounds ?? const {});
       await prefs.setString('reminder_last_success', DateTime.now().toUtc().toIso8601String());
       return 'Запланировано: ${plan.length}${service.isAndroid && plan.isNotEmpty ? (exact ? ' · точный режим' : ' · приблизительный режим') : ''}';
       });
