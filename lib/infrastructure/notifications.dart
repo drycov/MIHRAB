@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:ui' show PlatformDispatcher;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../l10n/reminder_strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -50,6 +53,11 @@ class Notifications {
     return canScheduleExact();
   }
 
+  Future<ReminderStrings> _strings() async {
+    final prefs=await SharedPreferences.getInstance();
+    return ReminderStrings(resolveReminderLanguage(prefs.getString('app_locale_v1'),PlatformDispatcher.instance.locales));
+  }
+
   Future<NotificationDetails> details(PrayerKind kind, PrayerSound sound, {bool early = false}) async {
     String? uri;
     if (sound == PrayerSound.adhan) {
@@ -79,7 +87,8 @@ class Notifications {
   Future<void> preview(PrayerKind kind, PrayerSound sound) async {
     if (!supported) throw StateError('Проверка доступна на Android и iOS');
     if (!await requestPermission()) throw StateError('Нет разрешения на уведомления');
-    await plugin.show(900, 'MIHRAB · ${kind.label}', 'Проверка звукового профиля',
+    final strings=await _strings();
+    await plugin.show(900, 'MIHRAB · ${strings.prayer(kind)}', strings.preview,
       await details(kind, sound));
   }
 
@@ -87,6 +96,7 @@ class Notifications {
     Map<PrayerKind, PrayerSound> sounds = const {}}) async {
     await initialize();
     if (!supported) return false;
+    final strings=await _strings();
     var exact = preferExact && await canScheduleExact();
     // iOS limits pending local requests to 64. Keep the earliest across both modules.
     reminders = [...reminders]..sort((a,b)=>a.time.compareTo(b.time));
@@ -108,12 +118,12 @@ class Notifications {
     for (final item in reminders) {
       if (!item.time.isAfter(DateTime.now())) continue;
       final notification = item.ramadan ? NotificationDetails(
-        android: AndroidNotificationDetails('mihrab_ramadan_${item.kind.name}_v1', item.kind == PrayerKind.fajr ? 'Сухур' : 'Ифтар', importance: Importance.high, priority: Priority.high, icon: 'ic_notification'),
+        android: AndroidNotificationDetails('mihrab_ramadan_${item.kind.name}_v1', item.kind == PrayerKind.fajr ? strings.suhoor : strings.iftar, importance: Importance.high, priority: Priority.high, icon: 'ic_notification'),
         iOS: const DarwinNotificationDetails(),
       ) : await details(item.kind, nativeIds.contains(item.id) ? PrayerSound.silent : (sounds[item.kind] == PrayerSound.adhan ? PrayerSound.system : (sounds[item.kind] ?? PrayerSound.system)), early: item.minutesBefore > 0);
       Future<void> schedule(AndroidScheduleMode mode) => plugin.zonedSchedule(
-        item.id, item.ramadan ? (item.kind == PrayerKind.fajr ? 'Сухур' : 'Ифтар') : item.kind.label,
-        item.ramadan ? (item.kind == PrayerKind.fajr ? (item.minutesBefore == 0 ? 'Время окончания сухура' : 'До окончания сухура ${item.minutesBefore} мин.') : (item.minutesBefore == 0 ? 'Время ифтара' : 'До ифтара ${item.minutesBefore} мин.')) : (item.minutesBefore == 0 ? 'Наступило время намаза' : 'До намаза ${item.minutesBefore} мин.'),
+        item.id, strings.title(item),
+        strings.body(item),
         item.time,
         notification,
         androidScheduleMode: mode,
@@ -126,7 +136,7 @@ class Notifications {
         // Reconcile native alarms on the next refresh; exact permission revocation
         // also cancels OS exact alarms. Use an audible system fallback for this request.
         if (nativeIds.contains(item.id)) {
-          await plugin.zonedSchedule(item.id, item.kind.label, 'Наступило время намаза', item.time,
+          await plugin.zonedSchedule(item.id, strings.prayer(item.kind), strings.prayerStart, item.time,
             await details(item.kind, PrayerSound.system), androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle);
         } else {
           await schedule(AndroidScheduleMode.inexactAllowWhileIdle);
