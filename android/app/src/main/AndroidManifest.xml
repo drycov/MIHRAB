@@ -37,6 +37,11 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <provider
+            android:name=".AdhanSoundProvider"
+            android:authorities="${applicationId}.adhan"
+            android:exported="false"
+            android:grantUriPermissions="true" />
         <!-- Restore scheduled local reminders after reboot or application update. -->
         <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" android:exported="false" />
         <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver" android:exported="false">
