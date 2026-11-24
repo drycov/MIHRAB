@@ -6,6 +6,8 @@ import 'package:workmanager/workmanager.dart';
 import '../application/reminder_preferences.dart';
 import '../domain/prayer_schedule.dart';
 import '../domain/reminders.dart';
+import '../domain/ramadan_reminders.dart';
+import '../application/ramadan_reminder_preferences.dart';
 import 'notifications.dart';
 import 'reminder_lock.dart';
 import 'schedule_repository.dart';
@@ -23,12 +25,14 @@ void reminderDispatcher() {
         final prefs = await SharedPreferences.getInstance();
         await prefs.reload();
         final config = ReminderPreferences.read(prefs);
-        if (config == null) return;
+        final ramadan = RamadanReminderPreferences.read(prefs);
         final city = City.all[(prefs.getInt('city') ?? 0).clamp(0, City.all.length - 1).toInt()];
         final plan = ReminderPlanner.plan(city, DateTime.now(),
-          hanafi: prefs.getBool('hanafi') ?? true, enabled: config.enabled,
-          minutesBefore: config.lead, repository: LocalScheduleRepository(prefs));
-        await Notifications().replace(plan, preferExact: config.exact, sounds: config.sounds);
+          hanafi: prefs.getBool('hanafi') ?? true, enabled: config?.enabled ?? <PrayerKind>{},
+          minutesBefore: config?.lead ?? 0, repository: LocalScheduleRepository(prefs));
+        plan.addAll(RamadanReminderPlanner.plan(city, DateTime.now(), hanafi: prefs.getBool('hanafi') ?? true,
+          config: ramadan, adjustment: (prefs.getInt('hijri_adjustment') ?? 0).clamp(-2,2).toInt(), repository: LocalScheduleRepository(prefs)));
+        await Notifications().replace(plan, preferExact: config?.exact ?? false, sounds: config?.sounds ?? const {});
         final now = DateTime.now().toUtc().toIso8601String();
         await prefs.setString('reminder_last_background_success', now);
         await prefs.setString('reminder_last_success', now);

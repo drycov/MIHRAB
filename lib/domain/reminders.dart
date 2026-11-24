@@ -3,8 +3,9 @@ import 'prayer_schedule.dart';
 import 'schedule_repository.dart';
 
 class PrayerReminder {
-  const PrayerReminder(this.id, this.kind, this.time, this.minutesBefore);
+  const PrayerReminder(this.id, this.kind, this.time, this.minutesBefore, {this.ramadan = false});
   final int id, minutesBefore;
+  final bool ramadan;
   final PrayerKind kind;
   final tz.TZDateTime time;
 }
@@ -15,7 +16,7 @@ abstract final class ReminderPlanner {
   static const idBase = 100000000;
   static const idLimit = 200000000;
   static bool ownsId(int id) => (id >= 1000 && id < 1120) ||
-      (id >= idBase && id < idLimit);
+      (id >= idBase && id < 300000000);
   static int stableId(DateTime date, PrayerKind kind, bool early) {
     final day = DateTime.utc(date.year, date.month, date.day)
         .difference(DateTime.utc(2000)).inDays;

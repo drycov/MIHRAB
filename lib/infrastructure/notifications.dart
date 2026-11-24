@@ -88,12 +88,15 @@ class Notifications {
     await initialize();
     if (!supported) return false;
     var exact = preferExact && await canScheduleExact();
+    // iOS limits pending local requests to 64. Keep the earliest across both modules.
+    reminders = [...reminders]..sort((a,b)=>a.time.compareTo(b.time));
+    if (!isAndroid && reminders.length > 60) reminders = reminders.take(60).toList();
     final desiredIds = reminders.where((item) => item.time.isAfter(DateTime.now())).map((item) => item.id).toSet();
     final previous = await plugin.pendingNotificationRequests();
     var nativeIds = <int>{};
     if (isAndroid) {
       final rows = [for (final item in reminders)
-        if (exact && item.minutesBefore == 0 && sounds[item.kind] == PrayerSound.adhan && item.time.isAfter(DateTime.now()))
+        if (!item.ramadan && exact && item.minutesBefore == 0 && sounds[item.kind] == PrayerSound.adhan && item.time.isAfter(DateTime.now()))
           {'id': item.id, 'time': item.time.millisecondsSinceEpoch, 'profile': item.kind == PrayerKind.fajr ? 'fajr' : 'standard'}];
       // Cancel legacy audible requests before arming a native alarm. The existing
       // reminder lock serializes foreground and headless schedule replacement.
@@ -104,10 +107,13 @@ class Notifications {
 
     for (final item in reminders) {
       if (!item.time.isAfter(DateTime.now())) continue;
-      final notification = await details(item.kind, nativeIds.contains(item.id) ? PrayerSound.silent : (sounds[item.kind] == PrayerSound.adhan ? PrayerSound.system : (sounds[item.kind] ?? PrayerSound.system)), early: item.minutesBefore > 0);
+      final notification = item.ramadan ? NotificationDetails(
+        android: AndroidNotificationDetails('mihrab_ramadan_${item.kind.name}_v1', item.kind == PrayerKind.fajr ? 'Сухур' : 'Ифтар', importance: Importance.high, priority: Priority.high, icon: 'ic_notification'),
+        iOS: const DarwinNotificationDetails(),
+      ) : await details(item.kind, nativeIds.contains(item.id) ? PrayerSound.silent : (sounds[item.kind] == PrayerSound.adhan ? PrayerSound.system : (sounds[item.kind] ?? PrayerSound.system)), early: item.minutesBefore > 0);
       Future<void> schedule(AndroidScheduleMode mode) => plugin.zonedSchedule(
-        item.id, item.kind.label,
-        item.minutesBefore == 0 ? 'Наступило время намаза' : 'До намаза ${item.minutesBefore} мин.',
+        item.id, item.ramadan ? (item.kind == PrayerKind.fajr ? 'Сухур' : 'Ифтар') : item.kind.label,
+        item.ramadan ? (item.kind == PrayerKind.fajr ? (item.minutesBefore == 0 ? 'Время окончания сухура' : 'До окончания сухура ${item.minutesBefore} мин.') : (item.minutesBefore == 0 ? 'Время ифтара' : 'До ифтара ${item.minutesBefore} мин.')) : (item.minutesBefore == 0 ? 'Наступило время намаза' : 'До намаза ${item.minutesBefore} мин.'),
         item.time,
         notification,
         androidScheduleMode: mode,

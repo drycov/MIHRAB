@@ -7,6 +7,7 @@ import '../../application/settings.dart';
 import '../../domain/ramadan.dart';
 import '../../domain/schedule_repository.dart';
 import '../../shared/format.dart';
+import 'ramadan_reminder_screen.dart';
 
 final ramadanSeasonProvider = Provider.autoDispose<List<RamadanDay>>((ref) {
   final key = ref.watch(localDayProvider);
@@ -28,7 +29,7 @@ class RamadanScreen extends ConsumerWidget {
     final city = ref.watch(settingsProvider.select((s) => s.city));
     final current = days.where((d) => d.date == today).firstOrNull;
     final theme = Theme.of(context);
-    return Scaffold(appBar:AppBar(title:const Text('Рамадан')),
+    return Scaffold(appBar:AppBar(title:const Text('Рамадан'),actions:[IconButton(tooltip:'Напоминания Рамадана',icon:const Icon(Icons.notifications_outlined),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const RamadanReminderScreen())))]),
       body: ListView(padding:const EdgeInsets.all(16),children:[
         Text(city.name,style:theme.textTheme.titleMedium),
         Text('Рамадан ${days.first.hijri.year} г.х.',style:theme.textTheme.headlineSmall),
