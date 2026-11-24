@@ -4,6 +4,7 @@ import '../../application/clock.dart';
 import '../../application/schedule.dart';
 import '../../application/settings.dart';
 import '../../domain/prayer_schedule.dart';
+import '../../domain/schedule_repository.dart';
 import '../../app/theme.dart';
 import '../../shared/format.dart';
 
@@ -19,8 +20,9 @@ class _PrayersScreenState extends ConsumerState<PrayersScreen> {
     final key = ref.watch(localDayProvider);
     final city = ref.watch(settingsProvider.select((s) => s.city));
     final date = DateTime(key.year, key.month, key.day + offset);
-    final slots = ref.watch(scheduleProvider((city: key.city, hanafi: key.hanafi,
+    final schedule = ref.watch(dailyScheduleProvider((city: key.city, hanafi: key.hanafi,
       year: date.year, month: date.month, day: date.day)));
+    final slots = schedule.slots;
     final next = ref.watch(nextPrayerProvider.select((p) => p.time));
     return ListView(padding: const EdgeInsets.all(MihrabTokens.space), children: [
       Row(children: [const Icon(Icons.location_on_outlined), const SizedBox(width: 8), Expanded(child: Text(city.name))]),
@@ -35,7 +37,7 @@ class _PrayersScreenState extends ConsumerState<PrayersScreen> {
       if (offset != 0) TextButton(onPressed: () => setState(() => offset = 0), child: const Text('Сегодня')),
       for (final slot in slots) PrayerTile(slot: slot, active: slot.time == next),
       const SizedBox(height: 16),
-      const Text('Расчёт MWL. Не официальное расписание ДУМК. Сверяйте время с местной мечетью.', textAlign: TextAlign.center),
+      Text(schedule.source == ScheduleSource.dumkCache ? 'ДУМК · сохранённое расписание' : 'Расчёт MWL. Не официальное расписание ДУМК. Сверяйте время с местной мечетью.', textAlign: TextAlign.center),
     ]);
   }
 }

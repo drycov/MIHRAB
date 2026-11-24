@@ -1,12 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timezone/timezone.dart' as tz;
 import '../domain/prayer_schedule.dart';
+import '../domain/schedule_repository.dart';
+import '../infrastructure/schedule_repository.dart';
 import 'clock.dart';
 import 'settings.dart';
 
 typedef DayKey = ({int city, bool hanafi, int year, int month, int day});
-final scheduleProvider = Provider.autoDispose.family<List<PrayerSlot>, DayKey>((ref, key) =>
-    PrayerSchedule.forDay(City.all[key.city], DateTime(key.year, key.month, key.day), hanafi: key.hanafi));
+final scheduleRepositoryProvider = Provider<ScheduleRepository>((ref) => LocalScheduleRepository(ref.watch(preferencesProvider)));
+final dailyScheduleProvider = Provider.autoDispose.family<DailySchedule, DayKey>((ref, key) =>
+    ref.watch(scheduleRepositoryProvider).getDay(City.all[key.city], DateTime(key.year, key.month, key.day), hanafi: key.hanafi));
+final scheduleProvider = Provider.autoDispose.family<List<PrayerSlot>, DayKey>((ref, key) => ref.watch(dailyScheduleProvider(key)).slots);
 
 final localDayProvider = Provider.autoDispose<DayKey>((ref) {
   final s = ref.watch(settingsProvider);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
+import '../../application/schedule.dart';
 import '../../domain/prayer_schedule.dart';
 import '../../domain/reminders.dart';
 import '../../infrastructure/notifications.dart';
@@ -35,7 +36,7 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
         throw StateError('Нет разрешения на уведомления.');
       }
       final settings = ref.read(settingsProvider);
-      final plan = ReminderPlanner.plan(settings.city, DateTime.now(), hanafi: settings.hanafi, enabled: enabled, minutesBefore: lead);
+      final plan = ReminderPlanner.plan(settings.city, DateTime.now(), hanafi: settings.hanafi, enabled: enabled, minutesBefore: lead, repository: ref.read(scheduleRepositoryProvider));
       await service.replace(plan);
       final prefs = ref.read(preferencesProvider);
       await prefs.setStringList('reminder_prayers', enabled.map((p) => p.name).toList());

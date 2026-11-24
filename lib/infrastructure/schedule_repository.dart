@@ -34,7 +34,7 @@ class LocalScheduleRepository implements ScheduleRepository {
 
   // Only call with data normalized by a verified official API adapter.
   Future<void> storeValidatedYear(City city, int year, Map<String, dynamic> days) async {
-    final expected = DateTime(year + 1).difference(DateTime(year)).inDays;
+    final expected = DateTime.utc(year + 1).difference(DateTime.utc(year)).inDays;
     if (days.length != expected) throw const FormatException('Incomplete year');
     for (var i = 0; i < expected; i++) {
       final day = DateTime(year, 1, i + 1);
