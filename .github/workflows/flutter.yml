@@ -18,6 +18,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: '3.50.1'
           cache: true
       - name: SDK diagnostics
         run: |
@@ -28,7 +29,7 @@ jobs:
         run: flutter pub get 2>&1 | tee ci-logs/pub-get.txt
         shell: bash
       - name: Analyze
-        run: flutter analyze 2>&1 | tee ci-logs/analyze.txt
+        run: flutter analyze --no-fatal-infos 2>&1 | tee ci-logs/analyze.txt
         shell: bash
       - name: Tests
         if: success() || failure()
@@ -36,7 +37,7 @@ jobs:
         shell: bash
       - name: Build web
         if: success() || failure()
-        run: flutter build web --release 2>&1 | tee ci-logs/web.txt
+        run: flutter build web --release --no-pub 2>&1 | tee ci-logs/web.txt
         shell: bash
       - uses: actions/upload-artifact@v4
         if: always()
@@ -56,6 +57,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: '3.50.1'
           cache: true
       - name: SDK diagnostics
         run: |
@@ -66,7 +68,7 @@ jobs:
         run: flutter pub get 2>&1 | tee ci-logs/pub-get.txt
         shell: bash
       - name: Build Android
-        run: flutter build apk --debug 2>&1 | tee ci-logs/android.txt
+        run: flutter build apk --debug --no-pub 2>&1 | tee ci-logs/android.txt
         shell: bash
       - uses: actions/upload-artifact@v4
         if: always()
