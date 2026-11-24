@@ -27,6 +27,12 @@ class Notifications {
   }
 
   bool get isAndroid => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+  Future<bool?> androidNotificationsEnabled() async {
+    if (!isAndroid) return null;
+    await initialize();
+    return plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.areNotificationsEnabled();
+  }
+
   Future<bool> canScheduleExact() async {
     if (!isAndroid) return false;
     return await plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.canScheduleExactNotifications() ?? false;

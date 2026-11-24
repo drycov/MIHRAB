@@ -29,7 +29,9 @@ void reminderDispatcher() {
           hanafi: prefs.getBool('hanafi') ?? true, enabled: config.enabled,
           minutesBefore: config.lead, repository: LocalScheduleRepository(prefs));
         await Notifications().replace(plan, preferExact: config.exact);
-        await prefs.setString('reminder_last_background_success', DateTime.now().toUtc().toIso8601String());
+        final now = DateTime.now().toUtc().toIso8601String();
+        await prefs.setString('reminder_last_background_success', now);
+        await prefs.setString('reminder_last_success', now);
       });
       return true;
     } catch (error) {
@@ -41,10 +43,13 @@ void reminderDispatcher() {
 
 Future<void> initializeBackgroundReminders() async {
   if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('reminder_background_registered', false);
   await Workmanager().initialize(reminderDispatcher);
   await Workmanager().registerPeriodicTask(reminderWorkName, reminderWorkName,
     frequency: const Duration(hours: 12),
     existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
     backoffPolicy: BackoffPolicy.exponential,
     backoffPolicyDelay: const Duration(minutes: 15));
+  await prefs.setBool('reminder_background_registered', true);
 }

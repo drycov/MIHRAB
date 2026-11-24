@@ -1,0 +1,2 @@
+# Reminder diagnostics
+Open Settings → Notifications → Diagnostics. Reports plugin pending-request count, Android notification permission, exact-alarm access, configured preference, foreground/background scheduling timestamps and registration result. Registration success does not establish actual WorkManager execution. Pending requests do not establish OS delivery. Manual replan uses the existing coordinator and lock; no new permission prompts. Test on physical Android and iOS devices; web should show unsupported platform without invoking native plugins.
