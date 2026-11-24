@@ -15,7 +15,9 @@ abstract final class QuranAudioCodec {
   static Uri decode(Object? data,{required int surah,required int verse,required QuranReciter reciter}){
     if(data is! Map||data['surah'] is! Map||data['edition'] is! Map||
         data['surah']['number']!=surah||data['numberInSurah']!=verse||
-        data['edition']['identifier']!=reciter.id)throw const FormatException('Audio identity mismatch');
+        data['edition']['identifier']!=reciter.id) {
+      throw const FormatException('Audio identity mismatch');
+    }
     final number=data['number'];
     if(number is! int||number<1||number>6236)throw const FormatException('Invalid ayah number');
     final url=Uri.parse(data['audio'] as String);

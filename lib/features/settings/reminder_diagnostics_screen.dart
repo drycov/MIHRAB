@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../../shared/islamic_ornaments.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/reminder_coordinator.dart';
@@ -84,12 +84,14 @@ class _ReminderDiagnosticsScreenState extends ConsumerState<ReminderDiagnosticsS
           data['Разрешение уведомлений'] = 'Проверьте в настройках iOS';
         }
       }
-      if (mounted) setState(() {
+      if (mounted) {
+        setState(() {
         rows = data; android = service.isAndroid; supported = service.supported;
         notificationAllowed = allowed; exactAllowed = exact;
         selectedCount = config?.enabled.length ?? 0; pendingCount = pendingTotal;
         if (actionResult != null) result = actionResult;
       });
+      }
     } catch (_) {
       if (mounted) setState(() => error = 'Не удалось выполнить операцию. Проверьте разрешения и повторите попытку.');
     } finally {

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../domain/hijri.dart';
 const supportedMihrabLocales=[Locale('ru'),Locale('kk'),Locale('ar'),Locale('en')];
 const _translations=<String,List<String>>{

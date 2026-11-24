@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ui' show PlatformDispatcher;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../l10n/reminder_strings.dart';
 import 'package:flutter/foundation.dart';

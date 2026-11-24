@@ -15,6 +15,8 @@ abstract final class RamadanReminderPreferences {
   }
   static Future<void> save(SharedPreferences prefs,RamadanReminderSettings config) async {
     if(!await prefs.setString(key,jsonEncode({'suhoor':config.suhoor,'iftar':config.iftar,
-      'suhoorLead':config.suhoorLead,'iftarLead':config.iftarLead})))throw StateError('Unable to save Ramadan reminders');
+      'suhoorLead':config.suhoorLead,'iftarLead':config.iftarLead}))) {
+      throw StateError('Unable to save Ramadan reminders');
+    }
   }
 }

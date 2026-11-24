@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
 import '../../application/ramadan_reminder_preferences.dart';
@@ -39,8 +39,10 @@ class _RamadanReminderScreenState extends ConsumerState<RamadanReminderScreen>{
   }
   Widget lead(bool suhoor)=>DropdownButton<int>(isExpanded:true,value:suhoor?config.suhoorLead:config.iftarLead,
     items:[for(final m in RamadanReminderSettings.leads) DropdownMenuItem(value:m,child:Text(m==0?'В момент события':'За $m мин.'))],
-    onChanged:busy?null:(v){if(v!=null)setState(()=>config=RamadanReminderSettings(suhoor:config.suhoor,iftar:config.iftar,
-      suhoorLead:suhoor?v:config.suhoorLead,iftarLead:suhoor?config.iftarLead:v));});
+    onChanged:busy?null:(v){if(v!=null) {
+      setState(()=>config=RamadanReminderSettings(suhoor:config.suhoor,iftar:config.iftar,
+      suhoorLead:suhoor?v:config.suhoorLead,iftarLead:suhoor?config.iftarLead:v));
+    }});
   @override
   Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('Напоминания Рамадана')),
     body:SafeArea(child:ListView(padding:const EdgeInsets.fromLTRB(16,12,16,28),children:[

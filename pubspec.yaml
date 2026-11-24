@@ -25,6 +25,8 @@ dependencies:
   path_provider: ^2.1.5
   mihrab_adhan_scheduler:
     path: packages/mihrab_adhan_scheduler
+  material_ui: 1.0.0
+  cupertino_ui: 1.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
