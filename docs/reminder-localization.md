@@ -1,0 +1,2 @@
+# Reminder localization
+Flutter notification titles and bodies use the persisted locale or supported system locale in foreground and WorkManager. Changing manual locale refreshes scheduled reminders through the existing coordinator. Notification IDs and scheduling rules unchanged. Native adhan service, existing Android channel names and home screen widgets remain untranslated. No new dependencies. Tests added, not run. Device and background verification pending.

@@ -89,6 +89,9 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
     ref.listen(localDayProvider, (previous, next) {
       if (previous != next) refreshReminders();
     });
+    ref.listen(localeProvider, (previous, next) {
+      if (previous != next) refreshReminders();
+    });
     ref.listen(hijriAdjustmentProvider, (previous, next) {
       if (previous != next) ref.read(widgetSyncProvider).refresh();
     });
