@@ -1,6 +1,7 @@
 package kz.mihrab.mihrab
 
 import android.content.Intent
+import kz.mihrab.scheduler.AdhanPlaybackService
 import android.os.Build
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -9,7 +10,6 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        flutterEngine.plugins.add(AdhanSchedulerPlugin())
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "mihrab/adhan_media")
             .setMethodCallHandler { call, result ->
                 try {

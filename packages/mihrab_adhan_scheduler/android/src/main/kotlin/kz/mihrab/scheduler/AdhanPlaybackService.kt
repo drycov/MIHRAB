@@ -1,4 +1,4 @@
-package kz.mihrab.mihrab
+package kz.mihrab.scheduler
 
 import android.app.*
 import android.content.Intent
@@ -57,7 +57,7 @@ class AdhanPlaybackService : Service() {
             val stop = PendingIntent.getService(this, ID, Intent(this, AdhanPlaybackService::class.java).setAction(STOP),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             val builder = if (Build.VERSION.SDK_INT >= 26) Notification.Builder(this, CHANNEL) else Notification.Builder(this)
-            val notification = builder.setSmallIcon(R.drawable.ic_notification)
+            val notification = builder.setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
                 .setContentTitle(if (profile == "fajr") "Азан Фаджра" else "Азан")
                 .setContentText("MIHRAB · Воспроизведение")
                 .setOngoing(true).setOnlyAlertOnce(true)
