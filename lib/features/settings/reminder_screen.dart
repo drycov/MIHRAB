@@ -90,7 +90,6 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
           if (config != null) setState(() { enabled = config.enabled.toSet(); lead = config.lead; preferExact = config.exact; sounds = Map.of(config.sounds); });
         } catch (_) { if (mounted) setState(() => status = 'Не удалось прочитать настройки.'); }
       }),
-      const Text('Расписание на шесть календарных дней обновляется при открытии приложения. Android может задерживать доставку. Локальный азан — экспериментальный звук уведомления Android при начале намаза. Выберите запись в настройках. При отсутствии файла и на iOS используется системный звук. На iOS вибрация зависит от системных настроек. Android может переопределять звук канала.'),
     ])),
   );
 }

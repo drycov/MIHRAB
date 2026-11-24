@@ -52,7 +52,6 @@ class _QuranScreenState extends ConsumerState<QuranScreen>{
               if(filtered.isEmpty)const ListTile(title:Text('Суры не найдены')),
             ]);
           })),
-        const Padding(padding:EdgeInsets.all(8),child:Text('Источник: Al Quran Cloud · просмотренные суры доступны из кеша')),
       ])));
   }
 }

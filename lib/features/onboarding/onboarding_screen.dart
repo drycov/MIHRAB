@@ -72,7 +72,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Text('Добро пожаловать в MIHRAB',style:theme.textTheme.headlineMedium),
             const Text('Время намазов, направление Киблы, исламский календарь и напоминания в одном приложении.'),
             const SizedBox(height:16),
-            const Text('Расчётное расписание следует сверять с официальными данными ДУМК.'),
           ],
           if(step==1)...[
             Text('Ваш город и настройки',style:theme.textTheme.headlineMedium),

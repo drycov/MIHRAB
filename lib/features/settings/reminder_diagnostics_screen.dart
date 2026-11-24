@@ -141,7 +141,6 @@ class _ReminderDiagnosticsScreenState extends ConsumerState<ReminderDiagnosticsS
       OutlinedButton.icon(onPressed: busy ? null : () => load(), icon: const Icon(Icons.refresh), label: const Text('Проверить состояние')),
       FilledButton.icon(onPressed: busy ? null : () => load(replan: true), icon: const Icon(Icons.schedule), label: const Text('Перепланировать')),
       const SizedBox(height: 12),
-      const Text('Число ожидающих уведомлений берётся из плагина и не гарантирует доставку системой. WorkManager может запускаться с задержкой.'),
     ])),
   );
 }
