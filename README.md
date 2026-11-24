@@ -84,3 +84,7 @@ UI rules: [docs/UI_GUIDE.md](docs/UI_GUIDE.md).
 [Privacy policy](docs/privacy-policy.md) · [Store listing draft and release gates](docs/store-metadata.md). Web deployments include `privacy.html`; verify the live HTTPS URL before submission.
 
 Publication assets (separate from Flutter runtime): [store-assets/](store-assets/README.md).
+
+## Install as PWA
+
+Use the browser install option or Safari Share → Add to Home Screen. Release deployment generates an offline shell. See [PWA build and test guide](docs/pwa.md).
