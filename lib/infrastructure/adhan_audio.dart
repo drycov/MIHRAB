@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'adhan_storage.dart';
 
@@ -28,7 +29,7 @@ class AdhanAudio {
     if (file.size <= 0 || file.size > maxBytes || file.path == null) {
       throw const FormatException('Выберите аудиофайл размером до 15 МБ');
     }
-    await player.stop();
+    await stop();
     final bytes = await readAdhanFile(file.path!, maxBytes);
     if (bytes.isEmpty) throw const FormatException('Пустой аудиофайл');
     await saveAdhanBytes(profile.name, bytes);
@@ -45,10 +46,20 @@ class AdhanAudio {
     await player.play(BytesSource(bytes));
   }
 
-  Future<void> stop() => player.stop();
+  static const _media = MethodChannel('mihrab/adhan_media');
+  Future<void> playNative(AdhanProfile profile) async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) throw UnsupportedError('Android only');
+    if (name(profile) == null) throw StateError('Сначала выберите запись');
+    await player.stop();
+    await _media.invokeMethod<void>('play', {'profile': profile.name});
+  }
+  Future<void> stop() async {
+    await player.stop();
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) await _media.invokeMethod<void>('stop');
+  }
 
   Future<void> remove(AdhanProfile profile) async {
-    await player.stop();
+    await stop();
     await deleteAdhanBytes(profile.name);
     await preferences.remove('adhan_name_${profile.name}');
   }
