@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
-import '../../application/schedule.dart';
+import '../../application/reminder_coordinator.dart';
 import '../../domain/prayer_schedule.dart';
-import '../../domain/reminders.dart';
-import '../../infrastructure/notifications.dart';
-
-final notificationsProvider = Provider<Notifications>((ref) => Notifications());
 
 class ReminderScreen extends ConsumerStatefulWidget {
   const ReminderScreen({super.key});
@@ -32,22 +28,8 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
   Future<void> save() async {
     setState(() { busy = true; status = null; });
     try {
-      final service = ref.read(notificationsProvider);
-      if (!service.supported) throw StateError('Уведомления доступны на Android и iOS.');
-      if (enabled.isNotEmpty && !await service.requestPermission()) {
-        throw StateError('Нет разрешения на уведомления.');
-      }
-      if (enabled.isNotEmpty && preferExact && service.isAndroid) {
-        await service.requestExactPermission();
-      }
-      final settings = ref.read(settingsProvider);
-      final plan = ReminderPlanner.plan(settings.city, DateTime.now(), hanafi: settings.hanafi, enabled: enabled, minutesBefore: lead, repository: ref.read(scheduleRepositoryProvider));
-      final exact = await service.replace(plan, preferExact: preferExact);
-      final prefs = ref.read(preferencesProvider);
-      await prefs.setStringList('reminder_prayers', enabled.map((p) => p.name).toList());
-      await prefs.setInt('reminder_lead', lead);
-      await prefs.setBool('reminder_exact', preferExact);
-      if (mounted) setState(() => status = 'Запланировано уведомлений: ${plan.length}${service.isAndroid ? (exact ? ' · точный режим' : ' · приблизительный режим') : ''}');
+      final result = await ref.read(reminderCoordinatorProvider).apply(enabled, lead, preferExact);
+      if (mounted) setState(() => status = result);
     } catch (e) {
       if (mounted) setState(() => status = e.toString());
     } finally {
@@ -67,7 +49,7 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
       DropdownButton<int>(value: lead, items: [for (final m in [0,5,10,15,30]) DropdownMenuItem(value: m, child: Text(m == 0 ? 'Нет' : 'За $m мин.'))], onChanged: busy ? null : (v) { if (v != null) setState(() => lead = v); }),
       FilledButton(onPressed: busy ? null : save, child: Text(busy ? 'Сохранение…' : 'Применить')),
       if (status != null) Text(status!),
-      const Text('Расписание на шесть календарных дней. Android может задерживать доставку. Используется системный звук, не запись азана.'),
+      const Text('Расписание на шесть календарных дней обновляется при открытии приложения. Android может задерживать доставку. Используется системный звук, не запись азана.'),
     ]),
   );
 }

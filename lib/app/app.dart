@@ -1,4 +1,6 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
+import '../application/reminder_coordinator.dart';
+import '../application/schedule.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../application/settings.dart';
 import '../features/prayers/prayers_screen.dart';
@@ -17,17 +19,46 @@ class MihrabApp extends ConsumerWidget {
     home: const AppShell(),
   );
 }
-class AppShell extends StatefulWidget {
+class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key});
   @override
-  State<AppShell> createState() => _AppShellState();
+  ConsumerState<AppShell> createState() => _AppShellState();
 }
-class _AppShellState extends State<AppShell> {
+class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver {
+  String? reminderError;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) { if (mounted) refreshReminders(); });
+  }
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) refreshReminders();
+  }
+  Future<void> refreshReminders() async {
+    try {
+      await ref.read(reminderCoordinatorProvider).refresh();
+      if (mounted && reminderError != null) setState(() => reminderError = null);
+    } catch (_) {
+      if (mounted) setState(() => reminderError = 'Не удалось обновить уведомления. Проверьте настройки.');
+    }
+  }
   int index = 0;
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    ref.listen(localDayProvider, (previous, next) { if (previous != next) refreshReminders(); });
+    return Scaffold(
     appBar: AppBar(title: const Text('MIHRAB', style: TextStyle(letterSpacing: 4, fontWeight: FontWeight.w600))),
-    body: SafeArea(child: switch (index) {0 => const PrayersScreen(), 1 => const QiblaScreen(), _ => const SettingsScreen()}),
+    body: SafeArea(child: Column(children: [
+      if (reminderError != null) ListTile(title: Text(reminderError!), trailing: IconButton(icon: const Icon(Icons.refresh), onPressed: refreshReminders)),
+      Expanded(child: switch (index) {0 => const PrayersScreen(), 1 => const QiblaScreen(), _ => const SettingsScreen()}),
+    ])),
     bottomNavigationBar: NavigationBar(selectedIndex: index,
       onDestinationSelected: (value) => setState(() => index = value),
       destinations: const [
@@ -36,4 +67,5 @@ class _AppShellState extends State<AppShell> {
         NavigationDestination(icon: Icon(Icons.settings_outlined), label: 'Настройки'),
       ]),
   );
+  }
 }

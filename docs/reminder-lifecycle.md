@@ -1,0 +1,2 @@
+# Reminder lifecycle
+The coordinator serializes manual application and automatic refresh. Refresh occurs on startup, resume and local day/city/madhab changes. No permission prompts during automatic refresh. Errors are shown in the app shell with retry. The six-day horizon is still finite: if the user does not open the app for six days, delivery stops. Android boot receiver restores existing alarms, not an unlimited schedule. Background refresh and real-device testing are pending.
