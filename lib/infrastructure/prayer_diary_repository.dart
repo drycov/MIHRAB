@@ -25,6 +25,17 @@ class PrayerDiaryRepository {
     final rows=await db.query('prayer_diary',where:'prayer_date = ?',whereArgs:[diaryDate(date)]);
     return DiaryDay(Map.unmodifiable({for(final row in rows) PrayerKind.values.byName(row['prayer_kind'] as String):PrayerStatus.values.byName(row['status'] as String)}));
   }
+  Future<Map<String,DiaryDay>> range(DateTime start,DateTime end)async{
+    if(diaryDate(start).compareTo(diaryDate(end))>0)throw ArgumentError('Invalid range');
+    final db=await _db();
+    final rows=await db.query('prayer_diary',where:'prayer_date BETWEEN ? AND ?',whereArgs:[diaryDate(start),diaryDate(end)],orderBy:'prayer_date ASC');
+    final grouped=<String,Map<PrayerKind,PrayerStatus>>{};
+    for(final row in rows){
+      final date=row['prayer_date'] as String;
+      grouped.putIfAbsent(date,()=>{})[PrayerKind.values.byName(row['prayer_kind'] as String)]=PrayerStatus.values.byName(row['status'] as String);
+    }
+    return Map.unmodifiable(grouped.map((key,value)=>MapEntry(key,DiaryDay(Map.unmodifiable(value)))));
+  }
   Future<void> mark(DateTime date,PrayerKind kind,PrayerStatus status)async{
     if(!kind.obligatory)throw ArgumentError('Only obligatory prayers');
     final db=await _db();
