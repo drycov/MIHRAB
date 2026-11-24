@@ -54,7 +54,7 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
       )),
       if(busy) const LinearProgressIndicator(),
       if(status!=null) Text(status!,style:TextStyle(color:Theme.of(context).colorScheme.error)),
-      const Text('Это локальное прослушивание. Записи пока не используются в фоновых уведомлениях; текущие звуковые профили остаются системными.'),
+      const Text('На Android можно выбрать профиль «Локальный азан» в настройках уведомлений. После импорта или удаления записи перепланируйте уведомления. Доставка звука зависит от Android и настроек канала; полное воспроизведение не гарантируется.'),
     ])),
   );
 }

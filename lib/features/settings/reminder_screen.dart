@@ -67,7 +67,7 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
           SwitchListTile(title: Text(p.label), value: enabled.contains(p), onChanged: busy ? null : (v) => setState(() { if (v) { enabled.add(p); } else { enabled.remove(p); } })),
           Padding(padding: const EdgeInsets.symmetric(horizontal:16), child: Row(children: [
             Expanded(child: DropdownButton<PrayerSound>(isExpanded:true, value:sounds[p] ?? PrayerSound.system,
-              items:[for(final sound in PrayerSound.values) DropdownMenuItem(value:sound,child:Text(sound.label))],
+              items:[for(final sound in PrayerSound.values.where((sound) => sound != PrayerSound.adhan || ref.watch(notificationsProvider).isAndroid || sounds[p] == PrayerSound.adhan)) DropdownMenuItem(value:sound,child:Text(sound.label))],
               onChanged:busy ? null : (v) {if(v!=null) setState(()=>sounds[p]=v);})),
             IconButton(tooltip:'Проверить ${p.label}',onPressed:busy ? null : ()=>preview(p),icon:const Icon(Icons.play_circle_outline)),
           ])),
@@ -90,7 +90,7 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
           if (config != null) setState(() { enabled = config.enabled.toSet(); lead = config.lead; preferExact = config.exact; sounds = Map.of(config.sounds); });
         } catch (_) { if (mounted) setState(() => status = 'Не удалось прочитать настройки.'); }
       }),
-      const Text('Расписание на шесть календарных дней обновляется при открытии приложения. Android может задерживать доставку. Профили используют системные звуки. Записи азана пока не включены. На iOS вибрация зависит от системных настроек. Android может переопределять звук канала.'),
+      const Text('Расписание на шесть календарных дней обновляется при открытии приложения. Android может задерживать доставку. Локальный азан — экспериментальный звук уведомления Android при начале намаза. Выберите запись в настройках. При отсутствии файла и на iOS используется системный звук. На iOS вибрация зависит от системных настроек. Android может переопределять звук канала.'),
     ])),
   );
 }

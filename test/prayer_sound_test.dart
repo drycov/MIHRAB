@@ -9,7 +9,7 @@ void main() {
     final ids = {for (final p in PrayerKind.values.where((p)=>p.obligatory))
       for(final sound in PrayerSound.values)
         for(final early in [false,true]) PrayerSoundChannels.id(p,sound,early:early)};
-    expect(ids.length,30);
+    expect(ids.length,40);
   });
   test('sound preferences round trip and legacy defaults', () async {
     SharedPreferences.setMockInitialValues({'reminder_prayers':['fajr']});

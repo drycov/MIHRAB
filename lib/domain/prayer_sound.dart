@@ -1,7 +1,7 @@
 import 'prayer_schedule.dart';
 
 enum PrayerSound {
-  system('Системный звук'), vibration('Только вибрация'), silent('Без звука');
+  system('Системный звук'), vibration('Только вибрация'), silent('Без звука'), adhan('Локальный азан');
   const PrayerSound(this.label);
   final String label;
   static PrayerSound parse(Object? value) =>
