@@ -7,6 +7,7 @@ import '../../application/settings.dart';
 import '../../domain/quran.dart';
 import '../../domain/quran_audio.dart';
 import '../../infrastructure/quran_audio_repository.dart';
+import '../../infrastructure/quran_disk.dart';
 
 class QuranAudioScreen extends ConsumerStatefulWidget{
   const QuranAudioScreen({super.key,required this.surah,required this.initialVerse});
@@ -54,7 +55,7 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen> with Widget
     setState((){busy=true;error=null;position=Duration.zero;duration=Duration.zero;});
     try{
       await player.stop();
-      final bytes=repository.cached(widget.surah.number,verse,reciter);
+      final bytes=await repository.local(widget.surah.number,verse,reciter);
       final source=bytes!=null&&!kIsWeb?BytesSource(bytes):UrlSource((await repository.resolve(widget.surah.number,verse,reciter)).toString());
       if(!mounted||!active||generation!=token)return;
       await player.play(source);
@@ -86,7 +87,7 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen> with Widget
   Widget build(BuildContext context){
     final playing=playback==PlayerState.playing;
     final paused=playback==PlayerState.paused;
-    final cached=repository.cached(widget.surah.number,verse,reciter)!=null;
+    
     return Scaffold(appBar:AppBar(title:const Text('Аудио Корана')),body:SafeArea(child:ListView(padding:const EdgeInsets.all(20),children:[
       Text(widget.surah.name,textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:Theme.of(context).textTheme.headlineLarge),
       Text(widget.surah.transliteration,textAlign:TextAlign.center),
@@ -112,8 +113,11 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen> with Widget
       ]),
       if(busy)const LinearProgressIndicator(),
       if(error!=null)Text(error!,style:TextStyle(color:Theme.of(context).colorScheme.error)),
-      if(!kIsWeb)OutlinedButton.icon(onPressed:busy||cached?null:()=>action(()=>repository.cache(widget.surah.number,verse,reciter)),icon:Icon(cached?Icons.check:Icons.download),label:Text(cached?'Аят в кеше текущей сессии':'Кешировать текущий аят')),
-      const Text('Источник: Al Quran Cloud / Islamic Network. Воспроизведение останавливается при уходе с экрана или сворачивании. Кеш хранится в памяти до закрытия плеера.'),
+      if(QuranDisk.supported) FutureBuilder<bool>(future:QuranDisk.contains(repository.key(widget.surah.number,verse,reciter)),builder:(context,snapshot){
+        final saved=snapshot.data==true;
+        return OutlinedButton.icon(onPressed:busy||saved?null:()=>action(()=>repository.cache(widget.surah.number,verse,reciter)),icon:Icon(saved?Icons.check:Icons.download),label:Text(saved?'Аят доступен офлайн':'Скачать текущий аят'));
+      }),
+      const Text('Источник: Al Quran Cloud / Islamic Network. Воспроизведение останавливается при уходе с экрана или сворачивании. Загруженные аяты сохраняются на устройстве.'),
     ])));
   }
 }
