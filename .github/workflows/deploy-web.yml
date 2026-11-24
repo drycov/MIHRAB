@@ -25,6 +25,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: '3.50.1'
           cache: true
 
       - name: Enable web
@@ -38,7 +39,9 @@ jobs:
         continue-on-error: true
 
       - name: Build web
-        run: flutter build web --release --base-href "/MIHRAB/"
+        run: |
+          flutter build web --release --no-pub --base-href "/MIHRAB/"
+          python3 tool/build_pwa.py build/web
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

@@ -1,36 +1,42 @@
 {
-    "name": "MIHRAB",
-    "short_name": "MIHRAB",
-    "start_url": ".",
-    "display": "standalone",
-    "background_color": "#071F1B",
-    "theme_color": "#0E342B",
-    "description": "Время намазов, Кибла, Хиджра, Коран и Рамадан",
-    "orientation": "portrait-primary",
-    "prefer_related_applications": false,
-    "lang": "ru",
-    "icons": [
-        {
-            "src": "icons/Icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/Icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/Icon-maskable-192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "maskable"
-        },
-        {
-            "src": "icons/Icon-maskable-512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "maskable"
-        }
-    ]
+  "name": "MIHRAB",
+  "short_name": "MIHRAB",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#071F1B",
+  "theme_color": "#0E342B",
+  "description": "MIHRAB — время намазов, Кибла, Коран, Хиджра и Рамадан",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "icons/Icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/Icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/Icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/Icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "id": "./",
+  "scope": "./",
+  "categories": [
+    "lifestyle",
+    "utilities"
+  ]
 }
