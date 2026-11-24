@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../domain/reminders.dart';
+import '../domain/prayer_schedule.dart';
+import '../domain/prayer_sound.dart';
 
 class Notifications {
   final plugin = FlutterLocalNotificationsPlugin();
@@ -46,7 +48,28 @@ class Notifications {
     return canScheduleExact();
   }
 
-  Future<bool> replace(List<PrayerReminder> reminders, {bool preferExact = false}) async {
+  NotificationDetails details(PrayerKind kind, PrayerSound sound, {bool early = false}) =>
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          PrayerSoundChannels.id(kind, sound, early: early),
+          PrayerSoundChannels.label(kind, sound, early: early),
+          importance: sound == PrayerSound.silent ? Importance.low : Importance.high,
+          priority: sound == PrayerSound.silent ? Priority.low : Priority.high,
+          icon: 'ic_notification', playSound: sound == PrayerSound.system,
+          enableVibration: sound != PrayerSound.silent,
+        ),
+        iOS: DarwinNotificationDetails(presentSound: sound == PrayerSound.system),
+      );
+
+  Future<void> preview(PrayerKind kind, PrayerSound sound) async {
+    if (!supported) throw StateError('Проверка доступна на Android и iOS');
+    if (!await requestPermission()) throw StateError('Нет разрешения на уведомления');
+    await plugin.show(900, 'MIHRAB · ${kind.label}', 'Проверка звукового профиля',
+      details(kind, sound));
+  }
+
+  Future<bool> replace(List<PrayerReminder> reminders, {bool preferExact = false,
+    Map<PrayerKind, PrayerSound> sounds = const {}}) async {
     await initialize();
     if (!supported) return false;
     var exact = preferExact && await canScheduleExact();
@@ -58,10 +81,7 @@ class Notifications {
         item.id, item.kind.label,
         item.minutesBefore == 0 ? 'Наступило время намаза' : 'До намаза ${item.minutesBefore} мин.',
         item.time,
-        const NotificationDetails(
-          android: AndroidNotificationDetails('prayer_reminders', 'Время намаза', importance: Importance.high, priority: Priority.high, icon: 'ic_notification'),
-          iOS: DarwinNotificationDetails(),
-        ),
+        details(item.kind, sounds[item.kind] ?? PrayerSound.system, early: item.minutesBefore > 0),
         androidScheduleMode: mode,
       );
       try {
