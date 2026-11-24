@@ -7,6 +7,7 @@ import '../bookmarks/bookmark_button.dart';
 import '../bookmarks/bookmarks_screen.dart';
 import '../tasbih/tasbih_screen.dart';
 import '../../domain/quran.dart';
+import 'quran_audio_screen.dart';
 import '../../infrastructure/quran_repository.dart';
 
 final quranRepositoryProvider=Provider<QuranRepository>((ref){
@@ -83,6 +84,7 @@ class _SurahScreenState extends ConsumerState<SurahScreen>{
   @override
   Widget build(BuildContext context)=>Scaffold(
     appBar:AppBar(title:Text(widget.surah.transliteration),actions:[
+      IconButton(tooltip:'Слушать аят',icon:const Icon(Icons.headphones),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>QuranAudioScreen(surah:widget.surah,initialVerse:verse)))),
       BookmarkButton(bookmark:Bookmark(kind:BookmarkKind.ayah,reference:'${widget.surah.number}:$verse',title:'${widget.surah.transliteration} · $verse')),
       IconButton(tooltip:'Сохранить позицию',onPressed:remember,icon:const Icon(Icons.bookmark_add_outlined))]),
     body:SafeArea(child:Column(children:[
