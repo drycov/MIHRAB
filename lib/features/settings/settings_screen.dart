@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'pwa_settings_card.dart';
+import 'web_push_screen.dart';
 import '../../application/locale.dart';
 import '../../l10n/mihrab_strings.dart';
 import 'reminder_screen.dart';
@@ -170,6 +171,7 @@ class SettingsScreen extends ConsumerWidget {
         if (kIsWeb) ...[
           sectionTitle('PWA'),
           const PwaSettingsCard(),
+          card([ListTile(title: const Text('Web Push'), leading: const Icon(Icons.notifications_outlined), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const WebPushScreen())))]),
         ],
         const SizedBox(height: 24),
         Text(
