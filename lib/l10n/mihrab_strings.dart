@@ -364,6 +364,13 @@ const _translations = <String, List<String>>{
   "Отписаться от Web Push": ["Web Push жазылымынан бас тарту","إلغاء الاشتراك في إشعارات الويب","Unsubscribe from Web Push"],
   "Операция выполнена": ["Операция орындалды","تمت العملية","Operation completed"],
   "Не удалось выполнить Web Push": ["Web Push орындалмады","تعذرت عملية إشعارات الويب","Web Push operation failed"],
+  "FCM недоступен": ["FCM қолжетімсіз","FCM غير متاح","FCM unavailable"],
+  "FCM готов к настройке": ["FCM баптауға дайын","FCM جاهز للإعداد","FCM ready to configure"],
+  "FCM передаёт идентификатор устройства в Firebase для удалённых уведомлений.": ["FCM қашықтағы хабарландырулар үшін құрылғы идентификаторын Firebase қызметіне жібереді.","يرسل FCM معرف الجهاز إلى Firebase للإشعارات البعيدة.","FCM sends a device identifier to Firebase for remote notifications."],
+  "Токен FCM получен": ["FCM токені алынды","تم الحصول على رمز FCM","FCM token received"],
+  "Разрешить FCM": ["FCM рұқсат ету","السماح بـ FCM","Enable FCM"],
+  "Отключить FCM": ["FCM өшіру","تعطيل FCM","Disable FCM"],
+  "Копировать токен FCM": ["FCM токенін көшіру","نسخ رمز FCM","Copy FCM token"],
 };
 String translateMihrab(String language, String source) {
   final index = const ['kk', 'ar', 'en'].indexOf(language);
