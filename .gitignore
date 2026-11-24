@@ -6,3 +6,11 @@ build/
 *.iml
 **.log
 **.lock
+
+# Private signing material, regardless of directory.
+**/key.properties
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.mobileprovision
