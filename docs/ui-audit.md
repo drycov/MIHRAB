@@ -1,0 +1,2 @@
+# UI consistency pass
+Reviewed all 18 feature Dart files against UI_GUIDE.md. Central button and AppBar accents, shared cards/dividers, settings grouping, countdown frame, Arabic direction and scroll padding. Existing providers and routes retained. Source-level pass only. Remaining custom layouts (including Ramadan highlighted rows, compass, tasbih and calendar) need visual contrast/spacing checks. Native home widgets excluded. Flutter analyze/test and device screenshot checks not executed.

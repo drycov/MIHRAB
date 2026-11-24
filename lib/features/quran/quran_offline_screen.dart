@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../shared/islamic_ornaments.dart';
 import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/quran.dart';
@@ -60,7 +61,7 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen>{
   @override
   void dispose(){cancel=true;super.dispose();}
   @override
-  Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:Text(context.tr('Офлайн-библиотека'))),body:SafeArea(child:ListView(padding:const EdgeInsets.all(16),children:[
+  Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:Text(context.tr('Офлайн-библиотека'))),body:SafeArea(child:ListView(padding:const EdgeInsets.fromLTRB(16,12,16,28),children:[
     DropdownButton<QuranTranslation>(isExpanded:true,value:translation,items:[for(final t in QuranTranslation.values)DropdownMenuItem(value:t,child:Text(t.label))],onChanged:busy?null:(t){if(t!=null){setState((){translation=t;hits=[];downloaded=0;});refresh();}}),
     Text('Сохранено сур: $downloaded / 114'),
     LinearProgressIndicator(value:downloaded/114),
@@ -68,14 +69,14 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen>{
     if(busy)TextButton(onPressed:()=>setState(()=>cancel=true),child:Text(cancel?'Остановка после текущей суры':'Остановить загрузку')),
     if(status!=null)Text(status!),
     TextButton(onPressed:busy?null:()async{if(await confirm('Удалить выбранный перевод и арабский кеш этой редакции?')&&mounted){await run(()=>ref.read(quranRepositoryProvider).removeTranslation(translation));if(mounted)setState(()=>hits=[]);}},child:const Text('Удалить текст выбранной редакции')),
-    const Divider(),
+    const IslamicDivider(),
     if(QuranDisk.supported)...[
       Text('Аудио: ${(bytes/1048576).toStringAsFixed(1)} / 256 МиБ'),
       LinearProgressIndicator(value:(bytes/QuranDisk.limit).clamp(0.0,1.0).toDouble()),
       const Text('Аяты скачиваются отдельно в аудиоплеере.'),
       TextButton(onPressed:busy?null:()async{if(await confirm('Удалить все скачанные аудиозаписи?')&&mounted)await run(QuranDisk.clear);},child:const Text('Очистить аудио')),
     ],
-    const Divider(),
+    const IslamicDivider(),
     TextField(decoration:const InputDecoration(labelText:'Поиск по сохранённым аятам'),onChanged:(v)=>query=v,onSubmitted:(_){if(!busy)search();}),
     OutlinedButton(onPressed:busy?null:search,child:const Text('Найти офлайн')),
     const Text('Поиск только по скачанным сурам выбранной редакции, до 200 результатов.'),

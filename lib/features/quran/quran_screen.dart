@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../shared/islamic_ornaments.dart';
 import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
@@ -48,8 +49,8 @@ class _QuranScreenState extends ConsumerState<QuranScreen>{
             return ListView(children:[
               if(last>=1&&last<=114&&query.isEmpty) ListTile(leading:const Icon(Icons.history),title:Text(context.tr('Продолжить чтение')),
                 subtitle:Text(surahs[last-1].transliteration),onTap:()=>open(surahs[last-1],verse:prefs.getInt('quran_last_verse')??1)),
-              for(final s in filtered) ListTile(leading:CircleAvatar(child:Text('${s.number}')),title:Text(s.transliteration),
-                subtitle:Text('${s.name} · ${s.count} аятов'),trailing:BookmarkButton(bookmark:Bookmark(kind:BookmarkKind.surah,reference:s.number.toString(),title:s.transliteration)),onTap:()=>open(s)),
+              for(final s in filtered) IslamicCard(padding:EdgeInsets.zero,child:ListTile(leading:CircleAvatar(child:Text('${s.number}')),title:Text(s.transliteration),
+                subtitle:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(s.name,textDirection:TextDirection.rtl),Text('${s.count} аятов')]),trailing:BookmarkButton(bookmark:Bookmark(kind:BookmarkKind.surah,reference:s.number.toString(),title:s.transliteration)),onTap:()=>open(s))),
               if(filtered.isEmpty)ListTile(title:Text(context.tr('Суры не найдены'))),
             ]);
           })),
@@ -99,11 +100,11 @@ class _SurahScreenState extends ConsumerState<SurahScreen>{
         if(snapshot.connectionState!=ConnectionState.done)return const Center(child:CircularProgressIndicator());
         if(snapshot.hasError||!snapshot.hasData)return Center(child:TextButton(onPressed:()=>setState(()=>future=ref.read(quranRepositoryProvider).verses(widget.surah,translation,refresh:true)),child:const Text('Ошибка загрузки. Повторить')));
         final ayah=snapshot.data![verse-1];
-        return ListView(padding:const EdgeInsets.all(20),children:[
+        return ListView(padding:const EdgeInsets.fromLTRB(20,12,20,28),children:[
           Text(widget.surah.name,textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height:24),
           SelectableText(ayah.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.right,style:TextStyle(fontSize:fontSize,height:2)),
-          const Divider(height:40),
+          const IslamicDivider(),
           SelectableText(ayah.translation,style:const TextStyle(fontSize:18,height:1.6)),
           const SizedBox(height:16),
           Text('Аят ${widget.surah.number}:$verse · ${translation.label}'),

@@ -63,7 +63,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       appBar:AppBar(title:const Text('MIHRAB')),
       body:SafeArea(child:Column(children:[
         LinearProgressIndicator(value:(step+1)/3),
-        Expanded(child:ListView(padding:const EdgeInsets.all(24),children:[
+        Expanded(child:ListView(padding:const EdgeInsets.fromLTRB(20,12,20,28),children:[
           Text('Шаг ${step+1} из 3',style:theme.textTheme.labelLarge),
           const SizedBox(height:24),
           if(step==0)...[
