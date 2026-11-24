@@ -1,13 +1,14 @@
 {
-    "name": "mihrab",
-    "short_name": "mihrab",
+    "name": "MIHRAB",
+    "short_name": "MIHRAB",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#071F1B",
+    "theme_color": "#0E342B",
+    "description": "Время намазов, Кибла, Хиджра, Коран и Рамадан",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
+    "lang": "ru",
     "icons": [
         {
             "src": "icons/Icon-192.png",

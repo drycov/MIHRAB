@@ -1,25 +1,59 @@
 # MIHRAB
 
-Offline-first Flutter prayer companion for Kazakhstan.
+Offline-first Flutter companion: prayer times, Qibla, Hijri calendar, Quran, Ramadan, tasbih and dua.
 
-## v0.2.0
+## Web app (public)
 
-Riverpod state management, separated application/domain/presentation modules,
-semantic theme tokens, cached daily schedules, isolated countdown updates,
-persisted settings and CI for analysis, tests and web build.
+After the first successful deploy, the app is available at:
 
-## Run
+**https://drycov.github.io/MIHRAB/**
 
-Use Flutter stable (3.29 or later).
+### Enable GitHub Pages (one-time)
+
+1. Open **Settings → Pages** in this repository.
+2. Under **Build and deployment → Source**, choose **GitHub Actions**.
+3. Push to `main` (or run workflow **Deploy Web (GitHub Pages)** manually).
+
+CI builds `flutter build web --release --base-href /MIHRAB/` and publishes the `build/web` artifact.
+
+### Local web build
 
 ```sh
-flutter create --platforms=android,ios,web --org kz.mihrab --project-name mihrab .
 flutter pub get
-flutter analyze
-flutter test
-flutter run -d chrome
+flutter build web --release --base-href /MIHRAB/
+# or root hosting:
+# flutter build web --release --base-href /
 ```
 
-Platform scaffolding is not committed yet. CI generates web scaffolding.
-Calculated MWL times are not official DUMK timetables; verify locally.
-Next: Qibla, geolocation, notifications, official schedule integration and localization.
+Serve locally:
+
+```sh
+flutter run -d chrome
+# or
+python -m http.server 8080 --directory build/web
+```
+
+### Platform notes (web)
+
+| Feature | Web |
+|---------|-----|
+| Prayer times, Hijri, calendar | Full |
+| Qibla (GPS city / static azimuth) | Full; compass sensor limited |
+| Quran / offline text | Full (browser storage) |
+| Local notifications / WorkManager | Not available — use mobile builds |
+| Adhan file import | Limited by browser file APIs |
+
+Calculated MWL times are not official DUMK timetables; verify with a local mosque.
+
+## Mobile
+
+```sh
+flutter pub get
+flutter run
+```
+
+Use Flutter stable matching `pubspec.yaml` (`flutter: '>=3.38.0'`).
+
+## Design
+
+UI rules for contributors and codegen: [docs/UI_GUIDE.md](docs/UI_GUIDE.md).
