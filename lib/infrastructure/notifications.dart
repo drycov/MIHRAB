@@ -106,7 +106,7 @@ class Notifications {
         final profile = kind == PrayerKind.fajr ? 'fajr' : 'standard';
         final bytes = await loadAdhanBytes(profile, 15 * 1024 * 1024);
         if (bytes != null && bytes.isNotEmpty) {
-          uri = 'content://kz.mihrab.mihrab.adhan/$profile';
+          uri = 'content://kz.zeus.mihrab.adhan/$profile';
         }
       }
       if (uri == null) sound = PrayerSound.system;

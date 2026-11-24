@@ -26,6 +26,6 @@ flutter build apk --release
 AAB: build/app/outputs/bundle/release/app-release.aab.
 APK: build/app/outputs/flutter-apk/app-release.apk.
 
-Verify the AAB using jarsigner -verify -verbose -certs and the APK using the installed Android SDK apksigner verify --verbose --print-certs. Compare the certificate fingerprint with the intended upload certificate. Use Play App Signing and the existing application ID kz.mihrab.mihrab. Do not publish until tests, device checks, store declarations and content licensing review pass.
+Verify the AAB using jarsigner -verify -verbose -certs and the APK using the installed Android SDK apksigner verify --verbose --print-certs. Compare the certificate fingerprint with the intended upload certificate. Use Play App Signing and the existing application ID kz.zeus.mihrab. Do not publish until tests, device checks, store declarations and content licensing review pass.
 
 CI remains debug-only for Android until signing secrets and a trusted release workflow are configured. No credentials have been generated or uploaded. Release build and task guard require verification with the actual Android toolchain.

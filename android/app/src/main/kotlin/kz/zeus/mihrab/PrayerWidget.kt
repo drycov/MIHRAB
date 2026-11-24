@@ -1,4 +1,4 @@
-package kz.mihrab.mihrab
+package kz.zeus.mihrab
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager

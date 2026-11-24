@@ -36,7 +36,7 @@ class AdhanAlarmReceiver : BroadcastReceiver() {
 }
 
 object AdhanAlarms {
-    const val ACTION = "kz.mihrab.mihrab.ADHAN_ALARM"
+    const val ACTION = "kz.zeus.mihrab.ADHAN_ALARM"
     private const val KEY = "alarms"
     private const val MAX_LATE = 5 * 60 * 1000L
     private fun prefs(c: Context) = c.getSharedPreferences("mihrab_native_adhan", Context.MODE_PRIVATE)

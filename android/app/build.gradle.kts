@@ -27,7 +27,7 @@ android {
             }
         }
     }
-    namespace = "kz.mihrab.mihrab"
+    namespace = "kz.zeus.mihrab"
     compileSdk = maxOf(flutter.compileSdkVersion, 35)
     ndkVersion = flutter.ndkVersion
 
@@ -39,7 +39,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "kz.mihrab.mihrab"
+        applicationId = "kz.zeus.mihrab"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

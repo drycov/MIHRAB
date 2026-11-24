@@ -13,8 +13,8 @@ import java.io.File
 
 class AdhanPlaybackService : Service() {
     companion object {
-        const val STOP = "kz.mihrab.mihrab.STOP_ADHAN"
-        const val PLAY = "kz.mihrab.mihrab.PLAY_ADHAN"
+        const val STOP = "kz.zeus.mihrab.STOP_ADHAN"
+        const val PLAY = "kz.zeus.mihrab.PLAY_ADHAN"
         private const val CHANNEL = "mihrab_adhan_media_v1"
         private const val ID = 901
     }
