@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
 import '../dua/dua_screen.dart';
+import '../../domain/bookmark.dart';
+import '../bookmarks/bookmark_button.dart';
+import '../bookmarks/bookmarks_screen.dart';
 import '../tasbih/tasbih_screen.dart';
 import '../../domain/quran.dart';
 import '../../infrastructure/quran_repository.dart';
@@ -25,7 +28,7 @@ class _QuranScreenState extends ConsumerState<QuranScreen>{
   Widget build(BuildContext context){
     final catalog=ref.watch(quranCatalogProvider);
     final prefs=ref.watch(preferencesProvider);
-    return Scaffold(appBar:AppBar(title:const Text('Коран'),actions:[IconButton(tooltip:'Тасбих',icon:const Icon(Icons.touch_app),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const TasbihScreen()))),IconButton(tooltip:'Дуа и азкары',icon:const Icon(Icons.auto_stories),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const DuaScreen())))]),
+    return Scaffold(appBar:AppBar(title:const Text('Коран'),actions:[IconButton(tooltip:'Избранное',icon:const Icon(Icons.bookmarks_outlined),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const BookmarksScreen()))),IconButton(tooltip:'Тасбих',icon:const Icon(Icons.touch_app),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const TasbihScreen()))),IconButton(tooltip:'Дуа и азкары',icon:const Icon(Icons.auto_stories),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const DuaScreen())))]),
       body:SafeArea(child:Column(children:[
         Padding(padding:const EdgeInsets.all(16),child:TextField(
           decoration:const InputDecoration(prefixIcon:Icon(Icons.search),hintText:'Название или номер суры'),
@@ -42,7 +45,7 @@ class _QuranScreenState extends ConsumerState<QuranScreen>{
               if(last>=1&&last<=114&&query.isEmpty) ListTile(leading:const Icon(Icons.history),title:const Text('Продолжить чтение'),
                 subtitle:Text(surahs[last-1].transliteration),onTap:()=>open(surahs[last-1],verse:prefs.getInt('quran_last_verse')??1)),
               for(final s in filtered) ListTile(leading:CircleAvatar(child:Text('${s.number}')),title:Text(s.transliteration),
-                subtitle:Text('${s.count} аятов'),trailing:Text(s.name,textDirection:TextDirection.rtl),onTap:()=>open(s)),
+                subtitle:Text('${s.name} · ${s.count} аятов'),trailing:BookmarkButton(bookmark:Bookmark(kind:BookmarkKind.surah,reference:s.number.toString(),title:s.transliteration)),onTap:()=>open(s)),
               if(filtered.isEmpty)const ListTile(title:Text('Суры не найдены')),
             ]);
           })),
@@ -80,6 +83,7 @@ class _SurahScreenState extends ConsumerState<SurahScreen>{
   @override
   Widget build(BuildContext context)=>Scaffold(
     appBar:AppBar(title:Text(widget.surah.transliteration),actions:[
+      BookmarkButton(bookmark:Bookmark(kind:BookmarkKind.ayah,reference:'${widget.surah.number}:$verse',title:'${widget.surah.transliteration} · $verse')),
       IconButton(tooltip:'Сохранить позицию',onPressed:remember,icon:const Icon(Icons.bookmark_add_outlined))]),
     body:SafeArea(child:Column(children:[
       Padding(padding:const EdgeInsets.symmetric(horizontal:16),child:DropdownButton<QuranTranslation>(
