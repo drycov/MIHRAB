@@ -1,4 +1,6 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'pwa_settings_card.dart';
 import '../../application/locale.dart';
 import '../../l10n/mihrab_strings.dart';
 import 'reminder_screen.dart';
@@ -165,6 +167,10 @@ class SettingsScreen extends ConsumerWidget {
                 ),
           ),
         ]),
+        if (kIsWeb) ...[
+          sectionTitle('PWA'),
+          const PwaSettingsCard(),
+        ],
         const SizedBox(height: 24),
         Text(
           'MIHRAB',
