@@ -4,15 +4,7 @@ import '../domain/prayer_schedule.dart';
 
 class PrayerDiaryRepository {
   Future<Database>? _opening;
-  Future<Database> _db() => _opening ??= _openWithRetry();
-  Future<Database> _openWithRetry() async {
-    try {
-      return await _open();
-    } catch (_) {
-      _opening = null;
-      rethrow;
-    }
-  }
+  Future<Database> _db()=>_opening??=_open();
   Future<Database> _open()async{
     final root=await getDatabasesPath();
     return openDatabase('$root/mihrab_diary.db',version:1,onCreate:(db,version)async{
@@ -59,17 +51,5 @@ class PrayerDiaryRepository {
       }
     });
   }
-  Future<void> close() async {
-    final opening = _opening;
-    _opening = null;
-    if (opening == null) return;
-    Database db;
-    try {
-      db = await opening;
-    } catch (_) {
-      // Opening failed; there is no database handle to close.
-      return;
-    }
-    await db.close();
-  }
+  Future<void> close()async{final opening=_opening;if(opening!=null)await (await opening).close();}
 }

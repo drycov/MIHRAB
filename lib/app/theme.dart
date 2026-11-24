@@ -39,7 +39,8 @@ abstract final class MihrabTheme {
       onSecondary: MihrabTokens.background,
       surface: dark ? MihrabTokens.background : MihrabTokens.cream,
       onSurface: dark ? MihrabTokens.cream : MihrabTokens.ink,
-      surfaceContainerHighest: dark ? MihrabTokens.emerald : MihrabTokens.creamMuted,
+      surfaceContainerHighest:
+          dark ? MihrabTokens.emerald : MihrabTokens.creamMuted,
       outline: dark ? MihrabTokens.emeraldSoft : MihrabTokens.creamMuted,
     );
 
@@ -66,51 +67,73 @@ abstract final class MihrabTheme {
           letterSpacing: MihrabTokens.letterTitle,
         ),
       ),
-      filledButtonTheme: FilledButtonThemeData(style: FilledButton.styleFrom(
-        backgroundColor: scheme.primary, foregroundColor: scheme.onPrimary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(MihrabTokens.radius)),
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: MihrabTokens.space),
-      )),
-      outlinedButtonTheme: OutlinedButtonThemeData(style: OutlinedButton.styleFrom(
-        foregroundColor: scheme.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(MihrabTokens.radius)),
-      )),
-      textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: scheme.primary)),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(MihrabTokens.radius),
+          ),
+          padding: const EdgeInsets.symmetric(
+            vertical: 14,
+            horizontal: MihrabTokens.space,
+          ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: scheme.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(MihrabTokens.radius),
+          ),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(foregroundColor: scheme.primary),
+      ),
       cardTheme: CardThemeData(
         elevation: 0,
-        color: dark ? MihrabTokens.emerald.withValues(alpha: 0.55) : MihrabTokens.paper,
+        color:
+            dark
+                ? MihrabTokens.emerald.withValues(alpha: 0.55)
+                : MihrabTokens.paper,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(MihrabTokens.radius),
           side: BorderSide(
-            color: dark
-                ? MihrabTokens.gold.withValues(alpha: 0.12)
-                : MihrabTokens.emerald.withValues(alpha: 0.08),
+            color:
+                dark
+                    ? MihrabTokens.gold.withValues(alpha: 0.12)
+                    : MihrabTokens.emerald.withValues(alpha: 0.08),
           ),
         ),
         margin: const EdgeInsets.symmetric(vertical: 5),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: scheme.surface,
-        indicatorColor: dark
-            ? MihrabTokens.gold.withValues(alpha: 0.18)
-            : MihrabTokens.emerald.withValues(alpha: 0.12),
+        indicatorColor:
+            dark
+                ? MihrabTokens.gold.withValues(alpha: 0.18)
+                : MihrabTokens.emerald.withValues(alpha: 0.12),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
             fontSize: 12,
             fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
             letterSpacing: 0.3,
-            color: selected
-                ? (dark ? MihrabTokens.gold : MihrabTokens.emerald)
-                : scheme.onSurface.withValues(alpha: 0.55),
+            color:
+                selected
+                    ? (dark ? MihrabTokens.gold : MihrabTokens.emerald)
+                    : scheme.onSurface.withValues(alpha: 0.55),
           );
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return IconThemeData(
             size: 22,
-            color: selected
-                ? (dark ? MihrabTokens.gold : MihrabTokens.emerald)
-                : scheme.onSurface.withValues(alpha: 0.55),
+            color:
+                selected
+                    ? (dark ? MihrabTokens.gold : MihrabTokens.emerald)
+                    : scheme.onSurface.withValues(alpha: 0.55),
           );
         }),
         height: 68,
@@ -143,9 +166,7 @@ abstract final class MihrabTheme {
           fontWeight: FontWeight.w600,
           letterSpacing: 0.4,
         ),
-        bodyMedium: base.textTheme.bodyMedium?.copyWith(
-          height: 1.35,
-        ),
+        bodyMedium: base.textTheme.bodyMedium?.copyWith(height: 1.35),
       ),
     );
   }

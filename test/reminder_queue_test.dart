@@ -14,16 +14,20 @@ void main() {
       await gate.future;
       events.add('first-end');
     });
-    final second = queue.run(() async { events.add('second'); });
+    final second = queue.run(() async {
+      events.add('second');
+    });
     await started.future;
     expect(events, ['first-start']);
     gate.complete();
     await Future.wait([first, second]);
-    expect(events, ['first-start','first-end','second']);
+    expect(events, ['first-start', 'first-end', 'second']);
   });
   test('queue recovers after failure', () async {
     final queue = ReminderQueue();
-    final failed = queue.run<void>(() async { throw StateError('failure'); });
+    final failed = queue.run<void>(() async {
+      throw StateError('failure');
+    });
     final next = queue.run(() async => 42);
     await expectLater(failed, throwsStateError);
     expect(await next, 42);

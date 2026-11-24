@@ -11,11 +11,15 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tzdata.initializeTimeZones();
   final preferences = await SharedPreferences.getInstance();
-  unawaited(initializeBackgroundReminders().catchError((Object error) {
-    debugPrint('MIHRAB WorkManager registration failed: $error');
-  }));
-  runApp(ProviderScope(
-    overrides: [preferencesProvider.overrideWithValue(preferences)],
-    child: const MihrabApp(),
-  ));
+  unawaited(
+    initializeBackgroundReminders().catchError((Object error) {
+      debugPrint('MIHRAB WorkManager registration failed: $error');
+    }),
+  );
+  runApp(
+    ProviderScope(
+      overrides: [preferencesProvider.overrideWithValue(preferences)],
+      child: const MihrabApp(),
+    ),
+  );
 }

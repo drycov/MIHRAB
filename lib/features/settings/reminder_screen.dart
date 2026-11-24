@@ -48,12 +48,9 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
       status = null;
     });
     try {
-      final result = await ref.read(reminderCoordinatorProvider).apply(
-            enabled,
-            lead,
-            preferExact,
-            sounds: sounds,
-          );
+      final result = await ref
+          .read(reminderCoordinatorProvider)
+          .apply(enabled, lead, preferExact, sounds: sounds);
       if (mounted) setState(() => status = result);
     } catch (e) {
       if (mounted) setState(() => status = e.toString());
@@ -68,10 +65,9 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
       status = null;
     });
     try {
-      await ref.read(notificationsProvider).preview(
-            kind,
-            sounds[kind] ?? PrayerSound.system,
-          );
+      await ref
+          .read(notificationsProvider)
+          .preview(kind, sounds[kind] ?? PrayerSound.system);
       if (mounted) setState(() => status = 'Тестовое уведомление отправлено');
     } catch (e) {
       if (mounted) setState(() => status = e.toString());
@@ -104,9 +100,10 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
                         textDirection: TextDirection.rtl,
                       ),
                       value: enabled.contains(p),
-                      onChanged: busy
-                          ? null
-                          : (v) => setState(() {
+                      onChanged:
+                          busy
+                              ? null
+                              : (v) => setState(() {
                                 if (v) {
                                   enabled.add(p);
                                 } else {
@@ -127,7 +124,9 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
                                 for (final sound in PrayerSound.values.where(
                                   (sound) =>
                                       sound != PrayerSound.adhan ||
-                                      ref.watch(notificationsProvider).isAndroid ||
+                                      ref
+                                          .watch(notificationsProvider)
+                                          .isAndroid ||
                                       sounds[p] == PrayerSound.adhan,
                                 ))
                                   DropdownMenuItem(
@@ -135,19 +134,23 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
                                     child: Text(sound.label),
                                   ),
                               ],
-                              onChanged: busy
-                                  ? null
-                                  : (v) {
-                                      if (v != null) {
-                                        setState(() => sounds[p] = v);
-                                      }
-                                    },
+                              onChanged:
+                                  busy
+                                      ? null
+                                      : (v) {
+                                        if (v != null) {
+                                          setState(() => sounds[p] = v);
+                                        }
+                                      },
                             ),
                           ),
                           IconButton(
                             tooltip: 'Проверить ${p.label}',
                             onPressed: busy ? null : () => preview(p),
-                            icon: Icon(Icons.play_circle_outline, color: accent),
+                            icon: Icon(
+                              Icons.play_circle_outline,
+                              color: accent,
+                            ),
                           ),
                         ],
                       ),
@@ -183,11 +186,12 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
                         child: Text(m == 0 ? 'Нет' : 'За $m мин.'),
                       ),
                   ],
-                  onChanged: busy
-                      ? null
-                      : (v) {
-                          if (v != null) setState(() => lead = v);
-                        },
+                  onChanged:
+                      busy
+                          ? null
+                          : (v) {
+                            if (v != null) setState(() => lead = v);
+                          },
                 ),
               ),
             ),
@@ -205,10 +209,7 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
               ),
               child: Text(busy ? 'Сохранение…' : 'Применить'),
             ),
-            if (status != null) ...[
-              const SizedBox(height: 12),
-              Text(status!),
-            ],
+            if (status != null) ...[const SizedBox(height: 12), Text(status!)],
             const IslamicDivider(),
             IslamicCard(
               padding: EdgeInsets.zero,
@@ -216,36 +217,38 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
                 leading: Icon(Icons.monitor_heart_outlined, color: accent),
                 title: const Text('Диагностика уведомлений'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: busy
-                    ? null
-                    : () async {
-                        await Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const ReminderDiagnosticsScreen(),
-                          ),
-                        );
-                        if (!mounted) return;
-                        final prefs = ref.read(preferencesProvider);
-                        await prefs.reload();
-                        if (!mounted) return;
-                        try {
-                          final config = ReminderPreferences.read(prefs);
-                          if (config != null) {
-                            setState(() {
-                              enabled = config.enabled.toSet();
-                              lead = config.lead;
-                              preferExact = config.exact;
-                              sounds = Map.of(config.sounds);
-                            });
+                onTap:
+                    busy
+                        ? null
+                        : () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const ReminderDiagnosticsScreen(),
+                            ),
+                          );
+                          if (!mounted) return;
+                          final prefs = ref.read(preferencesProvider);
+                          await prefs.reload();
+                          if (!mounted) return;
+                          try {
+                            final config = ReminderPreferences.read(prefs);
+                            if (config != null) {
+                              setState(() {
+                                enabled = config.enabled.toSet();
+                                lead = config.lead;
+                                preferExact = config.exact;
+                                sounds = Map.of(config.sounds);
+                              });
+                            }
+                          } catch (_) {
+                            if (mounted) {
+                              setState(
+                                () =>
+                                    status = 'Не удалось прочитать настройки.',
+                              );
+                            }
                           }
-                        } catch (_) {
-                          if (mounted) {
-                            setState(
-                              () => status = 'Не удалось прочитать настройки.',
-                            );
-                          }
-                        }
-                      },
+                        },
               ),
             ),
           ],

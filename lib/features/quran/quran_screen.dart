@@ -34,10 +34,10 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
   String query = '';
 
   void open(Surah surah, {int verse = 1}) => Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (_) => SurahScreen(surah: surah, initialVerse: verse),
-        ),
-      );
+    MaterialPageRoute<void>(
+      builder: (_) => SurahScreen(surah: surah, initialVerse: verse),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -53,23 +53,28 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
           IconButton(
             tooltip: context.tr('Избранное'),
             icon: Icon(Icons.bookmarks_outlined, color: accent),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const BookmarksScreen()),
-            ),
+            onPressed:
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const BookmarksScreen(),
+                  ),
+                ),
           ),
           IconButton(
             tooltip: context.tr('Тасбих'),
             icon: Icon(Icons.touch_app, color: accent),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const TasbihScreen()),
-            ),
+            onPressed:
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => const TasbihScreen()),
+                ),
           ),
           IconButton(
             tooltip: context.tr('Дуа и азкары'),
             icon: Icon(Icons.auto_stories, color: accent),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const DuaScreen()),
-            ),
+            onPressed:
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => const DuaScreen()),
+                ),
           ),
         ],
       ),
@@ -83,8 +88,8 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                   prefixIcon: Icon(Icons.search),
                   hintText: 'Название или номер суры',
                 ),
-                onChanged: (v) =>
-                    setState(() => query = v.trim().toLowerCase()),
+                onChanged:
+                    (v) => setState(() => query = v.trim().toLowerCase()),
               ),
             ),
             Padding(
@@ -99,43 +104,46 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                   ),
                   title: Text(context.tr('Офлайн-библиотека')),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => const QuranOfflineScreen(),
-                    ),
-                  ),
+                  onTap:
+                      () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const QuranOfflineScreen(),
+                        ),
+                      ),
                 ),
               ),
             ),
             Expanded(
               child: catalog.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, s) => Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Не удалось загрузить каталог. Проверьте интернет.',
+                error:
+                    (e, s) => Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Не удалось загрузить каталог. Проверьте интернет.',
+                          ),
+                          TextButton(
+                            onPressed:
+                                () => ref.invalidate(quranCatalogProvider),
+                            child: Text(context.tr('Повторить')),
+                          ),
+                        ],
                       ),
-                      TextButton(
-                        onPressed: () =>
-                            ref.invalidate(quranCatalogProvider),
-                        child: Text(context.tr('Повторить')),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
                 data: (surahs) {
                   final last = prefs.getInt('quran_last_surah') ?? 0;
-                  final filtered = surahs
-                      .where(
-                        (s) =>
-                            query.isEmpty ||
-                            s.number.toString() == query ||
-                            s.name.contains(query) ||
-                            s.transliteration.toLowerCase().contains(query),
-                      )
-                      .toList();
+                  final filtered =
+                      surahs
+                          .where(
+                            (s) =>
+                                query.isEmpty ||
+                                s.number.toString() == query ||
+                                s.name.contains(query) ||
+                                s.transliteration.toLowerCase().contains(query),
+                          )
+                          .toList();
                   return ListView(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
                     children: [
@@ -155,18 +163,20 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                             subtitle: Text(
                               surahs[last - 1].transliteration,
                               style: TextStyle(
-                                color: MihrabTokens.goldSoft
-                                    .withValues(alpha: 0.9),
+                                color: MihrabTokens.goldSoft.withValues(
+                                  alpha: 0.9,
+                                ),
                               ),
                             ),
                             trailing: const Icon(
                               Icons.chevron_right,
                               color: MihrabTokens.gold,
                             ),
-                            onTap: () => open(
-                              surahs[last - 1],
-                              verse: prefs.getInt('quran_last_verse') ?? 1,
-                            ),
+                            onTap:
+                                () => open(
+                                  surahs[last - 1],
+                                  verse: prefs.getInt('quran_last_verse') ?? 1,
+                                ),
                           ),
                         ),
                       for (final s in filtered)
@@ -174,9 +184,10 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                           padding: EdgeInsets.zero,
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: dark
-                                  ? MihrabTokens.emeraldSoft
-                                  : MihrabTokens.cream,
+                              backgroundColor:
+                                  dark
+                                      ? MihrabTokens.emeraldSoft
+                                      : MihrabTokens.cream,
                               foregroundColor: accent,
                               child: Text(
                                 '${s.number}',
@@ -188,8 +199,9 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                             ),
                             title: Text(
                               s.transliteration,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w600),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                             subtitle: Text(
                               '${s.name} · ${s.count} аятов',
@@ -206,9 +218,7 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                           ),
                         ),
                       if (filtered.isEmpty)
-                        const IslamicCard(
-                          child: Text('Суры не найдены'),
-                        ),
+                        const IslamicCard(child: Text('Суры не найдены')),
                     ],
                   );
                 },
@@ -245,13 +255,16 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
   void initState() {
     super.initState();
     final saved = ref.read(preferencesProvider).getString('quran_translation');
-    translation = widget.initialTranslation ??
+    translation =
+        widget.initialTranslation ??
         QuranTranslation.values.firstWhere(
           (t) => t.id == saved,
           orElse: () => QuranTranslation.russian,
         );
     verse = widget.initialVerse.clamp(1, widget.surah.count).toInt();
-    future = ref.read(quranRepositoryProvider).verses(widget.surah, translation);
+    future = ref
+        .read(quranRepositoryProvider)
+        .verses(widget.surah, translation);
   }
 
   Future<void> remember() async {
@@ -281,14 +294,16 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
           IconButton(
             tooltip: context.tr('Слушать аят'),
             icon: Icon(Icons.headphones, color: accent),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => QuranAudioScreen(
-                  surah: widget.surah,
-                  initialVerse: verse,
+            onPressed:
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder:
+                        (_) => QuranAudioScreen(
+                          surah: widget.surah,
+                          initialVerse: verse,
+                        ),
+                  ),
                 ),
-              ),
-            ),
           ),
           BookmarkButton(
             bookmark: Bookmark(
@@ -310,8 +325,10 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: IslamicCard(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 0,
+                ),
                 margin: EdgeInsets.zero,
                 child: DropdownButton<QuranTranslation>(
                   isExpanded: true,
@@ -368,15 +385,17 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
                   if (snapshot.hasError || !snapshot.hasData) {
                     return Center(
                       child: TextButton(
-                        onPressed: () => setState(
-                          () => future = ref
-                              .read(quranRepositoryProvider)
-                              .verses(
-                                widget.surah,
-                                translation,
-                                refresh: true,
-                              ),
-                        ),
+                        onPressed:
+                            () => setState(
+                              () =>
+                                  future = ref
+                                      .read(quranRepositoryProvider)
+                                      .verses(
+                                        widget.surah,
+                                        translation,
+                                        refresh: true,
+                                      ),
+                            ),
                         child: const Text('Ошибка загрузки. Повторить'),
                       ),
                     );
@@ -389,14 +408,14 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
                         widget.surah.name,
                         textDirection: TextDirection.rtl,
                         textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium
-                            ?.copyWith(
-                              color: dark
+                        style: Theme.of(
+                          context,
+                        ).textTheme.headlineMedium?.copyWith(
+                          color:
+                              dark
                                   ? MihrabTokens.goldSoft
                                   : MihrabTokens.emerald,
-                            ),
+                        ),
                       ),
                       const IslamicDivider(padding: 20),
                       SelectableText(
@@ -406,9 +425,7 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
                         style: TextStyle(
                           fontSize: fontSize,
                           height: 2,
-                          color: dark
-                              ? MihrabTokens.cream
-                              : MihrabTokens.ink,
+                          color: dark ? MihrabTokens.cream : MihrabTokens.ink,
                         ),
                       ),
                       const IslamicDivider(padding: 20),
@@ -420,9 +437,8 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
                       Text(
                         'Аят ${widget.surah.number}:$verse · ${translation.label}',
                         style: TextStyle(
-                          color: dark
-                              ? MihrabTokens.goldSoft
-                              : MihrabTokens.muted,
+                          color:
+                              dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
                           letterSpacing: 0.3,
                         ),
                       ),
@@ -436,9 +452,10 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: dark
-                        ? MihrabTokens.gold.withValues(alpha: 0.12)
-                        : MihrabTokens.emerald.withValues(alpha: 0.08),
+                    color:
+                        dark
+                            ? MihrabTokens.gold.withValues(alpha: 0.12)
+                            : MihrabTokens.emerald.withValues(alpha: 0.08),
                   ),
                 ),
               ),
@@ -447,8 +464,7 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
                 children: [
                   IconButton(
                     tooltip: context.tr('Предыдущий аят'),
-                    onPressed:
-                        verse > 1 ? () => setState(() => verse--) : null,
+                    onPressed: verse > 1 ? () => setState(() => verse--) : null,
                     icon: Icon(Icons.chevron_left, color: accent),
                   ),
                   DropdownButton<int>(
@@ -467,9 +483,10 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
                   ),
                   IconButton(
                     tooltip: context.tr('Следующий аят'),
-                    onPressed: verse < widget.surah.count
-                        ? () => setState(() => verse++)
-                        : null,
+                    onPressed:
+                        verse < widget.surah.count
+                            ? () => setState(() => verse++)
+                            : null,
                     icon: Icon(Icons.chevron_right, color: accent),
                   ),
                 ],

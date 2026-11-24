@@ -2,9 +2,13 @@ import 'package:adhan/adhan.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 enum PrayerKind {
-  fajr('Фаджр', 'الفجر'), sunrise('Восход', 'الشروق'),
-  dhuhr('Зухр', 'الظهر'), asr('Аср', 'العصر'),
-  maghrib('Магриб', 'المغرب'), isha('Иша', 'العشاء');
+  fajr('Фаджр', 'الفجر'),
+  sunrise('Восход', 'الشروق'),
+  dhuhr('Зухр', 'الظهر'),
+  asr('Аср', 'العصر'),
+  maghrib('Магриб', 'المغرب'),
+  isha('Иша', 'العشاء');
+
   const PrayerKind(this.label, this.arabic);
   final String label;
   final String arabic;
@@ -32,18 +36,31 @@ class PrayerSlot {
 }
 
 class PrayerSchedule {
-  static List<PrayerSlot> forDay(City city, DateTime day, {bool hanafi = true}) {
+  static List<PrayerSlot> forDay(
+    City city,
+    DateTime day, {
+    bool hanafi = true,
+  }) {
     final zone = tz.getLocation(city.zone);
     final params = CalculationMethod.muslim_world_league.getParameters();
     params.madhab = hanafi ? Madhab.hanafi : Madhab.shafi;
     final times = PrayerTimes.utc(
       Coordinates(city.latitude, city.longitude),
-      DateComponents(day.year, day.month, day.day), params,
+      DateComponents(day.year, day.month, day.day),
+      params,
     );
-    final raw = [times.fajr, times.sunrise, times.dhuhr, times.asr, times.maghrib, times.isha];
-    return List.generate(raw.length, (i) => PrayerSlot(
-      PrayerKind.values[i], tz.TZDateTime.from(raw[i], zone),
-    ));
+    final raw = [
+      times.fajr,
+      times.sunrise,
+      times.dhuhr,
+      times.asr,
+      times.maghrib,
+      times.isha,
+    ];
+    return List.generate(
+      raw.length,
+      (i) => PrayerSlot(PrayerKind.values[i], tz.TZDateTime.from(raw[i], zone)),
+    );
   }
 
   static PrayerSlot next(City city, DateTime instant, {bool hanafi = true}) {
@@ -52,6 +69,10 @@ class PrayerSchedule {
     for (final slot in today) {
       if (slot.kind.obligatory && slot.time.isAfter(now)) return slot;
     }
-    return forDay(city, DateTime(now.year, now.month, now.day + 1), hanafi: hanafi).first;
+    return forDay(
+      city,
+      DateTime(now.year, now.month, now.day + 1),
+      hanafi: hanafi,
+    ).first;
   }
 }

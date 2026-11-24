@@ -26,13 +26,34 @@ void reminderDispatcher() {
         await prefs.reload();
         final config = ReminderPreferences.read(prefs);
         final ramadan = RamadanReminderPreferences.read(prefs);
-        final city = City.all[(prefs.getInt('city') ?? 0).clamp(0, City.all.length - 1).toInt()];
-        final plan = ReminderPlanner.plan(city, DateTime.now(),
-          hanafi: prefs.getBool('hanafi') ?? true, enabled: config?.enabled ?? <PrayerKind>{},
-          minutesBefore: config?.lead ?? 0, repository: LocalScheduleRepository(prefs));
-        plan.addAll(RamadanReminderPlanner.plan(city, DateTime.now(), hanafi: prefs.getBool('hanafi') ?? true,
-          config: ramadan, adjustment: (prefs.getInt('hijri_adjustment') ?? 0).clamp(-2,2).toInt(), repository: LocalScheduleRepository(prefs)));
-        await Notifications().replace(plan, preferExact: config?.exact ?? false, sounds: config?.sounds ?? const {});
+        final city =
+            City.all[(prefs.getInt('city') ?? 0)
+                .clamp(0, City.all.length - 1)
+                .toInt()];
+        final plan = ReminderPlanner.plan(
+          city,
+          DateTime.now(),
+          hanafi: prefs.getBool('hanafi') ?? true,
+          enabled: config?.enabled ?? <PrayerKind>{},
+          minutesBefore: config?.lead ?? 0,
+          repository: LocalScheduleRepository(prefs),
+        );
+        plan.addAll(
+          RamadanReminderPlanner.plan(
+            city,
+            DateTime.now(),
+            hanafi: prefs.getBool('hanafi') ?? true,
+            config: ramadan,
+            adjustment:
+                (prefs.getInt('hijri_adjustment') ?? 0).clamp(-2, 2).toInt(),
+            repository: LocalScheduleRepository(prefs),
+          ),
+        );
+        await Notifications().replace(
+          plan,
+          preferExact: config?.exact ?? false,
+          sounds: config?.sounds ?? const {},
+        );
         final now = DateTime.now().toUtc().toIso8601String();
         await prefs.setString('reminder_last_background_success', now);
         await prefs.setString('reminder_last_success', now);
@@ -50,10 +71,13 @@ Future<void> initializeBackgroundReminders() async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setBool('reminder_background_registered', false);
   await Workmanager().initialize(reminderDispatcher);
-  await Workmanager().registerPeriodicTask(reminderWorkName, reminderWorkName,
+  await Workmanager().registerPeriodicTask(
+    reminderWorkName,
+    reminderWorkName,
     frequency: const Duration(hours: 12),
     existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
     backoffPolicy: BackoffPolicy.exponential,
-    backoffPolicyDelay: const Duration(minutes: 15));
+    backoffPolicyDelay: const Duration(minutes: 15),
+  );
   await prefs.setBool('reminder_background_registered', true);
 }

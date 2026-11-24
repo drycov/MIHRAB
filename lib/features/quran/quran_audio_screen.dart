@@ -40,13 +40,14 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
   String? diskAvailabilityKey;
 
   Future<bool> availability() {
-    final key=repository.key(widget.surah.number,verse,reciter);
-    if(diskAvailabilityKey!=key || diskAvailability==null){
-      diskAvailabilityKey=key;
-      diskAvailability=QuranDisk.contains(key);
+    final key = repository.key(widget.surah.number, verse, reciter);
+    if (diskAvailabilityKey != key || diskAvailability == null) {
+      diskAvailabilityKey = key;
+      diskAvailability = QuranDisk.contains(key);
     }
     return diskAvailability!;
   }
+
   int generation = 0;
 
   @override
@@ -59,23 +60,31 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
       orElse: () => QuranReciter.alafasy,
     );
     WidgetsBinding.instance.addObserver(this);
-    subscriptions.add(player.onPlayerStateChanged.listen((s) {
-      if (mounted) setState(() => playback = s);
-    }));
-    subscriptions.add(player.onPositionChanged.listen((p) {
-      if (mounted) setState(() => position = p);
-    }));
-    subscriptions.add(player.onDurationChanged.listen((d) {
-      if (mounted) setState(() => duration = d);
-    }));
-    subscriptions.add(player.onPlayerComplete.listen((_) {
-      if (!mounted || busy || !active) return;
-      final next = QuranAudioCodec.next(verse, widget.surah.count, mode);
-      if (next != null) {
-        setState(() => verse = next);
-        play();
-      }
-    }));
+    subscriptions.add(
+      player.onPlayerStateChanged.listen((s) {
+        if (mounted) setState(() => playback = s);
+      }),
+    );
+    subscriptions.add(
+      player.onPositionChanged.listen((p) {
+        if (mounted) setState(() => position = p);
+      }),
+    );
+    subscriptions.add(
+      player.onDurationChanged.listen((d) {
+        if (mounted) setState(() => duration = d);
+      }),
+    );
+    subscriptions.add(
+      player.onPlayerComplete.listen((_) {
+        if (!mounted || busy || !active) return;
+        final next = QuranAudioCodec.next(verse, widget.surah.count, mode);
+        if (next != null) {
+          setState(() => verse = next);
+          play();
+        }
+      }),
+    );
   }
 
   @override
@@ -98,22 +107,24 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
     });
     try {
       await player.stop();
-      final bytes =
-          await repository.local(widget.surah.number, verse, reciter);
-      final source = bytes != null && !kIsWeb
-          ? BytesSource(bytes)
-          : UrlSource(
-              (await repository.resolve(widget.surah.number, verse, reciter))
-                  .toString(),
-            );
+      final bytes = await repository.local(widget.surah.number, verse, reciter);
+      final source =
+          bytes != null && !kIsWeb
+              ? BytesSource(bytes)
+              : UrlSource(
+                (await repository.resolve(
+                  widget.surah.number,
+                  verse,
+                  reciter,
+                )).toString(),
+              );
       if (!mounted || !active || generation != token) return;
       await player.play(source);
       if (!active || generation != token) await player.stop();
     } catch (_) {
       if (mounted && generation == token) {
         setState(
-          () => error =
-              'Не удалось воспроизвести аят. Проверьте соединение.',
+          () => error = 'Не удалось воспроизвести аят. Проверьте соединение.',
         );
       }
     } finally {
@@ -184,8 +195,8 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
               textDirection: TextDirection.rtl,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    color: dark ? MihrabTokens.goldSoft : MihrabTokens.emerald,
-                  ),
+                color: dark ? MihrabTokens.goldSoft : MihrabTokens.emerald,
+              ),
             ),
             Text(
               widget.surah.transliteration,
@@ -205,25 +216,26 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
                   for (final r in QuranReciter.values)
                     DropdownMenuItem(value: r, child: Text(r.label)),
                 ],
-                onChanged: busy
-                    ? null
-                    : (r) {
-                        if (r != null) {
-                          action(() async {
-                            generation++;
-                            await player.stop();
-                            if (!mounted) return;
-                            setState(() {
-                              reciter = r;
-                              position = Duration.zero;
-                              duration = Duration.zero;
+                onChanged:
+                    busy
+                        ? null
+                        : (r) {
+                          if (r != null) {
+                            action(() async {
+                              generation++;
+                              await player.stop();
+                              if (!mounted) return;
+                              setState(() {
+                                reciter = r;
+                                position = Duration.zero;
+                                duration = Duration.zero;
+                              });
+                              await ref
+                                  .read(preferencesProvider)
+                                  .setString('quran_reciter', r.id);
                             });
-                            await ref
-                                .read(preferencesProvider)
-                                .setString('quran_reciter', r.id);
-                          });
-                        }
-                      },
+                          }
+                        },
               ),
             ),
             IslamicCard(
@@ -236,11 +248,12 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
                   for (final m in QuranPlaybackMode.values)
                     DropdownMenuItem(value: m, child: Text(m.label)),
                 ],
-                onChanged: busy
-                    ? null
-                    : (m) {
-                        if (m != null) setState(() => mode = m);
-                      },
+                onChanged:
+                    busy
+                        ? null
+                        : (m) {
+                          if (m != null) setState(() => mode = m);
+                        },
               ),
             ),
             const SizedBox(height: 8),
@@ -249,9 +262,8 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
               children: [
                 IconButton(
                   tooltip: context.tr('Предыдущий аят'),
-                  onPressed: busy || verse <= 1
-                      ? null
-                      : () => selectVerse(verse - 1),
+                  onPressed:
+                      busy || verse <= 1 ? null : () => selectVerse(verse - 1),
                   icon: Icon(Icons.skip_previous, color: accent),
                 ),
                 DropdownButton<int>(
@@ -261,39 +273,40 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
                     for (var i = 1; i <= widget.surah.count; i++)
                       DropdownMenuItem(value: i, child: Text('Аят $i')),
                   ],
-                  onChanged: busy
-                      ? null
-                      : (v) {
-                          if (v != null) selectVerse(v);
-                        },
+                  onChanged:
+                      busy
+                          ? null
+                          : (v) {
+                            if (v != null) selectVerse(v);
+                          },
                 ),
                 IconButton(
                   tooltip: context.tr('Следующий аят'),
-                  onPressed: busy || verse >= widget.surah.count
-                      ? null
-                      : () => selectVerse(verse + 1),
+                  onPressed:
+                      busy || verse >= widget.surah.count
+                          ? null
+                          : () => selectVerse(verse + 1),
                   icon: Icon(Icons.skip_next, color: accent),
                 ),
               ],
             ),
             Slider(
-              value: duration.inMilliseconds == 0
-                  ? 0
-                  : position.inMilliseconds
-                      .clamp(0, duration.inMilliseconds)
-                      .toDouble(),
-              max: duration.inMilliseconds == 0
-                  ? 1
-                  : duration.inMilliseconds.toDouble(),
+              value:
+                  duration.inMilliseconds == 0
+                      ? 0
+                      : position.inMilliseconds
+                          .clamp(0, duration.inMilliseconds)
+                          .toDouble(),
+              max:
+                  duration.inMilliseconds == 0
+                      ? 1
+                      : duration.inMilliseconds.toDouble(),
               activeColor: accent,
-              onChanged: busy ||
-                      duration.inMilliseconds == 0 ||
-                      (!playing && !paused)
-                  ? null
-                  : (v) => action(
-                        () => player.seek(
-                          Duration(milliseconds: v.round()),
-                        ),
+              onChanged:
+                  busy || duration.inMilliseconds == 0 || (!playing && !paused)
+                      ? null
+                      : (v) => action(
+                        () => player.seek(Duration(milliseconds: v.round())),
                       ),
             ),
             Row(
@@ -319,9 +332,10 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
               children: [
                 IconButton.filledTonal(
                   tooltip: 'Остановить',
-                  onPressed: busy
-                      ? null
-                      : () => action(() async {
+                  onPressed:
+                      busy
+                          ? null
+                          : () => action(() async {
                             generation++;
                             await player.stop();
                             if (mounted) {
@@ -339,13 +353,14 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
                     foregroundColor:
                         dark ? MihrabTokens.background : MihrabTokens.cream,
                   ),
-                  onPressed: busy
-                      ? null
-                      : playing
+                  onPressed:
+                      busy
+                          ? null
+                          : playing
                           ? () => action(player.pause)
                           : paused
-                              ? () => action(player.resume)
-                              : play,
+                          ? () => action(player.resume)
+                          : play,
                   icon: Icon(playing ? Icons.pause : Icons.play_arrow),
                 ),
               ],
@@ -367,19 +382,20 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
                   return Padding(
                     padding: const EdgeInsets.only(top: 12),
                     child: OutlinedButton.icon(
-                      onPressed: busy || saved
-                          ? null
-                          : () => action(
-                                () async {
-                                  await repository.cache(widget.surah.number,verse,reciter);
-                                  diskAvailability=null;
-                                },
-                              ),
+                      onPressed:
+                          busy || saved
+                              ? null
+                              : () => action(() async {
+                                await repository.cache(
+                                  widget.surah.number,
+                                  verse,
+                                  reciter,
+                                );
+                                diskAvailability = null;
+                              }),
                       icon: Icon(saved ? Icons.check : Icons.download),
                       label: Text(
-                        saved
-                            ? 'Аят доступен офлайн'
-                            : 'Скачать текущий аят',
+                        saved ? 'Аят доступен офлайн' : 'Скачать текущий аят',
                       ),
                     ),
                   );
@@ -389,9 +405,9 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
             Text(
               'Источник: Al Quran Cloud / Islamic Network. Воспроизведение останавливается при уходе с экрана или сворачивании. Загруженные аяты сохраняются на устройстве.',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
-                    height: 1.4,
-                  ),
+                color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
+                height: 1.4,
+              ),
             ),
           ],
         ),

@@ -28,12 +28,14 @@ class MihrabApp extends ConsumerWidget {
     debugShowCheckedModeBanner: false,
     theme: MihrabTheme.build(Brightness.light),
     darkTheme: MihrabTheme.build(Brightness.dark),
-    themeMode: ref.watch(settingsProvider.select((s) => s.light))
-        ? ThemeMode.light
-        : ThemeMode.dark,
-    home: ref.watch(onboardingProvider)
-        ? const AppShell()
-        : const OnboardingScreen(),
+    themeMode:
+        ref.watch(settingsProvider.select((s) => s.light))
+            ? ThemeMode.light
+            : ThemeMode.dark,
+    home:
+        ref.watch(onboardingProvider)
+            ? const AppShell()
+            : const OnboardingScreen(),
   );
 }
 
@@ -43,7 +45,8 @@ class AppShell extends ConsumerStatefulWidget {
   ConsumerState<AppShell> createState() => _AppShellState();
 }
 
-class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver {
+class _AppShellState extends ConsumerState<AppShell>
+    with WidgetsBindingObserver {
   String? reminderError;
   int index = 0;
 
@@ -77,8 +80,11 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
       }
     } catch (_) {
       if (mounted) {
-        setState(() =>
-            reminderError = 'Не удалось обновить уведомления. Проверьте настройки.');
+        setState(
+          () =>
+              reminderError =
+                  'Не удалось обновить уведомления. Проверьте настройки.',
+        );
       }
     }
   }
@@ -113,9 +119,12 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
               Icons.nightlight_round,
               color: dark ? MihrabTokens.gold : MihrabTokens.emerald,
             ),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const RamadanScreen()),
-            ),
+            onPressed:
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const RamadanScreen(),
+                  ),
+                ),
           ),
         ],
       ),
@@ -124,9 +133,8 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
           children: [
             if (reminderError != null)
               Material(
-                color: dark
-                    ? MihrabTokens.emeraldSoft
-                    : MihrabTokens.creamMuted,
+                color:
+                    dark ? MihrabTokens.emeraldSoft : MihrabTokens.creamMuted,
                 child: ListTile(
                   dense: true,
                   title: Text(

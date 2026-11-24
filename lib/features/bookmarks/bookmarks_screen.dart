@@ -40,27 +40,30 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
     String name = '';
     final result = await showDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Новая коллекция'),
-        content: TextField(
-          autofocus: true,
-          maxLength: 60,
-          onChanged: (v) => name = v,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Отмена'),
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Новая коллекция'),
+            content: TextField(
+              autofocus: true,
+              maxLength: 60,
+              onChanged: (v) => name = v,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Отмена'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx, name),
+                child: const Text('Создать'),
+              ),
+            ],
           ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, name),
-            child: const Text('Создать'),
-          ),
-        ],
-      ),
     );
     if (result != null && mounted) {
-      await run(() => ref.read(bookmarksProvider.notifier).addCollection(result));
+      await run(
+        () => ref.read(bookmarksProvider.notifier).addCollection(result),
+      );
     }
   }
 
@@ -78,14 +81,12 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
         final number = int.parse(parts.first);
         final catalog = await ref.read(quranRepositoryProvider).catalog();
         final surah = catalog.firstWhere((s) => s.number == number);
-        final verse =
-            b.kind == BookmarkKind.ayah ? int.parse(parts.last) : 1;
+        final verse = b.kind == BookmarkKind.ayah ? int.parse(parts.last) : 1;
         if (verse > surah.count) throw StateError('Invalid verse');
         if (mounted) {
           await Navigator.of(context).push(
             MaterialPageRoute<void>(
-              builder: (_) =>
-                  SurahScreen(surah: surah, initialVerse: verse),
+              builder: (_) => SurahScreen(surah: surah, initialVerse: verse),
             ),
           );
         }
@@ -96,20 +97,21 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
   Future<void> move(Bookmark b, List<String> collections) async {
     final result = await showDialog<String>(
       context: context,
-      builder: (ctx) => SimpleDialog(
-        title: const Text('Переместить в коллекцию'),
-        children: [
-          SimpleDialogOption(
-            onPressed: () => Navigator.pop(ctx, ''),
-            child: const Text('Без коллекции'),
+      builder:
+          (ctx) => SimpleDialog(
+            title: const Text('Переместить в коллекцию'),
+            children: [
+              SimpleDialogOption(
+                onPressed: () => Navigator.pop(ctx, ''),
+                child: const Text('Без коллекции'),
+              ),
+              for (final name in collections)
+                SimpleDialogOption(
+                  onPressed: () => Navigator.pop(ctx, name),
+                  child: Text(name),
+                ),
+            ],
           ),
-          for (final name in collections)
-            SimpleDialogOption(
-              onPressed: () => Navigator.pop(ctx, name),
-              child: Text(name),
-            ),
-        ],
-      ),
     );
     if (result != null && mounted) {
       await run(() => ref.read(bookmarksProvider.notifier).move(b.id, result));
@@ -119,21 +121,23 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
   @override
   Widget build(BuildContext context) {
     final library = ref.watch(bookmarksProvider);
-    final selected = collection == null ||
-            collection == '' ||
-            library.collections.contains(collection)
-        ? collection
-        : null;
-    final rows = library.items
-        .where(
-          (b) =>
-              (selected == null || b.collection == selected) &&
-              (kind == null || b.kind == kind) &&
-              '${b.title} ${b.reference} ${b.collection}'
-                  .toLowerCase()
-                  .contains(query),
-        )
-        .toList();
+    final selected =
+        collection == null ||
+                collection == '' ||
+                library.collections.contains(collection)
+            ? collection
+            : null;
+    final rows =
+        library.items
+            .where(
+              (b) =>
+                  (selected == null || b.collection == selected) &&
+                  (kind == null || b.kind == kind) &&
+                  '${b.title} ${b.reference} ${b.collection}'
+                      .toLowerCase()
+                      .contains(query),
+            )
+            .toList();
     final dark = Theme.of(context).brightness == Brightness.dark;
     final accent = dark ? MihrabTokens.gold : MihrabTokens.emerald;
 
@@ -158,15 +162,17 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
                   prefixIcon: Icon(Icons.search),
                   hintText: 'Поиск закладок',
                 ),
-                onChanged: (v) =>
-                    setState(() => query = v.trim().toLowerCase()),
+                onChanged:
+                    (v) => setState(() => query = v.trim().toLowerCase()),
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: IslamicCard(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 0,
+                ),
                 margin: EdgeInsets.zero,
                 child: DropdownButton<String>(
                   isExpanded: true,
@@ -181,13 +187,15 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
                       value: '',
                       child: Text('Без коллекции'),
                     ),
-                    for (final name
-                        in library.collections.where((c) => c != '__all__'))
+                    for (final name in library.collections.where(
+                      (c) => c != '__all__',
+                    ))
                       DropdownMenuItem(value: name, child: Text(name)),
                   ],
-                  onChanged: (v) => setState(
-                    () => collection = v == '__all__' ? null : v,
-                  ),
+                  onChanged:
+                      (v) => setState(
+                        () => collection = v == '__all__' ? null : v,
+                      ),
                 ),
               ),
             ),
@@ -198,22 +206,23 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
                 onPressed: () async {
                   final confirmed = await showDialog<bool>(
                     context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text('Удалить коллекцию?'),
-                      content: const Text(
-                        'Закладки останутся без коллекции.',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, false),
-                          child: const Text('Отмена'),
+                    builder:
+                        (ctx) => AlertDialog(
+                          title: const Text('Удалить коллекцию?'),
+                          content: const Text(
+                            'Закладки останутся без коллекции.',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, false),
+                              child: const Text('Отмена'),
+                            ),
+                            FilledButton(
+                              onPressed: () => Navigator.pop(ctx, true),
+                              child: const Text('Удалить'),
+                            ),
+                          ],
                         ),
-                        FilledButton(
-                          onPressed: () => Navigator.pop(ctx, true),
-                          child: const Text('Удалить'),
-                        ),
-                      ],
-                    ),
                   );
                   if (confirmed == true && mounted) {
                     await run(
@@ -266,9 +275,7 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
                           style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                         subtitle: Text(
-                          b.collection.isEmpty
-                              ? 'Без коллекции'
-                              : b.collection,
+                          b.collection.isEmpty ? 'Без коллекции' : b.collection,
                         ),
                         onTap: () => open(b),
                         trailing: PopupMenuButton<String>(
@@ -283,16 +290,17 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
                               );
                             }
                           },
-                          itemBuilder: (_) => const [
-                            PopupMenuItem(
-                              value: 'move',
-                              child: Text('Переместить'),
-                            ),
-                            PopupMenuItem(
-                              value: 'delete',
-                              child: Text('Удалить'),
-                            ),
-                          ],
+                          itemBuilder:
+                              (_) => const [
+                                PopupMenuItem(
+                                  value: 'move',
+                                  child: Text('Переместить'),
+                                ),
+                                PopupMenuItem(
+                                  value: 'delete',
+                                  child: Text('Удалить'),
+                                ),
+                              ],
                         ),
                       ),
                     ),

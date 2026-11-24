@@ -22,7 +22,10 @@ class SettingsScreen extends ConsumerWidget {
     final dark = theme.brightness == Brightness.dark;
 
     Widget sectionTitle(String text) => IslamicSectionTitle(text);
-    Widget card(List<Widget> children) => IslamicCard(padding: EdgeInsets.zero, child: Column(children: children));
+    Widget card(List<Widget> children) => IslamicCard(
+      padding: EdgeInsets.zero,
+      child: Column(children: children),
+    );
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(
@@ -34,21 +37,40 @@ class SettingsScreen extends ConsumerWidget {
       children: [
         sectionTitle(context.tr('Язык')),
         card([
-          ListTile(title: Text(context.tr('Язык')), trailing: DropdownButton<String>(
-            value: locale?.languageCode ?? 'system',
-            items: [
-              DropdownMenuItem(value:'system',child:Text(context.tr('Системный язык'))),
-              const DropdownMenuItem(value:'ru',child:Text('Русский')),
-              const DropdownMenuItem(value:'kk',child:Text('Қазақша')),
-              const DropdownMenuItem(value:'ar',child:Text('العربية', textDirection: TextDirection.rtl)),
-              const DropdownMenuItem(value:'en',child:Text('English')),
-            ],
-            onChanged:(value) async {
-              if(value==null)return;
-              try{await ref.read(localeProvider.notifier).change(value=='system'?null:value);}
-              catch(_){if(context.mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(context.tr('Не удалось сохранить язык'))));}
-            },
-          )),
+          ListTile(
+            title: Text(context.tr('Язык')),
+            trailing: DropdownButton<String>(
+              value: locale?.languageCode ?? 'system',
+              items: [
+                DropdownMenuItem(
+                  value: 'system',
+                  child: Text(context.tr('Системный язык')),
+                ),
+                const DropdownMenuItem(value: 'ru', child: Text('Русский')),
+                const DropdownMenuItem(value: 'kk', child: Text('Қазақша')),
+                const DropdownMenuItem(
+                  value: 'ar',
+                  child: Text('العربية', textDirection: TextDirection.rtl),
+                ),
+                const DropdownMenuItem(value: 'en', child: Text('English')),
+              ],
+              onChanged: (value) async {
+                if (value == null) return;
+                try {
+                  await ref
+                      .read(localeProvider.notifier)
+                      .change(value == 'system' ? null : value);
+                } catch (_) {
+                  if (context.mounted)
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(context.tr('Не удалось сохранить язык')),
+                      ),
+                    );
+                }
+              },
+            ),
+          ),
         ]),
         sectionTitle(context.tr('Место и расчёт')),
         card([
@@ -88,7 +110,9 @@ class SettingsScreen extends ConsumerWidget {
           SwitchListTile(
             title: Text(context.tr('Светлая тема')),
             subtitle: Text(
-              context.tr(settings.light ? 'Пергамент и изумруд' : 'Ночная мечеть'),
+              context.tr(
+                settings.light ? 'Пергамент и изумруд' : 'Ночная мечеть',
+              ),
             ),
             value: settings.light,
             onChanged: controller.light,
@@ -103,9 +127,12 @@ class SettingsScreen extends ConsumerWidget {
             ),
             title: Text(context.tr('Уведомления')),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const ReminderScreen()),
-            ),
+            onTap:
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const ReminderScreen(),
+                  ),
+                ),
           ),
           const Divider(height: 1, indent: 16, endIndent: 16),
           ListTile(
@@ -115,9 +142,10 @@ class SettingsScreen extends ConsumerWidget {
             ),
             title: Text(context.tr('Записи азана')),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const AdhanScreen()),
-            ),
+            onTap:
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => const AdhanScreen()),
+                ),
           ),
         ]),
         sectionTitle(context.tr('Прочее')),
@@ -129,11 +157,12 @@ class SettingsScreen extends ConsumerWidget {
             ),
             title: Text(context.tr('Первоначальная настройка')),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const OnboardingScreen(revisit: true),
-              ),
-            ),
+            onTap:
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const OnboardingScreen(revisit: true),
+                  ),
+                ),
           ),
         ]),
         const SizedBox(height: 24),
@@ -144,9 +173,10 @@ class SettingsScreen extends ConsumerWidget {
             letterSpacing: 4,
             fontWeight: FontWeight.w600,
             fontSize: 12,
-            color: dark
-                ? MihrabTokens.gold.withValues(alpha: 0.4)
-                : MihrabTokens.emerald.withValues(alpha: 0.35),
+            color:
+                dark
+                    ? MihrabTokens.gold.withValues(alpha: 0.4)
+                    : MihrabTokens.emerald.withValues(alpha: 0.35),
           ),
         ),
       ],

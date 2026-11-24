@@ -8,8 +8,13 @@ import 'package:mihrab/domain/prayer_schedule.dart';
 void main() {
   setUpAll(tz.initializeTimeZones);
   test('overlapping rolling windows preserve notification identities', () {
-    List<PrayerReminder> plan(int day) => ReminderPlanner.plan(City.all.first,
-      DateTime.utc(2026,11,day), hanafi: true, enabled: {PrayerKind.dhuhr}, minutesBefore: 15);
+    List<PrayerReminder> plan(int day) => ReminderPlanner.plan(
+      City.all.first,
+      DateTime.utc(2026, 11, day),
+      hanafi: true,
+      enabled: {PrayerKind.dhuhr},
+      minutesBefore: 15,
+    );
     final first = {for (final p in plan(24)) p.time: p.id};
     final second = plan(25);
     final overlap = second.where((p) => first.containsKey(p.time)).toList();
@@ -23,7 +28,9 @@ void main() {
   });
   test('legacy settings migrate to one versioned value', () async {
     SharedPreferences.setMockInitialValues({
-      'reminder_prayers': ['fajr','sunrise'], 'reminder_lead': 15, 'reminder_exact': true,
+      'reminder_prayers': ['fajr', 'sunrise'],
+      'reminder_lead': 15,
+      'reminder_exact': true,
     });
     final prefs = await SharedPreferences.getInstance();
     final config = ReminderPreferences.read(prefs)!;

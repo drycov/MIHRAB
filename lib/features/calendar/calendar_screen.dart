@@ -18,8 +18,18 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   int offset = 0;
   DateTime? selected;
   static const months = [
-    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
+    'Январь',
+    'Февраль',
+    'Март',
+    'Апрель',
+    'Май',
+    'Июнь',
+    'Июль',
+    'Август',
+    'Сентябрь',
+    'Октябрь',
+    'Ноябрь',
+    'Декабрь',
   ];
 
   @override
@@ -32,13 +42,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final first = month.weekday - 1;
     final day = selected ?? (offset == 0 ? today : month);
     final hijri = HijriCalendar.fromGregorian(day, adjustment: adjustment);
-    final schedule = ref.watch(dailyScheduleProvider((
-      city: key.city,
-      hanafi: key.hanafi,
-      year: day.year,
-      month: day.month,
-      day: day.day,
-    )));
+    final schedule = ref.watch(
+      dailyScheduleProvider((
+        city: key.city,
+        hanafi: key.hanafi,
+        year: day.year,
+        month: day.month,
+        day: day.day,
+      )),
+    );
     final dark = Theme.of(context).brightness == Brightness.dark;
     final theme = Theme.of(context);
 
@@ -70,9 +82,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             children: [
               IconButton(
                 tooltip: context.tr('Предыдущий месяц'),
-                onPressed: offset <= -120
-                    ? null
-                    : () => setState(() {
+                onPressed:
+                    offset <= -120
+                        ? null
+                        : () => setState(() {
                           offset--;
                           selected = null;
                         }),
@@ -89,9 +102,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               ),
               IconButton(
                 tooltip: context.tr('Следующий месяц'),
-                onPressed: offset >= 120
-                    ? null
-                    : () => setState(() {
+                onPressed:
+                    offset >= 120
+                        ? null
+                        : () => setState(() {
                           offset++;
                           selected = null;
                         }),
@@ -105,10 +119,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         ),
         if (offset != 0)
           TextButton(
-            onPressed: () => setState(() {
-              offset = 0;
-              selected = null;
-            }),
+            onPressed:
+                () => setState(() {
+                  offset = 0;
+                  selected = null;
+                }),
             child: Text(context.tr('Сегодня')),
           ),
         const SizedBox(height: 8),
@@ -146,19 +161,21 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             return Padding(
               padding: const EdgeInsets.all(2),
               child: Material(
-                color: active
-                    ? MihrabTokens.emerald
-                    : (dark
-                        ? MihrabTokens.emerald.withValues(alpha: 0.25)
-                        : MihrabTokens.paper),
+                color:
+                    active
+                        ? MihrabTokens.emerald
+                        : (dark
+                            ? MihrabTokens.emerald.withValues(alpha: 0.25)
+                            : MihrabTokens.paper),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                   side: BorderSide(
-                    color: isToday
-                        ? MihrabTokens.gold
-                        : (active
-                            ? MihrabTokens.gold.withValues(alpha: 0.35)
-                            : MihrabTokens.transparent),
+                    color:
+                        isToday
+                            ? MihrabTokens.gold
+                            : (active
+                                ? MihrabTokens.gold.withValues(alpha: 0.35)
+                                : MihrabTokens.transparent),
                     width: isToday || active ? 1.2 : 0,
                   ),
                 ),
@@ -178,22 +195,24 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       Text(
                         '${h.day}',
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: active
-                              ? MihrabTokens.goldSoft
-                              : (dark
-                                  ? MihrabTokens.gold.withValues(alpha: 0.5)
-                                  : MihrabTokens.muted),
+                          color:
+                              active
+                                  ? MihrabTokens.goldSoft
+                                  : (dark
+                                      ? MihrabTokens.gold.withValues(alpha: 0.5)
+                                      : MihrabTokens.muted),
                         ),
                       ),
                       if (h.event != null)
                         Icon(
                           Icons.circle,
                           size: 5,
-                          color: active
-                              ? MihrabTokens.gold
-                              : (dark
-                                  ? MihrabTokens.goldSoft
-                                  : MihrabTokens.emerald),
+                          color:
+                              active
+                                  ? MihrabTokens.gold
+                                  : (dark
+                                      ? MihrabTokens.goldSoft
+                                      : MihrabTokens.emerald),
                         ),
                     ],
                   ),
@@ -256,9 +275,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         slot.kind.arabic,
                         textDirection: TextDirection.rtl,
                         style: TextStyle(
-                          color: dark
-                              ? MihrabTokens.gold.withValues(alpha: 0.55)
-                              : MihrabTokens.muted,
+                          color:
+                              dark
+                                  ? MihrabTokens.gold.withValues(alpha: 0.55)
+                                  : MihrabTokens.muted,
                           fontSize: 13,
                         ),
                       ),
@@ -287,10 +307,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               underline: const SizedBox.shrink(),
               items: [
                 for (var i = -2; i <= 2; i++)
-                  DropdownMenuItem(
-                    value: i,
-                    child: Text(i > 0 ? '+$i' : '$i'),
-                  ),
+                  DropdownMenuItem(value: i, child: Text(i > 0 ? '+$i' : '$i')),
               ],
               onChanged: (v) async {
                 if (v == null) return;
@@ -298,9 +315,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   await ref.read(hijriAdjustmentProvider.notifier).change(v);
                 } catch (e) {
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(e.toString())));
                   }
                 }
               },

@@ -56,7 +56,8 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
     final today = DateTime.utc(key.year, key.month, key.day);
     final date =
         selected == null || selected!.isAfter(today) ? today : selected!;
-    final supported = !kIsWeb &&
+    final supported =
+        !kIsWeb &&
         (defaultTargetPlatform == TargetPlatform.android ||
             defaultTargetPlatform == TargetPlatform.iOS ||
             defaultTargetPlatform == TargetPlatform.macOS);
@@ -81,9 +82,10 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
           IconButton(
             tooltip: context.tr('Статистика'),
             icon: Icon(Icons.bar_chart, color: accent),
-            onPressed: busy
-                ? null
-                : () => Navigator.of(context).push(
+            onPressed:
+                busy
+                    ? null
+                    : () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (_) => const StatisticsScreen(),
                       ),
@@ -102,11 +104,14 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
                 children: [
                   IconButton(
                     tooltip: context.tr('Предыдущий день'),
-                    onPressed: busy || !date.isAfter(DateTime.utc(2000))
-                        ? null
-                        : () => setState(
-                              () => selected =
-                                  date.subtract(const Duration(days: 1)),
+                    onPressed:
+                        busy || !date.isAfter(DateTime.utc(2000))
+                            ? null
+                            : () => setState(
+                              () =>
+                                  selected = date.subtract(
+                                    const Duration(days: 1),
+                                  ),
                             ),
                     icon: Icon(Icons.chevron_left, color: accent),
                   ),
@@ -120,36 +125,42 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
                         color: dark ? MihrabTokens.cream : MihrabTokens.ink,
                       ),
                     ),
-                    onPressed: busy
-                        ? null
-                        : () async {
-                            final result = await showDatePicker(
-                              context: context,
-                              initialDate:
-                                  DateTime(date.year, date.month, date.day),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(
-                                today.year,
-                                today.month,
-                                today.day,
-                              ),
-                            );
-                            if (result != null && mounted) {
-                              setState(
-                                () => selected = DateTime.utc(
-                                  result.year,
-                                  result.month,
-                                  result.day,
+                    onPressed:
+                        busy
+                            ? null
+                            : () async {
+                              final result = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime(
+                                  date.year,
+                                  date.month,
+                                  date.day,
+                                ),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(
+                                  today.year,
+                                  today.month,
+                                  today.day,
                                 ),
                               );
-                            }
-                          },
+                              if (result != null && mounted) {
+                                setState(
+                                  () =>
+                                      selected = DateTime.utc(
+                                        result.year,
+                                        result.month,
+                                        result.day,
+                                      ),
+                                );
+                              }
+                            },
                   ),
                   IconButton(
                     tooltip: context.tr('Следующий день'),
-                    onPressed: busy || !date.isBefore(today)
-                        ? null
-                        : () => setState(
+                    onPressed:
+                        busy || !date.isBefore(today)
+                            ? null
+                            : () => setState(
                               () =>
                                   selected = date.add(const Duration(days: 1)),
                             ),
@@ -164,131 +175,144 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
                 child: Text(context.tr('Сегодня')),
               ),
             ...day.when(
-              loading: () => <Widget>[
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ],
-              error: (e, s) => <Widget>[
-                const IslamicCard(child: Text('Не удалось открыть дневник')),
-                TextButton(
-                  onPressed: () => ref.invalidate(diaryDayProvider(date)),
-                  child: Text(context.tr('Повторить')),
-                ),
-              ],
-              data: (value) => <Widget>[
-                MihrabFrame(
-                  padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
-                  child: Column(
-                    children: [
-                      const IslamicStar(size: 20, color: MihrabTokens.gold),
-                      const SizedBox(height: 12),
-                      Text(
-                        'ВЫПОЛНЕНО',
-                        style: TextStyle(
-                          color: MihrabTokens.gold.withValues(alpha: 0.9),
-                          letterSpacing: 2.2,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '${value.completed} из 5',
-                        style: const TextStyle(
-                          color: MihrabTokens.paper,
-                          fontSize: 32,
-                          fontWeight: FontWeight.w300,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: value.completed / 5,
-                          minHeight: 4,
-                          backgroundColor:
-                              MihrabTokens.gold.withValues(alpha: 0.15),
-                          color: MihrabTokens.gold,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      Text(
-                        'Своевременно: ${value.count(PrayerStatus.onTime)}  ·  Восполнено: ${value.count(PrayerStatus.qada)}',
-                        style: TextStyle(
-                          color: MihrabTokens.goldSoft.withValues(alpha: 0.9),
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        'Пропущено: ${value.count(PrayerStatus.missed)}  ·  Не отмечено: ${value.count(PrayerStatus.unmarked)}',
-                        style: TextStyle(
-                          color: MihrabTokens.gold.withValues(alpha: 0.7),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const IslamicSectionTitle('Отметки'),
-                for (final kind
-                    in PrayerKind.values.where((k) => k.obligatory))
-                  IslamicCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          kind.label,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          kind.arabic,
-                          textDirection: TextDirection.rtl,
-                          style: TextStyle(
-                            color: dark
-                                ? MihrabTokens.gold.withValues(alpha: 0.55)
-                                : MihrabTokens.muted,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        DropdownButton<PrayerStatus>(
-                          isExpanded: true,
-                          value: value.status(kind),
-                          underline: const SizedBox.shrink(),
-                          items: [
-                            for (final status in PrayerStatus.values)
-                              DropdownMenuItem(
-                                value: status,
-                                child: Text(context.tr(status.label)),
-                              ),
-                          ],
-                          onChanged: busy
-                              ? null
-                              : (status) {
-                                  if (status != null) {
-                                    mark(date, kind, status);
-                                  }
-                                },
-                        ),
-                      ],
+              loading:
+                  () => <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24),
+                      child: Center(child: CircularProgressIndicator()),
                     ),
-                  ),
-              ],
+                  ],
+              error:
+                  (e, s) => <Widget>[
+                    const IslamicCard(
+                      child: Text('Не удалось открыть дневник'),
+                    ),
+                    TextButton(
+                      onPressed: () => ref.invalidate(diaryDayProvider(date)),
+                      child: Text(context.tr('Повторить')),
+                    ),
+                  ],
+              data:
+                  (value) => <Widget>[
+                    MihrabFrame(
+                      padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
+                      child: Column(
+                        children: [
+                          const IslamicStar(size: 20, color: MihrabTokens.gold),
+                          const SizedBox(height: 12),
+                          Text(
+                            'ВЫПОЛНЕНО',
+                            style: TextStyle(
+                              color: MihrabTokens.gold.withValues(alpha: 0.9),
+                              letterSpacing: 2.2,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '${value.completed} из 5',
+                            style: const TextStyle(
+                              color: MihrabTokens.paper,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w300,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: LinearProgressIndicator(
+                              value: value.completed / 5,
+                              minHeight: 4,
+                              backgroundColor: MihrabTokens.gold.withValues(
+                                alpha: 0.15,
+                              ),
+                              color: MihrabTokens.gold,
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            'Своевременно: ${value.count(PrayerStatus.onTime)}  ·  Восполнено: ${value.count(PrayerStatus.qada)}',
+                            style: TextStyle(
+                              color: MihrabTokens.goldSoft.withValues(
+                                alpha: 0.9,
+                              ),
+                              fontSize: 13,
+                            ),
+                          ),
+                          Text(
+                            'Пропущено: ${value.count(PrayerStatus.missed)}  ·  Не отмечено: ${value.count(PrayerStatus.unmarked)}',
+                            style: TextStyle(
+                              color: MihrabTokens.gold.withValues(alpha: 0.7),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const IslamicSectionTitle('Отметки'),
+                    for (final kind in PrayerKind.values.where(
+                      (k) => k.obligatory,
+                    ))
+                      IslamicCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              kind.label,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              kind.arabic,
+                              textDirection: TextDirection.rtl,
+                              style: TextStyle(
+                                color:
+                                    dark
+                                        ? MihrabTokens.gold.withValues(
+                                          alpha: 0.55,
+                                        )
+                                        : MihrabTokens.muted,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            DropdownButton<PrayerStatus>(
+                              isExpanded: true,
+                              value: value.status(kind),
+                              underline: const SizedBox.shrink(),
+                              items: [
+                                for (final status in PrayerStatus.values)
+                                  DropdownMenuItem(
+                                    value: status,
+                                    child: Text(context.tr(status.label)),
+                                  ),
+                              ],
+                              onChanged:
+                                  busy
+                                      ? null
+                                      : (status) {
+                                        if (status != null) {
+                                          mark(date, kind, status);
+                                        }
+                                      },
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
             ),
             if (busy) const LinearProgressIndicator(minHeight: 2),
             const SizedBox(height: 12),
             Text(
               'Отметки личные и задаются вручную. Неотмеченный намаз не считается пропущенным. Записи привязаны к выбранной календарной дате и не изменяются при смене города.',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
-                    height: 1.4,
-                  ),
+                color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
+                height: 1.4,
+              ),
             ),
           ],
         ),

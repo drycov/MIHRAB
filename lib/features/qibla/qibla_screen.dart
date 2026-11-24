@@ -46,7 +46,14 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
       );
       if (mounted) setState(() => position = result);
     } catch (e) {
-      if (mounted) setState(() => error = e is StateError ? e.message.toString() : 'Не удалось определить местоположение');
+      if (mounted)
+        setState(
+          () =>
+              error =
+                  e is StateError
+                      ? e.message.toString()
+                      : 'Не удалось определить местоположение',
+        );
     } finally {
       if (mounted) setState(() => loading = false);
     }
@@ -59,7 +66,8 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
       position?.latitude ?? city.latitude,
       position?.longitude ?? city.longitude,
     );
-    final mobile = !kIsWeb &&
+    final mobile =
+        !kIsWeb &&
         (defaultTargetPlatform == TargetPlatform.android ||
             defaultTargetPlatform == TargetPlatform.iOS);
     final dark = Theme.of(context).brightness == Brightness.dark;
@@ -101,7 +109,9 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
         FilledButton.icon(
           onPressed: loading ? null : locate,
           icon: const Icon(Icons.my_location),
-          label: Text(context.tr(loading ? 'Определение…' : 'Использовать GPS')),
+          label: Text(
+            context.tr(loading ? 'Определение…' : 'Использовать GPS'),
+          ),
           style: FilledButton.styleFrom(
             backgroundColor: dark ? MihrabTokens.gold : MihrabTokens.emerald,
             foregroundColor:
@@ -164,9 +174,7 @@ class _Dial extends StatelessWidget {
           const SizedBox(height: 18),
           AspectRatio(
             aspectRatio: 1,
-            child: CustomPaint(
-              painter: _CompassPainter(bearing, heading),
-            ),
+            child: CustomPaint(painter: _CompassPainter(bearing, heading)),
           ),
           const SizedBox(height: 12),
           Text(
@@ -195,23 +203,26 @@ class _CompassPainter extends CustomPainter {
     final center = size.center(Offset.zero);
     final radius = size.shortestSide / 2 - 10;
 
-    final ring = Paint()
-      ..color = MihrabTokens.gold.withValues(alpha: 0.55)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-    final ringSoft = Paint()
-      ..color = MihrabTokens.gold.withValues(alpha: 0.2)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
+    final ring =
+        Paint()
+          ..color = MihrabTokens.gold.withValues(alpha: 0.55)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5;
+    final ringSoft =
+        Paint()
+          ..color = MihrabTokens.gold.withValues(alpha: 0.2)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1;
 
     canvas.drawCircle(center, radius, ring);
     canvas.drawCircle(center, radius * 0.72, ringSoft);
     canvas.drawCircle(center, radius * 0.12, ring);
 
-    final tick = Paint()
-      ..color = MihrabTokens.gold.withValues(alpha: 0.75)
-      ..strokeWidth = 1.4
-      ..strokeCap = StrokeCap.round;
+    final tick =
+        Paint()
+          ..color = MihrabTokens.gold.withValues(alpha: 0.75)
+          ..strokeWidth = 1.4
+          ..strokeCap = StrokeCap.round;
 
     for (var i = 0; i < 360; i += 10) {
       final a = (i - (heading ?? 0)) * math.pi / 180;
@@ -245,15 +256,12 @@ class _CompassPainter extends CustomPainter {
     // Kaaba marker on ring
     final kaabaAngle =
         ((heading == null ? bearing : Qibla.relative(bearing, heading!))) *
-            math.pi /
-            180;
+        math.pi /
+        180;
     final kaabaPos =
-        center + Offset(math.sin(kaabaAngle), -math.cos(kaabaAngle)) * (radius - 2);
-    canvas.drawCircle(
-      kaabaPos,
-      4,
-      Paint()..color = MihrabTokens.gold,
-    );
+        center +
+        Offset(math.sin(kaabaAngle), -math.cos(kaabaAngle)) * (radius - 2);
+    canvas.drawCircle(kaabaPos, 4, Paint()..color = MihrabTokens.gold);
 
     canvas.save();
     canvas.translate(center.dx, center.dy);
@@ -262,12 +270,13 @@ class _CompassPainter extends CustomPainter {
           math.pi /
           180,
     );
-    final needle = Path()
-      ..moveTo(0, -radius + 36)
-      ..lineTo(-12, 18)
-      ..lineTo(0, 6)
-      ..lineTo(12, 18)
-      ..close();
+    final needle =
+        Path()
+          ..moveTo(0, -radius + 36)
+          ..lineTo(-12, 18)
+          ..lineTo(0, 6)
+          ..lineTo(12, 18)
+          ..close();
     canvas.drawPath(needle, Paint()..color = MihrabTokens.gold);
     canvas.drawPath(
       needle,

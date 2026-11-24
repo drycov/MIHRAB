@@ -41,8 +41,9 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
     } catch (_) {
       if (mounted) {
         setState(
-          () => status =
-              'Не удалось выполнить операцию с аудио. Проверьте формат и файл.',
+          () =>
+              status =
+                  'Не удалось выполнить операцию с аудио. Проверьте формат и файл.',
         );
       }
     } finally {
@@ -73,16 +74,15 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
                     Text(
                       profile.label,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       audio.name(profile) ?? 'Запись не выбрана',
                       style: TextStyle(
-                        color: dark
-                            ? MihrabTokens.goldSoft
-                            : MihrabTokens.muted,
+                        color:
+                            dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -91,41 +91,47 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
                       runSpacing: 8,
                       children: [
                         OutlinedButton.icon(
-                          onPressed: busy || !audio.supported
-                              ? null
-                              : () => run(() async {
+                          onPressed:
+                              busy || !audio.supported
+                                  ? null
+                                  : () => run(() async {
                                     await audio.import(profile);
                                   }),
                           icon: const Icon(Icons.folder_open),
                           label: const Text('Выбрать'),
                         ),
                         FilledButton.tonalIcon(
-                          onPressed: busy || audio.name(profile) == null
-                              ? null
-                              : () => run(() => audio.play(profile)),
+                          onPressed:
+                              busy || audio.name(profile) == null
+                                  ? null
+                                  : () => run(() => audio.play(profile)),
                           icon: const Icon(Icons.play_arrow),
                           label: const Text('Слушать'),
                         ),
                         if (!kIsWeb &&
                             defaultTargetPlatform == TargetPlatform.android)
                           OutlinedButton.icon(
-                            onPressed: busy || audio.name(profile) == null
-                                ? null
-                                : () => run(() => audio.playNative(profile)),
+                            onPressed:
+                                busy || audio.name(profile) == null
+                                    ? null
+                                    : () =>
+                                        run(() => audio.playNative(profile)),
                             icon: const Icon(Icons.play_circle),
                             label: const Text('Фоновое'),
                           ),
                         OutlinedButton.icon(
-                          onPressed: busy || !audio.supported
-                              ? null
-                              : () => run(audio.stop),
+                          onPressed:
+                              busy || !audio.supported
+                                  ? null
+                                  : () => run(audio.stop),
                           icon: const Icon(Icons.stop),
                           label: const Text('Стоп'),
                         ),
                         TextButton(
-                          onPressed: busy || audio.name(profile) == null
-                              ? null
-                              : () => run(() => audio.remove(profile)),
+                          onPressed:
+                              busy || audio.name(profile) == null
+                                  ? null
+                                  : () => run(() => audio.remove(profile)),
                           child: Text(
                             'Удалить',
                             style: TextStyle(color: accent),

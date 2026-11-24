@@ -25,8 +25,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
   Widget build(BuildContext context) {
     final key = ref.watch(localDayProvider);
     final today = DateTime.utc(key.year, key.month, key.day);
-    final end =
-        includeToday ? today : today.subtract(const Duration(days: 1));
+    final end = includeToday ? today : today.subtract(const Duration(days: 1));
     final period = (end: end, length: length);
     final statistics = ref.watch(prayerStatisticsProvider(period));
     final dark = Theme.of(context).brightness == Brightness.dark;
@@ -65,22 +64,25 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
             ),
             const SizedBox(height: 12),
             ...statistics.when(
-              loading: () => <Widget>[
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ],
-              error: (_, __) => <Widget>[
-                const IslamicCard(
-                  child: Text('Не удалось загрузить статистику'),
-                ),
-                TextButton(
-                  onPressed: () =>
-                      ref.invalidate(prayerStatisticsProvider(period)),
-                  child: Text(context.tr('Повторить')),
-                ),
-              ],
+              loading:
+                  () => <Widget>[
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                  ],
+              error:
+                  (_, __) => <Widget>[
+                    const IslamicCard(
+                      child: Text('Не удалось загрузить статистику'),
+                    ),
+                    TextButton(
+                      onPressed:
+                          () =>
+                              ref.invalidate(prayerStatisticsProvider(period)),
+                      child: Text(context.tr('Повторить')),
+                    ),
+                  ],
               data: (s) => _content(context, s),
             ),
           ],
@@ -96,9 +98,10 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
       PrayerStatus.onTime: MihrabTokens.emeraldSoft,
       PrayerStatus.qada: MihrabTokens.gold,
       PrayerStatus.missed: theme.colorScheme.error,
-      PrayerStatus.unmarked: dark
-          ? MihrabTokens.gold.withValues(alpha: 0.25)
-          : MihrabTokens.muted.withValues(alpha: 0.35),
+      PrayerStatus.unmarked:
+          dark
+              ? MihrabTokens.gold.withValues(alpha: 0.25)
+              : MihrabTokens.muted.withValues(alpha: 0.35),
     };
 
     return [
@@ -189,9 +192,8 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                 child: LinearProgressIndicator(
                   value: s.total == 0 ? 0 : s.count(status) / s.total,
                   minHeight: 5,
-                  backgroundColor: dark
-                      ? MihrabTokens.emeraldSoft
-                      : MihrabTokens.creamMuted,
+                  backgroundColor:
+                      dark ? MihrabTokens.emeraldSoft : MihrabTokens.creamMuted,
                   color: palette[status],
                 ),
               ),
@@ -213,9 +215,10 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                 kind.arabic,
                 textDirection: TextDirection.rtl,
                 style: TextStyle(
-                  color: dark
-                      ? MihrabTokens.gold.withValues(alpha: 0.5)
-                      : MihrabTokens.muted,
+                  color:
+                      dark
+                          ? MihrabTokens.gold.withValues(alpha: 0.5)
+                          : MihrabTokens.muted,
                   fontSize: 13,
                 ),
               ),
@@ -228,10 +231,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                       if (s.countFor(kind, status) > 0)
                         Expanded(
                           flex: s.countFor(kind, status),
-                          child: Container(
-                            height: 9,
-                            color: palette[status],
-                          ),
+                          child: Container(height: 9, color: palette[status]),
                         ),
                   ],
                 ),
@@ -262,12 +262,10 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
             ),
             subtitle: Row(
               children: [
-                for (final kind
-                    in PrayerKind.values.where((k) => k.obligatory))
+                for (final kind in PrayerKind.values.where((k) => k.obligatory))
                   Expanded(
                     child: Tooltip(
-                      message:
-                          '${kind.label}: ${item.day.status(kind).label}',
+                      message: '${kind.label}: ${item.day.status(kind).label}',
                       child: Container(
                         margin: const EdgeInsets.only(right: 3, top: 6),
                         height: 8,
@@ -287,11 +285,12 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                 fontFeatures: [FontFeature.tabularFigures()],
               ),
             ),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => DiaryScreen(initialDate: item.date),
-              ),
-            ),
+            onTap:
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => DiaryScreen(initialDate: item.date),
+                  ),
+                ),
           ),
         ),
       const SizedBox(height: 8),

@@ -9,6 +9,9 @@ void main() {
     expect(formatRemaining(const Duration(milliseconds: 1001)), '00:00:02');
   });
   test('countdown supports more than one hour', () {
-    expect(formatRemaining(const Duration(hours: 2, minutes: 3, seconds: 4)), '02:03:04');
+    expect(
+      formatRemaining(const Duration(hours: 2, minutes: 3, seconds: 4)),
+      '02:03:04',
+    );
   });
 }

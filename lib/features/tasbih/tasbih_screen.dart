@@ -25,19 +25,20 @@ class TasbihScreen extends ConsumerWidget {
   Future<bool> confirm(BuildContext context, String title) async =>
       await showDialog<bool>(
         context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(title),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Отмена'),
+        builder:
+            (ctx) => AlertDialog(
+              title: Text(title),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Отмена'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text('Подтвердить'),
+                ),
+              ],
             ),
-            FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Подтвердить'),
-            ),
-          ],
-        ),
       ) ??
       false;
 
@@ -58,7 +59,10 @@ class TasbihScreen extends ConsumerWidget {
       return;
     }
     if (!context.mounted) return;
-    await run(context, () => ref.read(tasbihProvider.notifier).configure(d, target));
+    await run(
+      context,
+      () => ref.read(tasbihProvider.notifier).configure(d, target),
+    );
   }
 
   Future<void> custom(BuildContext context, WidgetRef ref) async {
@@ -67,36 +71,37 @@ class TasbihScreen extends ConsumerWidget {
     );
     final goal = await showDialog<int>(
       context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocal) {
-          final value = int.tryParse(controller.text);
-          final valid = value != null && value >= 1 && value <= 9999;
-          return AlertDialog(
-            title: const Text('Произвольная цель'),
-            content: TextField(
-              controller: controller,
-              autofocus: true,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(4),
-              ],
-              decoration: const InputDecoration(labelText: 'От 1 до 9999'),
-              onChanged: (_) => setLocal(() {}),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Отмена'),
-              ),
-              FilledButton(
-                onPressed: valid ? () => Navigator.pop(ctx, value) : null,
-                child: const Text('Применить'),
-              ),
-            ],
-          );
-        },
-      ),
+      builder:
+          (ctx) => StatefulBuilder(
+            builder: (ctx, setLocal) {
+              final value = int.tryParse(controller.text);
+              final valid = value != null && value >= 1 && value <= 9999;
+              return AlertDialog(
+                title: const Text('Произвольная цель'),
+                content: TextField(
+                  controller: controller,
+                  autofocus: true,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(4),
+                  ],
+                  decoration: const InputDecoration(labelText: 'От 1 до 9999'),
+                  onChanged: (_) => setLocal(() {}),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    child: const Text('Отмена'),
+                  ),
+                  FilledButton(
+                    onPressed: valid ? () => Navigator.pop(ctx, value) : null,
+                    child: const Text('Применить'),
+                  ),
+                ],
+              );
+            },
+          ),
     );
     controller.dispose();
     if (goal != null && context.mounted) {
@@ -119,11 +124,12 @@ class TasbihScreen extends ConsumerWidget {
           IconButton(
             tooltip: 'История',
             icon: Icon(Icons.history, color: accent),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const TasbihHistoryScreen(),
-              ),
-            ),
+            onPressed:
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const TasbihHistoryScreen(),
+                  ),
+                ),
           ),
         ],
       ),
@@ -196,9 +202,10 @@ class TasbihScreen extends ConsumerWidget {
                         child: CircularProgressIndicator(
                           value: s.count / s.target,
                           strokeWidth: 6,
-                          backgroundColor: dark
-                              ? MihrabTokens.emeraldSoft
-                              : MihrabTokens.creamMuted,
+                          backgroundColor:
+                              dark
+                                  ? MihrabTokens.emeraldSoft
+                                  : MihrabTokens.creamMuted,
                           color: accent,
                         ),
                       ),
@@ -209,12 +216,17 @@ class TasbihScreen extends ConsumerWidget {
                           style: FilledButton.styleFrom(
                             shape: const CircleBorder(),
                             padding: EdgeInsets.zero,
-                            backgroundColor: dark ? MihrabTokens.gold : MihrabTokens.emerald,
-                            foregroundColor: dark ? MihrabTokens.background : MihrabTokens.cream,
+                            backgroundColor:
+                                dark ? MihrabTokens.gold : MihrabTokens.emerald,
+                            foregroundColor:
+                                dark
+                                    ? MihrabTokens.background
+                                    : MihrabTokens.cream,
                           ),
-                          onPressed: s.complete
-                              ? null
-                              : () => run(context, () async {
+                          onPressed:
+                              s.complete
+                                  ? null
+                                  : () => run(context, () async {
                                     final before = ref.read(tasbihProvider);
                                     await c.increment();
                                     if (!context.mounted) return;
@@ -237,15 +249,16 @@ class TasbihScreen extends ConsumerWidget {
                                   fontSize: 48,
                                   fontWeight: FontWeight.w300,
                                   letterSpacing: 1,
-                                  fontFeatures: [
-                                    FontFeature.tabularFigures(),
-                                  ],
+                                  fontFeatures: [FontFeature.tabularFigures()],
                                 ),
                               ),
                               Text(
                                 'из ${s.target}',
                                 style: TextStyle(
-                                  color: dark ? MihrabTokens.background : MihrabTokens.cream,
+                                  color:
+                                      dark
+                                          ? MihrabTokens.background
+                                          : MihrabTokens.cream,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -254,7 +267,10 @@ class TasbihScreen extends ConsumerWidget {
                                 style: TextStyle(
                                   fontSize: 12,
                                   letterSpacing: 1.2,
-                                  color: dark ? MihrabTokens.background : MihrabTokens.cream,
+                                  color:
+                                      dark
+                                          ? MihrabTokens.background
+                                          : MihrabTokens.cream,
                                 ),
                               ),
                             ],
@@ -268,14 +284,15 @@ class TasbihScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 28),
             FilledButton.tonalIcon(
-              onPressed: s.count == 0
-                  ? null
-                  : () async {
-                      if (s.complete ||
-                          await confirm(context, 'Сбросить текущий счёт?')) {
-                        if (context.mounted) await run(context, c.reset);
-                      }
-                    },
+              onPressed:
+                  s.count == 0
+                      ? null
+                      : () async {
+                        if (s.complete ||
+                            await confirm(context, 'Сбросить текущий счёт?')) {
+                          if (context.mounted) await run(context, c.reset);
+                        }
+                      },
               icon: const Icon(Icons.restart_alt),
               label: Text(s.complete ? 'Новая сессия' : 'Сбросить'),
             ),
@@ -320,20 +337,21 @@ class TasbihHistoryScreen extends ConsumerWidget {
           IconButton(
             tooltip: 'Очистить историю',
             icon: Icon(Icons.delete_outline, color: accent),
-            onPressed: history.isEmpty
-                ? null
-                : () async {
-                    if (await helper.confirm(
+            onPressed:
+                history.isEmpty
+                    ? null
+                    : () async {
+                      if (await helper.confirm(
+                            context,
+                            'Удалить историю завершённых сессий?',
+                          ) &&
+                          context.mounted) {
+                        await helper.run(
                           context,
-                          'Удалить историю завершённых сессий?',
-                        ) &&
-                        context.mounted) {
-                      await helper.run(
-                        context,
-                        ref.read(tasbihProvider.notifier).clearHistory,
-                      );
-                    }
-                  },
+                          ref.read(tasbihProvider.notifier).clearHistory,
+                        );
+                      }
+                    },
           ),
         ],
       ),
@@ -351,9 +369,7 @@ class TasbihHistoryScreen extends ConsumerWidget {
               ),
             ),
             if (history.isEmpty)
-              const IslamicCard(
-                child: Text('История пока пуста'),
-              ),
+              const IslamicCard(child: Text('История пока пуста')),
             for (final item in history)
               IslamicCard(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -361,8 +377,9 @@ class TasbihHistoryScreen extends ConsumerWidget {
                   leading: Icon(Icons.check_circle_outline, color: accent),
                   title: Text(item.dhikr.label),
                   subtitle: Text(
-                    MaterialLocalizations.of(context)
-                        .formatMediumDate(item.completedAt.toLocal()),
+                    MaterialLocalizations.of(
+                      context,
+                    ).formatMediumDate(item.completedAt.toLocal()),
                   ),
                   trailing: Text(
                     '${item.target}',
@@ -378,8 +395,8 @@ class TasbihHistoryScreen extends ConsumerWidget {
               'Хранятся последние 100 завершённых сессий.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
-                  ),
+                color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
+              ),
             ),
           ],
         ),

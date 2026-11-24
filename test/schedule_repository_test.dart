@@ -10,14 +10,25 @@ void main() {
   test('missing cache explicitly falls back to calculation', () async {
     SharedPreferences.setMockInitialValues({});
     final repo = LocalScheduleRepository(await SharedPreferences.getInstance());
-    expect(repo.getDay(City.all.first, DateTime(2026,11,24), hanafi: true).source, ScheduleSource.astronomical);
+    expect(
+      repo.getDay(City.all.first, DateTime(2026, 11, 24), hanafi: true).source,
+      ScheduleSource.astronomical,
+    );
   });
   test('invalid year rejected', () async {
     SharedPreferences.setMockInitialValues({});
     final repo = LocalScheduleRepository(await SharedPreferences.getInstance());
-    await expectLater(repo.storeValidatedYear(City.all.first, 2026, {}), throwsFormatException);
+    await expectLater(
+      repo.storeValidatedYear(City.all.first, 2026, {}),
+      throwsFormatException,
+    );
   });
   test('invalid times rejected', () {
-    expect(() => OfficialDayCodec.decode(City.all.first, DateTime(2026,11,24), {'fajr':'25:00'}), throwsFormatException);
+    expect(
+      () => OfficialDayCodec.decode(City.all.first, DateTime(2026, 11, 24), {
+        'fajr': '25:00',
+      }),
+      throwsFormatException,
+    );
   });
 }

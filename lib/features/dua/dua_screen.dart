@@ -21,14 +21,19 @@ class _DuaScreenState extends State<DuaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final filtered = duas
-        .where(
-          (d) =>
-              (category == null || d.category == category) &&
-              [d.title, d.meaning, d.transliteration, d.arabic]
-                  .any((s) => s.toLowerCase().contains(query)),
-        )
-        .toList();
+    final filtered =
+        duas
+            .where(
+              (d) =>
+                  (category == null || d.category == category) &&
+                  [
+                    d.title,
+                    d.meaning,
+                    d.transliteration,
+                    d.arabic,
+                  ].any((s) => s.toLowerCase().contains(query)),
+            )
+            .toList();
     final dark = Theme.of(context).brightness == Brightness.dark;
     final accent = dark ? MihrabTokens.gold : MihrabTokens.emerald;
 
@@ -39,16 +44,20 @@ class _DuaScreenState extends State<DuaScreen> {
           IconButton(
             tooltip: context.tr('Избранное'),
             icon: Icon(Icons.bookmarks_outlined, color: accent),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const BookmarksScreen()),
-            ),
+            onPressed:
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const BookmarksScreen(),
+                  ),
+                ),
           ),
           IconButton(
             tooltip: context.tr('Тасбих'),
             icon: Icon(Icons.touch_app, color: accent),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const TasbihScreen()),
-            ),
+            onPressed:
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => const TasbihScreen()),
+                ),
           ),
         ],
       ),
@@ -62,7 +71,8 @@ class _DuaScreenState extends State<DuaScreen> {
                   prefixIcon: Icon(Icons.search),
                   hintText: 'Поиск дуа и азкаров',
                 ),
-                onChanged: (v) => setState(() => query = v.trim().toLowerCase()),
+                onChanged:
+                    (v) => setState(() => query = v.trim().toLowerCase()),
               ),
             ),
             SingleChildScrollView(
@@ -108,11 +118,12 @@ class _DuaScreenState extends State<DuaScreen> {
                           '${d.category.label} · ${d.repetitions} повторений',
                         ),
                         trailing: Icon(Icons.chevron_right, color: accent),
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => DuaDetailScreen(dua: d),
-                          ),
-                        ),
+                        onTap:
+                            () => Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => DuaDetailScreen(dua: d),
+                              ),
+                            ),
                       ),
                     ),
                 ],

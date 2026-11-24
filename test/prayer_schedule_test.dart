@@ -15,14 +15,21 @@ void main() {
   test('after Isha next prayer is tomorrow Fajr', () {
     final city = City.all.first;
     final isha = PrayerSchedule.forDay(city, DateTime(2026, 11, 24)).last;
-    final next = PrayerSchedule.next(city, isha.time.add(const Duration(minutes: 1)));
+    final next = PrayerSchedule.next(
+      city,
+      isha.time.add(const Duration(minutes: 1)),
+    );
     expect(next.kind, PrayerKind.fajr);
     expect(next.time.day, 25);
   });
   test('Hanafi Asr is later than Shafi Asr', () {
     final city = City.all.first;
     final day = DateTime(2026, 11, 24);
-    expect(PrayerSchedule.forDay(city, day)[3].time.isAfter(
-      PrayerSchedule.forDay(city, day, hanafi: false)[3].time), isTrue);
+    expect(
+      PrayerSchedule.forDay(city, day)[3].time.isAfter(
+        PrayerSchedule.forDay(city, day, hanafi: false)[3].time,
+      ),
+      isTrue,
+    );
   });
 }

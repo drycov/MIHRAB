@@ -11,8 +11,7 @@ import 'quran_screen.dart';
 class QuranOfflineScreen extends ConsumerStatefulWidget {
   const QuranOfflineScreen({super.key});
   @override
-  ConsumerState<QuranOfflineScreen> createState() =>
-      _QuranOfflineScreenState();
+  ConsumerState<QuranOfflineScreen> createState() => _QuranOfflineScreenState();
 }
 
 class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen> {
@@ -55,8 +54,9 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen> {
     } catch (_) {
       if (mounted) {
         setState(
-          () => status =
-              'Операция не завершена. Проверьте сеть и свободное место.',
+          () =>
+              status =
+                  'Операция не завершена. Проверьте сеть и свободное место.',
         );
       }
     } finally {
@@ -79,7 +79,8 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen> {
       if (repo.cachedVerses(surah, selected) == null) {
         throw StateError('Cache incomplete');
       }
-      if (mounted) setState(() => downloaded = catalog.take(surah.number).length);
+      if (mounted)
+        setState(() => downloaded = catalog.take(surah.number).length);
     }
     if (mounted) setState(() => status = 'Все 114 сур сохранены.');
   }
@@ -98,19 +99,20 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen> {
   Future<bool> confirm(String title) async =>
       await showDialog<bool>(
         context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(title),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Отмена'),
+        builder:
+            (ctx) => AlertDialog(
+              title: Text(title),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Отмена'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text('Удалить'),
+                ),
+              ],
             ),
-            FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Удалить'),
-            ),
-          ],
-        ),
       ) ??
       false;
 
@@ -142,18 +144,19 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen> {
                   for (final t in QuranTranslation.values)
                     DropdownMenuItem(value: t, child: Text(t.label)),
                 ],
-                onChanged: busy
-                    ? null
-                    : (t) {
-                        if (t != null) {
-                          setState(() {
-                            translation = t;
-                            hits = [];
-                            downloaded = 0;
-                          });
-                          refresh();
-                        }
-                      },
+                onChanged:
+                    busy
+                        ? null
+                        : (t) {
+                          if (t != null) {
+                            setState(() {
+                              translation = t;
+                              hits = [];
+                              downloaded = 0;
+                            });
+                            refresh();
+                          }
+                        },
               ),
             ),
             IslamicCard(
@@ -170,9 +173,10 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen> {
                     child: LinearProgressIndicator(
                       value: downloaded / 114,
                       minHeight: 5,
-                      backgroundColor: dark
-                          ? MihrabTokens.emeraldSoft
-                          : MihrabTokens.creamMuted,
+                      backgroundColor:
+                          dark
+                              ? MihrabTokens.emeraldSoft
+                              : MihrabTokens.creamMuted,
                       color: accent,
                     ),
                   ),
@@ -204,21 +208,22 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen> {
               ),
             if (status != null) Text(status!),
             TextButton(
-              onPressed: busy
-                  ? null
-                  : () async {
-                      if (await confirm(
-                            'Удалить выбранный перевод и арабский кеш этой редакции?',
-                          ) &&
-                          mounted) {
-                        await run(
-                          () => ref
-                              .read(quranRepositoryProvider)
-                              .removeTranslation(translation),
-                        );
-                        if (mounted) setState(() => hits = []);
-                      }
-                    },
+              onPressed:
+                  busy
+                      ? null
+                      : () async {
+                        if (await confirm(
+                              'Удалить выбранный перевод и арабский кеш этой редакции?',
+                            ) &&
+                            mounted) {
+                          await run(
+                            () => ref
+                                .read(quranRepositoryProvider)
+                                .removeTranslation(translation),
+                          );
+                          if (mounted) setState(() => hits = []);
+                        }
+                      },
               child: const Text('Удалить текст выбранной редакции'),
             ),
             if (QuranDisk.supported) ...[
@@ -235,13 +240,15 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
-                        value: (bytes / QuranDisk.limit)
-                            .clamp(0.0, 1.0)
-                            .toDouble(),
+                        value:
+                            (bytes / QuranDisk.limit)
+                                .clamp(0.0, 1.0)
+                                .toDouble(),
                         minHeight: 5,
-                        backgroundColor: dark
-                            ? MihrabTokens.emeraldSoft
-                            : MihrabTokens.creamMuted,
+                        backgroundColor:
+                            dark
+                                ? MihrabTokens.emeraldSoft
+                                : MihrabTokens.creamMuted,
                         color: accent,
                       ),
                     ),
@@ -249,25 +256,25 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen> {
                     Text(
                       'Аяты скачиваются отдельно в аудиоплеере.',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: dark
-                                ? MihrabTokens.goldSoft
-                                : MihrabTokens.muted,
-                          ),
+                        color:
+                            dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
+                      ),
                     ),
                   ],
                 ),
               ),
               TextButton(
-                onPressed: busy
-                    ? null
-                    : () async {
-                        if (await confirm(
-                              'Удалить все скачанные аудиозаписи?',
-                            ) &&
-                            mounted) {
-                          await run(QuranDisk.clear);
-                        }
-                      },
+                onPressed:
+                    busy
+                        ? null
+                        : () async {
+                          if (await confirm(
+                                'Удалить все скачанные аудиозаписи?',
+                              ) &&
+                              mounted) {
+                            await run(QuranDisk.clear);
+                          }
+                        },
                 child: const Text('Очистить аудио'),
               ),
             ],
@@ -291,8 +298,8 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen> {
             Text(
               'Поиск только по скачанным сурам выбранной редакции, до 200 результатов.',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
-                  ),
+                color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
+              ),
             ),
             for (final hit in hits)
               IslamicCard(
@@ -307,15 +314,17 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen> {
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => SurahScreen(
-                        surah: hit.surah,
-                        initialVerse: hit.ayah.number,
-                        initialTranslation: translation,
+                  onTap:
+                      () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder:
+                              (_) => SurahScreen(
+                                surah: hit.surah,
+                                initialVerse: hit.ayah.number,
+                                initialTranslation: translation,
+                              ),
+                        ),
                       ),
-                    ),
-                  ),
                 ),
               ),
           ],

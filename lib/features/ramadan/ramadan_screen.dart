@@ -57,11 +57,12 @@ class RamadanScreen extends ConsumerWidget {
               Icons.notifications_outlined,
               color: dark ? MihrabTokens.gold : MihrabTokens.emerald,
             ),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const RamadanReminderScreen(),
-              ),
-            ),
+            onPressed:
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const RamadanReminderScreen(),
+                  ),
+                ),
           ),
         ],
       ),
@@ -112,8 +113,9 @@ class RamadanScreen extends ConsumerWidget {
                     child: LinearProgressIndicator(
                       value: current.hijri.day / days.length,
                       minHeight: 4,
-                      backgroundColor:
-                          MihrabTokens.gold.withValues(alpha: 0.15),
+                      backgroundColor: MihrabTokens.gold.withValues(
+                        alpha: 0.15,
+                      ),
                       color: MihrabTokens.gold,
                     ),
                   ),
@@ -126,14 +128,14 @@ class RamadanScreen extends ConsumerWidget {
             IslamicCard(
               child: ListTile(
                 title: Text(context.tr('До расчётного начала Рамадана')),
-                subtitle: Text(
-                  '${days.first.date.difference(today).inDays}',
-                ),
+                subtitle: Text('${days.first.date.difference(today).inDays}'),
               ),
             ),
           const SizedBox(height: 12),
           Text(
-            context.tr('Сухур завершается к Фаджру; ифтар начинается с Магриба. Даты предварительные, сверяйте с ДУМК.'),
+            context.tr(
+              'Сухур завершается к Фаджру; ифтар начинается с Магриба. Даты предварительные, сверяйте с ДУМК.',
+            ),
             style: theme.textTheme.bodySmall?.copyWith(
               color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
               height: 1.4,
@@ -204,17 +206,21 @@ class RamadanScreen extends ConsumerWidget {
                           formatDate(day.date),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: day.date == today ? MihrabTokens.paper : null,
+                            color:
+                                day.date == today ? MihrabTokens.paper : null,
                           ),
                         ),
                         Text(
                           '${context.tr("День")} ${day.hijri.day} · ${day.source == ScheduleSource.dumkCache ? "ДУМК" : "MWL"}',
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: day.date == today
-                                ? MihrabTokens.goldSoft
-                                : (dark
-                                    ? MihrabTokens.gold.withValues(alpha: 0.5)
-                                    : MihrabTokens.muted),
+                            color:
+                                day.date == today
+                                    ? MihrabTokens.goldSoft
+                                    : (dark
+                                        ? MihrabTokens.gold.withValues(
+                                          alpha: 0.5,
+                                        )
+                                        : MihrabTokens.muted),
                           ),
                         ),
                       ],
@@ -242,9 +248,7 @@ class RamadanScreen extends ConsumerWidget {
                     child: Text(
                       '${day.fastingDuration.inHours}:${two(day.fastingDuration.inMinutes.remainder(60))}',
                       style: TextStyle(
-                        color: day.date == today
-                            ? MihrabTokens.gold
-                            : null,
+                        color: day.date == today ? MihrabTokens.gold : null,
                         fontWeight: FontWeight.w600,
                         fontFeatures: const [FontFeature.tabularFigures()],
                       ),

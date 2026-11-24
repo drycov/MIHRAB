@@ -27,32 +27,85 @@ class _PrayersScreenState extends ConsumerState<PrayersScreen> {
     final key = ref.watch(localDayProvider);
     final city = ref.watch(settingsProvider.select((s) => s.city));
     final date = DateTime(key.year, key.month, key.day + offset);
-    final schedule = ref.watch(dailyScheduleProvider((
-      city: key.city,
-      hanafi: key.hanafi,
-      year: date.year,
-      month: date.month,
-      day: date.day,
-    )));
+    final schedule = ref.watch(
+      dailyScheduleProvider((
+        city: key.city,
+        hanafi: key.hanafi,
+        year: date.year,
+        month: date.month,
+        day: date.day,
+      )),
+    );
     final slots = schedule.slots;
     final next = ref.watch(nextPrayerProvider.select((p) => p.time));
-    return ListView(padding: const EdgeInsets.all(MihrabTokens.space), children: [
-      Row(children: [const Icon(Icons.location_on_outlined), const SizedBox(width: 8), Expanded(child: Text(context.tr(city.name)))]),
-      Text(context.hijriLabel(HijriCalendar.fromGregorian(DateTime(key.year,key.month,key.day), adjustment: ref.watch(hijriAdjustmentProvider))), textAlign: TextAlign.center),
-      const SizedBox(height: 24),
-      const CountdownCard(),
-      ListTile(leading: const Icon(Icons.fact_check_outlined), title: Text(context.tr('Дневник намазов')), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DiaryScreen()))),
-      const SizedBox(height: 24),
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        IconButton(tooltip: context.tr('Предыдущий день'), onPressed: () => setState(() => offset--), icon: const Icon(Icons.chevron_left)),
-        Text(formatDate(date), style: Theme.of(context).textTheme.titleMedium),
-        IconButton(tooltip: context.tr('Следующий день'), onPressed: () => setState(() => offset++), icon: const Icon(Icons.chevron_right)),
-      ]),
-      if (offset != 0) TextButton(onPressed: () => setState(() => offset = 0), child: Text(context.tr('Сегодня'))),
-      for (final slot in slots) PrayerTile(slot: slot, active: slot.time == next),
-      const SizedBox(height: 16),
-      Text(context.tr(schedule.source == ScheduleSource.dumkCache ? 'ДУМК · сохранённое расписание' : 'Расчёт MWL. Не официальное расписание ДУМК. Сверяйте время с местной мечетью.'), textAlign: TextAlign.center),
-    ]);
+    return ListView(
+      padding: const EdgeInsets.all(MihrabTokens.space),
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.location_on_outlined),
+            const SizedBox(width: 8),
+            Expanded(child: Text(context.tr(city.name))),
+          ],
+        ),
+        Text(
+          context.hijriLabel(
+            HijriCalendar.fromGregorian(
+              DateTime(key.year, key.month, key.day),
+              adjustment: ref.watch(hijriAdjustmentProvider),
+            ),
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 24),
+        const CountdownCard(),
+        ListTile(
+          leading: const Icon(Icons.fact_check_outlined),
+          title: Text(context.tr('Дневник намазов')),
+          trailing: const Icon(Icons.chevron_right),
+          onTap:
+              () => Navigator.of(context).push(
+                MaterialPageRoute<void>(builder: (_) => const DiaryScreen()),
+              ),
+        ),
+        const SizedBox(height: 24),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              tooltip: context.tr('Предыдущий день'),
+              onPressed: () => setState(() => offset--),
+              icon: const Icon(Icons.chevron_left),
+            ),
+            Text(
+              formatDate(date),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            IconButton(
+              tooltip: context.tr('Следующий день'),
+              onPressed: () => setState(() => offset++),
+              icon: const Icon(Icons.chevron_right),
+            ),
+          ],
+        ),
+        if (offset != 0)
+          TextButton(
+            onPressed: () => setState(() => offset = 0),
+            child: Text(context.tr('Сегодня')),
+          ),
+        for (final slot in slots)
+          PrayerTile(slot: slot, active: slot.time == next),
+        const SizedBox(height: 16),
+        Text(
+          context.tr(
+            schedule.source == ScheduleSource.dumkCache
+                ? 'ДУМК · сохранённое расписание'
+                : 'Расчёт MWL. Не официальное расписание ДУМК. Сверяйте время с местной мечетью.',
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
   }
 }
 
@@ -157,11 +210,11 @@ class PrayerTile extends StatelessWidget {
   final bool active;
 
   IconData get _icon => switch (slot.kind) {
-        PrayerKind.fajr || PrayerKind.sunrise => Icons.wb_twilight,
-        PrayerKind.isha => Icons.nightlight_outlined,
-        PrayerKind.maghrib => Icons.brightness_4_outlined,
-        _ => Icons.wb_sunny_outlined,
-      };
+    PrayerKind.fajr || PrayerKind.sunrise => Icons.wb_twilight,
+    PrayerKind.isha => Icons.nightlight_outlined,
+    PrayerKind.maghrib => Icons.brightness_4_outlined,
+    _ => Icons.wb_sunny_outlined,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -171,50 +224,56 @@ class PrayerTile extends StatelessWidget {
       duration: const Duration(milliseconds: 220),
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
-        color: active
-            ? MihrabTokens.emerald
-            : (dark
-                ? MihrabTokens.emerald.withValues(alpha: 0.35)
-                : MihrabTokens.paper),
+        color:
+            active
+                ? MihrabTokens.emerald
+                : (dark
+                    ? MihrabTokens.emerald.withValues(alpha: 0.35)
+                    : MihrabTokens.paper),
         borderRadius: BorderRadius.circular(MihrabTokens.radius),
         border: Border.all(
-          color: active
-              ? MihrabTokens.gold.withValues(alpha: 0.45)
-              : (dark
-                  ? MihrabTokens.gold.withValues(alpha: 0.08)
-                  : MihrabTokens.emerald.withValues(alpha: 0.07)),
+          color:
+              active
+                  ? MihrabTokens.gold.withValues(alpha: 0.45)
+                  : (dark
+                      ? MihrabTokens.gold.withValues(alpha: 0.08)
+                      : MihrabTokens.emerald.withValues(alpha: 0.07)),
           width: active ? 1.2 : 1,
         ),
-        boxShadow: active
-            ? [
-                BoxShadow(
-                  color: MihrabTokens.emerald.withValues(alpha: 0.35),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-              ]
-            : null,
+        boxShadow:
+            active
+                ? [
+                  BoxShadow(
+                    color: MihrabTokens.emerald.withValues(alpha: 0.35),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ]
+                : null,
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         textColor: active ? MihrabTokens.paper : null,
-        iconColor: active
-            ? MihrabTokens.gold
-            : (dark ? MihrabTokens.goldSoft : MihrabTokens.emerald),
+        iconColor:
+            active
+                ? MihrabTokens.gold
+                : (dark ? MihrabTokens.goldSoft : MihrabTokens.emerald),
         leading: Container(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: active
-                ? MihrabTokens.gold.withValues(alpha: 0.15)
-                : (dark
-                    ? MihrabTokens.background.withValues(alpha: 0.4)
-                    : MihrabTokens.cream),
+            color:
+                active
+                    ? MihrabTokens.gold.withValues(alpha: 0.15)
+                    : (dark
+                        ? MihrabTokens.background.withValues(alpha: 0.4)
+                        : MihrabTokens.cream),
             border: Border.all(
-              color: active
-                  ? MihrabTokens.gold.withValues(alpha: 0.35)
-                  : MihrabTokens.transparent,
+              color:
+                  active
+                      ? MihrabTokens.gold.withValues(alpha: 0.35)
+                      : MihrabTokens.transparent,
             ),
           ),
           child: Icon(_icon, size: 20),
@@ -230,11 +289,12 @@ class PrayerTile extends StatelessWidget {
           slot.kind.arabic,
           textDirection: TextDirection.rtl,
           style: TextStyle(
-            color: active
-                ? MihrabTokens.goldSoft
-                : (dark
-                    ? MihrabTokens.gold.withValues(alpha: 0.55)
-                    : MihrabTokens.muted),
+            color:
+                active
+                    ? MihrabTokens.goldSoft
+                    : (dark
+                        ? MihrabTokens.gold.withValues(alpha: 0.55)
+                        : MihrabTokens.muted),
             fontSize: 15,
           ),
         ),
@@ -252,4 +312,3 @@ class PrayerTile extends StatelessWidget {
     );
   }
 }
-

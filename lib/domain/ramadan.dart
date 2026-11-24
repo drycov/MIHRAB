@@ -18,13 +18,21 @@ class RamadanDay {
 }
 
 abstract final class RamadanCalendar {
-  static RamadanDay forDay(ScheduleRepository repository, City city, DateTime date,
-      {required bool hanafi, int adjustment = 0}) {
+  static RamadanDay forDay(
+    ScheduleRepository repository,
+    City city,
+    DateTime date, {
+    required bool hanafi,
+    int adjustment = 0,
+  }) {
     final schedule = repository.getDay(city, date, hanafi: hanafi);
-    return RamadanDay(date, HijriCalendar.fromGregorian(date, adjustment: adjustment),
+    return RamadanDay(
+      date,
+      HijriCalendar.fromGregorian(date, adjustment: adjustment),
       schedule.slots.firstWhere((p) => p.kind == PrayerKind.fajr).time,
       schedule.slots.firstWhere((p) => p.kind == PrayerKind.maghrib).time,
-      schedule.source);
+      schedule.source,
+    );
   }
 
   static List<DateTime> season(DateTime today, {int adjustment = 0}) {
@@ -32,8 +40,9 @@ abstract final class RamadanCalendar {
     final hijri = HijriCalendar.fromGregorian(civil, adjustment: adjustment);
     final year = hijri.month > 9 ? hijri.year + 1 : hijri.year;
     final length = HijriCalendar.start(year, 10) - HijriCalendar.start(year, 9);
-    final start = DateTime.utc(1970).add(Duration(days:
-        HijriCalendar.start(year, 9) - 2440588 - adjustment));
+    final start = DateTime.utc(
+      1970,
+    ).add(Duration(days: HijriCalendar.start(year, 9) - 2440588 - adjustment));
     return List.generate(length, (i) => start.add(Duration(days: i)));
   }
 }

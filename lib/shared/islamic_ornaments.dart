@@ -18,8 +18,7 @@ class IslamicStar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final c = color ??
-        (dark ? MihrabTokens.gold : MihrabTokens.emerald);
+    final c = color ?? (dark ? MihrabTokens.gold : MihrabTokens.emerald);
     return CustomPaint(
       size: Size.square(size),
       painter: _StarPainter(c, strokeWidth),
@@ -36,11 +35,12 @@ class _StarPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
     final r = size.shortestSide / 2;
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeJoin = StrokeJoin.round;
+    final paint =
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth
+          ..strokeJoin = StrokeJoin.round;
 
     // 8-point geometric star (two squares)
     Path square(double rotation) {
@@ -80,9 +80,10 @@ class IslamicDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final color = dark
-        ? MihrabTokens.gold.withValues(alpha: 0.35)
-        : MihrabTokens.emerald.withValues(alpha: 0.22);
+    final color =
+        dark
+            ? MihrabTokens.gold.withValues(alpha: 0.35)
+            : MihrabTokens.emerald.withValues(alpha: 0.22);
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: padding),
@@ -114,10 +115,10 @@ class IslamicSectionTitle extends StatelessWidget {
       child: Text(
         text.toUpperCase(),
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              letterSpacing: 1.8,
-              fontWeight: FontWeight.w600,
-              color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
-            ),
+          letterSpacing: 1.8,
+          fontWeight: FontWeight.w600,
+          color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
+        ),
       ),
     );
   }
@@ -144,28 +145,31 @@ class IslamicCard extends StatelessWidget {
     return Container(
       margin: margin,
       decoration: BoxDecoration(
-        color: highlighted
-            ? MihrabTokens.emerald
-            : (dark
-                ? MihrabTokens.emerald.withValues(alpha: 0.4)
-                : MihrabTokens.paper),
+        color:
+            highlighted
+                ? MihrabTokens.emerald
+                : (dark
+                    ? MihrabTokens.emerald.withValues(alpha: 0.4)
+                    : MihrabTokens.paper),
         borderRadius: BorderRadius.circular(MihrabTokens.radius),
         border: Border.all(
-          color: highlighted
-              ? MihrabTokens.gold.withValues(alpha: 0.4)
-              : (dark
-                  ? MihrabTokens.gold.withValues(alpha: 0.1)
-                  : MihrabTokens.emerald.withValues(alpha: 0.07)),
+          color:
+              highlighted
+                  ? MihrabTokens.gold.withValues(alpha: 0.4)
+                  : (dark
+                      ? MihrabTokens.gold.withValues(alpha: 0.1)
+                      : MihrabTokens.emerald.withValues(alpha: 0.07)),
         ),
-        boxShadow: highlighted
-            ? [
-                BoxShadow(
-                  color: MihrabTokens.emeraldDeep.withValues(alpha: 0.35),
-                  blurRadius: 18,
-                  offset: const Offset(0, 8),
-                ),
-              ]
-            : null,
+        boxShadow:
+            highlighted
+                ? [
+                  BoxShadow(
+                    color: MihrabTokens.emeraldDeep.withValues(alpha: 0.35),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                ]
+                : null,
       ),
       child: Material(
         type: MaterialType.transparency,
