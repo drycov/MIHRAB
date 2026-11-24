@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../domain/dua.dart';
+import '../../domain/bookmark.dart';
+import '../bookmarks/bookmark_button.dart';
+import '../bookmarks/bookmarks_screen.dart';
 import '../tasbih/tasbih_screen.dart';
 
 class DuaScreen extends StatefulWidget {
@@ -15,7 +18,7 @@ class _DuaScreenState extends State<DuaScreen>{
   Widget build(BuildContext context){
     final filtered=duas.where((d)=>(category==null||d.category==category)&&
       [d.title,d.meaning,d.transliteration,d.arabic].any((s)=>s.toLowerCase().contains(query))).toList();
-    return Scaffold(appBar:AppBar(title:const Text('Дуа и азкары'),actions:[IconButton(tooltip:'Тасбих',icon:const Icon(Icons.touch_app),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const TasbihScreen())))]),
+    return Scaffold(appBar:AppBar(title:const Text('Дуа и азкары'),actions:[IconButton(tooltip:'Избранное',icon:const Icon(Icons.bookmarks_outlined),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const BookmarksScreen()))),IconButton(tooltip:'Тасбих',icon:const Icon(Icons.touch_app),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const TasbihScreen())))]),
       body:SafeArea(child:Column(children:[
         Padding(padding:const EdgeInsets.all(16),child:TextField(
           decoration:const InputDecoration(prefixIcon:Icon(Icons.search),hintText:'Поиск дуа и азкаров'),
@@ -44,7 +47,7 @@ class _DuaDetailScreenState extends State<DuaDetailScreen>{
   Widget build(BuildContext context){
     final d=widget.dua;
     final done=count>=d.repetitions;
-    return Scaffold(appBar:AppBar(title:Text(d.title)),body:SafeArea(child:ListView(padding:const EdgeInsets.all(20),children:[
+    return Scaffold(appBar:AppBar(title:Text(d.title),actions:[BookmarkButton(bookmark:Bookmark(kind:BookmarkKind.dua,reference:d.id,title:d.title))]),body:SafeArea(child:ListView(padding:const EdgeInsets.all(20),children:[
       Text(d.category.label,style:Theme.of(context).textTheme.labelLarge),
       const SizedBox(height:20),
       SelectableText(d.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.right,style:const TextStyle(fontSize:30,height:2)),
