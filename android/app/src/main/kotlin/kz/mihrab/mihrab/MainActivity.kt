@@ -10,6 +10,14 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "mihrab/widgets")
+            .setMethodCallHandler { call, result ->
+                if (call.method != "publish") result.notImplemented()
+                else try {
+                    PrayerWidget.publish(this, call.arguments as String)
+                    result.success(null)
+                } catch (e: Exception) { result.error("widget_publish_failed", e.message, null) }
+            }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "mihrab/adhan_media")
             .setMethodCallHandler { call, result ->
                 try {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../application/reminder_coordinator.dart';
 import '../application/schedule.dart';
+import '../application/widget_sync.dart';
+import '../application/hijri_settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../application/settings.dart';
 import '../application/onboarding.dart';
@@ -61,6 +63,8 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
   }
 
   Future<void> refreshReminders() async {
+    await ref.read(widgetSyncProvider).refresh();
+    if (!mounted) return;
     try {
       await ref.read(reminderCoordinatorProvider).refresh();
       if (mounted && reminderError != null) {
@@ -78,6 +82,9 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
   Widget build(BuildContext context) {
     ref.listen(localDayProvider, (previous, next) {
       if (previous != next) refreshReminders();
+    });
+    ref.listen(hijriAdjustmentProvider, (previous, next) {
+      if (previous != next) ref.read(widgetSyncProvider).refresh();
     });
     final dark = Theme.of(context).brightness == Brightness.dark;
 

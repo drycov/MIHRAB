@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/prayer_diary.dart';
+import '../../application/widget_sync.dart';
 import '../../application/schedule.dart';
 import '../../domain/prayer_diary.dart';
 import '../../domain/prayer_schedule.dart';
@@ -24,7 +25,7 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen>{
     setState(()=>busy=true);
     try{
       await ref.read(diaryRepositoryProvider).mark(date,kind,status);
-      if(mounted){ref.invalidate(diaryDayProvider(date));ref.invalidate(prayerStatisticsProvider);}
+      if(mounted){ref.invalidate(diaryDayProvider(date));ref.invalidate(prayerStatisticsProvider);await ref.read(widgetSyncProvider).refresh();}
     }catch(_){
       if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Не удалось сохранить запись')));
     }finally{if(mounted)setState(()=>busy=false);}
