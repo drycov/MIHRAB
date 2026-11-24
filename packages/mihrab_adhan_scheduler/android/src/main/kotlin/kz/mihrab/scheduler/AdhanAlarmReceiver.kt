@@ -106,12 +106,13 @@ object AdhanAlarms {
     fun fallback(c: Context, id: Int) {
         val nm = c.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
         if (!nm.areNotificationsEnabled()) return
+        val strings = AdhanStrings(c)
         val channel = "mihrab_adhan_fallback_v1"
         if (Build.VERSION.SDK_INT >= 26) nm.createNotificationChannel(android.app.NotificationChannel(
-            channel, "Напоминания азана", android.app.NotificationManager.IMPORTANCE_DEFAULT))
+            channel, strings.reminders, android.app.NotificationManager.IMPORTANCE_DEFAULT))
         val builder = if (Build.VERSION.SDK_INT >= 26) android.app.Notification.Builder(c, channel)
             else android.app.Notification.Builder(c)
-        nm.notify(id, builder.setSmallIcon(android.R.drawable.ic_lock_idle_alarm).setContentTitle("Время намаза")
-            .setContentText("Воспроизведение азана недоступно").setAutoCancel(true).build())
+        nm.notify(id, builder.setSmallIcon(android.R.drawable.ic_lock_idle_alarm).setContentTitle(strings.prayerTime)
+            .setContentText(strings.unavailable).setAutoCancel(true).build())
     }
 }

@@ -17,6 +17,9 @@ private struct Snapshot: Decodable {
     let version: Int
     let city: String
     let zone: String
+    let language: String?
+    let labels: [String:String]?
+    func label(_ key: String, _ fallback: String) -> String { labels?[key] ?? fallback }
     let generated: Double
     let days: [PrayerDay]
     static func load() -> Snapshot? {
@@ -106,8 +109,8 @@ private struct PrayerView: View {
                 Text(day.hijri).font(.caption2).lineLimit(1)
                 if let next = entry.next {
                     Text(next.name + " " + s.clock(next.date)).font(.headline).lineLimit(1).minimumScaleFactor(0.7)
-                    if s.dayKey(next.date) != day.date { Text("Завтра").font(.caption2) }
-                } else { Text("Обновите расписание").font(.caption) }
+                    if s.dayKey(next.date) != day.date { Text(s.label("tomorrow","Завтра")).font(.caption2) }
+                } else { Text(s.label("refresh","Обновите расписание")).font(.caption) }
                 if family != .systemSmall {
                     HStack(spacing: 5) {
                         ForEach(day.prayers.indices, id: \.self) { i in
@@ -119,14 +122,14 @@ private struct PrayerView: View {
                     }
                 }
                 if let completed = day.completed {
-                    Text("Дневник: \(completed)/5").font(.caption2).privacySensitive()
+                    Text(s.label("diary","Дневник") + ": \(completed)/5").font(.caption2).privacySensitive()
                 }
             } else {
-                Text("Откройте MIHRAB").font(.headline)
-                Text("Для обновления расписания").font(.caption2)
+                Text(entry.snapshot?.label("openMihrab","Откройте MIHRAB") ?? "Откройте MIHRAB").font(.headline)
+                Text(entry.snapshot?.label("refreshHint","Для обновления расписания") ?? "Для обновления расписания").font(.caption2)
             }
             Spacer(minLength: 0)
-        }.foregroundColor(ink).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        }.environment(\.layoutDirection, entry.snapshot?.language == "ar" ? .rightToLeft : .leftToRight).foregroundColor(ink).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 @main
