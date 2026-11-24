@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
@@ -162,7 +163,7 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
     final accent = dark ? MihrabTokens.gold : MihrabTokens.emerald;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('АУДИО КОРАНА')),
+      appBar: AppBar(title: Text(context.tr('Аудио Корана'))),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
@@ -236,7 +237,7 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  tooltip: 'Предыдущий аят',
+                  tooltip: context.tr('Предыдущий аят'),
                   onPressed: busy || verse <= 1
                       ? null
                       : () => selectVerse(verse - 1),
@@ -256,7 +257,7 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
                         },
                 ),
                 IconButton(
-                  tooltip: 'Следующий аят',
+                  tooltip: context.tr('Следующий аят'),
                   onPressed: busy || verse >= widget.surah.count
                       ? null
                       : () => selectVerse(verse + 1),

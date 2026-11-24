@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
 import '../dua/dua_screen.dart';
@@ -47,24 +48,24 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('КОРАН'),
+        title: Text(context.tr('Коран')),
         actions: [
           IconButton(
-            tooltip: 'Избранное',
+            tooltip: context.tr('Избранное'),
             icon: Icon(Icons.bookmarks_outlined, color: accent),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const BookmarksScreen()),
             ),
           ),
           IconButton(
-            tooltip: 'Тасбих',
+            tooltip: context.tr('Тасбих'),
             icon: Icon(Icons.touch_app, color: accent),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const TasbihScreen()),
             ),
           ),
           IconButton(
-            tooltip: 'Дуа и азкары',
+            tooltip: context.tr('Дуа и азкары'),
             icon: Icon(Icons.auto_stories, color: accent),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const DuaScreen()),
@@ -96,7 +97,7 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                     Icons.download_for_offline_outlined,
                     color: accent,
                   ),
-                  title: const Text('Офлайн-библиотека'),
+                  title: Text(context.tr('Офлайн-библиотека')),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
@@ -119,7 +120,7 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                       TextButton(
                         onPressed: () =>
                             ref.invalidate(quranCatalogProvider),
-                        child: const Text('Повторить'),
+                        child: Text(context.tr('Повторить')),
                       ),
                     ],
                   ),
@@ -149,7 +150,7 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                             ),
                             title: const Text(
                               'Продолжить чтение',
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(color: MihrabTokens.paper),
                             ),
                             subtitle: Text(
                               surahs[last - 1].transliteration,
@@ -278,7 +279,7 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
         title: Text(widget.surah.transliteration),
         actions: [
           IconButton(
-            tooltip: 'Слушать аят',
+            tooltip: context.tr('Слушать аят'),
             icon: Icon(Icons.headphones, color: accent),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
@@ -297,7 +298,7 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
             ),
           ),
           IconButton(
-            tooltip: 'Сохранить позицию',
+            tooltip: context.tr('Сохранить позицию'),
             onPressed: remember,
             icon: Icon(Icons.bookmark_add_outlined, color: accent),
           ),
@@ -445,7 +446,7 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    tooltip: 'Предыдущий аят',
+                    tooltip: context.tr('Предыдущий аят'),
                     onPressed:
                         verse > 1 ? () => setState(() => verse--) : null,
                     icon: Icon(Icons.chevron_left, color: accent),
@@ -465,7 +466,7 @@ class _SurahScreenState extends ConsumerState<SurahScreen> {
                     },
                   ),
                   IconButton(
-                    tooltip: 'Следующий аят',
+                    tooltip: context.tr('Следующий аят'),
                     onPressed: verse < widget.surah.count
                         ? () => setState(() => verse++)
                         : null,

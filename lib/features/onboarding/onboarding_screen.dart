@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/onboarding.dart';
 import '../../application/settings.dart';
@@ -108,7 +109,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
                 children: [
                   Text(
                     'ШАГ ${step + 1} ИЗ 3',
@@ -188,7 +189,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       child: Column(
                         children: [
                           ListTile(
-                            title: const Text('Город'),
+                            title: Text(context.tr('Город')),
                             trailing: DropdownButton<int>(
                               value: city,
                               underline: const SizedBox.shrink(),
@@ -196,7 +197,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                 for (var i = 0; i < City.all.length; i++)
                                   DropdownMenuItem(
                                     value: i,
-                                    child: Text(City.all[i].name),
+                                    child: Text(context.tr(City.all[i].name)),
                                   ),
                               ],
                               onChanged: busy
@@ -208,7 +209,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           ),
                           const Divider(height: 1, indent: 16, endIndent: 16),
                           SwitchListTile(
-                            title: const Text('Ханафитский Аср'),
+                            title: Text(context.tr('Ханафитский Аср')),
                             subtitle: const Text('Метод определения времени Асра'),
                             value: hanafi,
                             onChanged: busy
@@ -217,7 +218,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           ),
                           const Divider(height: 1, indent: 16, endIndent: 16),
                           SwitchListTile(
-                            title: const Text('Светлая тема'),
+                            title: Text(context.tr('Светлая тема')),
                             subtitle: Text(
                               light ? 'Пергамент и изумруд' : 'Ночная мечеть',
                             ),
@@ -313,6 +314,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       ),
                     ),
                   ],
+                  if (step == 2)
+                    const Text('Если пропустить уведомления, существующие настройки не изменятся.'),
                   if (message != null) ...[
                     const SizedBox(height: 12),
                     Text(

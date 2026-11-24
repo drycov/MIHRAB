@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/bookmarks.dart';
 import '../../domain/bookmark.dart';
@@ -138,7 +139,7 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ИЗБРАННОЕ'),
+        title: Text(context.tr('Избранное')),
         actions: [
           IconButton(
             tooltip: 'Новая коллекция',

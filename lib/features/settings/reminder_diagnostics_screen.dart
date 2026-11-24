@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../shared/islamic_ornaments.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/reminder_coordinator.dart';
 import '../../application/reminder_preferences.dart';
@@ -124,10 +125,10 @@ class _ReminderDiagnosticsScreenState extends ConsumerState<ReminderDiagnosticsS
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Диагностика уведомлений')),
-    body: SafeArea(child: ListView(padding: const EdgeInsets.all(20), children: [
+    body: SafeArea(child: ListView(padding: const EdgeInsets.fromLTRB(20,12,20,28), children: [
       if (busy) const LinearProgressIndicator(),
       if (error != null) Text(error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-      if (supported) Card(child: Padding(padding: const EdgeInsets.all(16), child: Column(
+      if (supported) IslamicCard(child: Padding(padding: const EdgeInsets.all(16), child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Text('Готовность уведомлений', style: Theme.of(context).textTheme.titleLarge),
           Text(notificationAllowed == false ? 'Уведомления запрещены системой' : selectedCount == 0 ? 'Выберите намазы для напоминаний' : pendingCount == 0 ? 'Нет ожидающих уведомлений' : 'Запланировано: $pendingCount'),

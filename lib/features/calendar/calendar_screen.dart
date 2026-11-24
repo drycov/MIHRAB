@@ -149,7 +149,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     ? MihrabTokens.emerald
                     : (dark
                         ? MihrabTokens.emerald.withValues(alpha: 0.25)
-                        : Colors.white),
+                        : MihrabTokens.paper),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                   side: BorderSide(
@@ -157,7 +157,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         ? MihrabTokens.gold
                         : (active
                             ? MihrabTokens.gold.withValues(alpha: 0.35)
-                            : Colors.transparent),
+                            : MihrabTokens.transparent),
                     width: isToday || active ? 1.2 : 0,
                   ),
                 ),
@@ -171,7 +171,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         '${date.day}',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          color: active ? Colors.white : null,
+                          color: active ? MihrabTokens.paper : null,
                         ),
                       ),
                       Text(
@@ -210,7 +210,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               Text(
                 formatDate(day),
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: MihrabTokens.paper,
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.6,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/prayer_diary.dart';
@@ -64,7 +65,7 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
 
     if (!supported) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Дневник намазов')),
+        appBar: AppBar(title: Text(context.tr('Дневник намазов'))),
         body: const Center(
           child: Text('Локальный дневник недоступен на этой платформе'),
         ),
@@ -75,10 +76,10 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ДНЕВНИК НАМАЗОВ'),
+        title: Text(context.tr('Дневник намазов')),
         actions: [
           IconButton(
-            tooltip: 'Статистика',
+            tooltip: context.tr('Статистика'),
             icon: Icon(Icons.bar_chart, color: accent),
             onPressed: busy
                 ? null
@@ -100,7 +101,7 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    tooltip: 'Предыдущий день',
+                    tooltip: context.tr('Предыдущий день'),
                     onPressed: busy || !date.isAfter(DateTime.utc(2000))
                         ? null
                         : () => setState(
@@ -145,7 +146,7 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
                           },
                   ),
                   IconButton(
-                    tooltip: 'Следующий день',
+                    tooltip: context.tr('Следующий день'),
                     onPressed: busy || !date.isBefore(today)
                         ? null
                         : () => setState(
@@ -160,7 +161,7 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
             if (date != today)
               TextButton(
                 onPressed: busy ? null : () => setState(() => selected = null),
-                child: const Text('Сегодня'),
+                child: Text(context.tr('Сегодня')),
               ),
             ...day.when(
               loading: () => <Widget>[
@@ -173,7 +174,7 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
                 const IslamicCard(child: Text('Не удалось открыть дневник')),
                 TextButton(
                   onPressed: () => ref.invalidate(diaryDayProvider(date)),
-                  child: const Text('Повторить'),
+                  child: Text(context.tr('Повторить')),
                 ),
               ],
               data: (value) => <Widget>[
@@ -196,7 +197,7 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
                       Text(
                         '${value.completed} из 5',
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: MihrabTokens.paper,
                           fontSize: 32,
                           fontWeight: FontWeight.w300,
                           letterSpacing: 1,
@@ -264,7 +265,7 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
                             for (final status in PrayerStatus.values)
                               DropdownMenuItem(
                                 value: status,
-                                child: Text(status.label),
+                                child: Text(context.tr(status.label)),
                               ),
                           ],
                           onChanged: busy

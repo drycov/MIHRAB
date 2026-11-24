@@ -203,7 +203,7 @@ class RamadanScreen extends ConsumerWidget {
                           formatDate(day.date),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: day.date == today ? Colors.white : null,
+                            color: day.date == today ? MihrabTokens.paper : null,
                           ),
                         ),
                         Text(
@@ -223,7 +223,7 @@ class RamadanScreen extends ConsumerWidget {
                     child: Text(
                       formatTime(day.fajr),
                       style: TextStyle(
-                        color: day.date == today ? Colors.white : null,
+                        color: day.date == today ? MihrabTokens.paper : null,
                         fontFeatures: const [FontFeature.tabularFigures()],
                       ),
                     ),
@@ -232,7 +232,7 @@ class RamadanScreen extends ConsumerWidget {
                     child: Text(
                       formatTime(day.maghrib),
                       style: TextStyle(
-                        color: day.date == today ? Colors.white : null,
+                        color: day.date == today ? MihrabTokens.paper : null,
                         fontFeatures: const [FontFeature.tabularFigures()],
                       ),
                     ),
@@ -281,7 +281,7 @@ class FastingCountdown extends ConsumerWidget {
           Text(
             formatRemaining(next.time.difference(now)),
             style: const TextStyle(
-              color: Colors.white,
+              color: MihrabTokens.paper,
               fontSize: 40,
               fontWeight: FontWeight.w300,
               letterSpacing: 2,

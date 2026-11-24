@@ -43,7 +43,7 @@ class _RamadanReminderScreenState extends ConsumerState<RamadanReminderScreen>{
       suhoorLead:suhoor?v:config.suhoorLead,iftarLead:suhoor?config.iftarLead:v));});
   @override
   Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('Напоминания Рамадана')),
-    body:SafeArea(child:ListView(padding:const EdgeInsets.all(16),children:[
+    body:SafeArea(child:ListView(padding:const EdgeInsets.fromLTRB(16,12,16,28),children:[
       SwitchListTile(title:const Text('Окончание сухура'),value:config.suhoor,onChanged:busy?null:(v)=>setState(()=>config=RamadanReminderSettings(suhoor:v,iftar:config.iftar,suhoorLead:config.suhoorLead,iftarLead:config.iftarLead))),
       if(config.suhoor)lead(true),
       SwitchListTile(title:const Text('Ифтар'),value:config.iftar,onChanged:busy?null:(v)=>setState(()=>config=RamadanReminderSettings(suhoor:config.suhoor,iftar:v,suhoorLead:config.suhoorLead,iftarLead:config.iftarLead))),

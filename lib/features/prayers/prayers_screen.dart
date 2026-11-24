@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/clock.dart';
 import '../../application/hijri_settings.dart';
@@ -7,6 +8,7 @@ import '../../application/schedule.dart';
 import '../../application/settings.dart';
 import '../../domain/prayer_schedule.dart';
 import '../../app/theme.dart';
+import '../../shared/islamic_ornaments.dart';
 import '../../shared/format.dart';
 import '../diary/diary_screen.dart';
 
@@ -34,21 +36,21 @@ class _PrayersScreenState extends ConsumerState<PrayersScreen> {
     final slots = schedule.slots;
     final next = ref.watch(nextPrayerProvider.select((p) => p.time));
     return ListView(padding: const EdgeInsets.all(MihrabTokens.space), children: [
-      Row(children: [const Icon(Icons.location_on_outlined), const SizedBox(width: 8), Expanded(child: Text(city.name))]),
+      Row(children: [const Icon(Icons.location_on_outlined), const SizedBox(width: 8), Expanded(child: Text(context.tr(city.name)))]),
       Text(HijriCalendar.fromGregorian(DateTime(key.year,key.month,key.day), adjustment: ref.watch(hijriAdjustmentProvider)).label, textAlign: TextAlign.center),
       const SizedBox(height: 24),
       const CountdownCard(),
-      ListTile(leading: const Icon(Icons.fact_check_outlined), title: const Text('Дневник намазов'), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DiaryScreen()))),
+      ListTile(leading: const Icon(Icons.fact_check_outlined), title: Text(context.tr('Дневник намазов')), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DiaryScreen()))),
       const SizedBox(height: 24),
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        IconButton(tooltip: 'Предыдущий день', onPressed: () => setState(() => offset--), icon: const Icon(Icons.chevron_left)),
+        IconButton(tooltip: context.tr('Предыдущий день'), onPressed: () => setState(() => offset--), icon: const Icon(Icons.chevron_left)),
         Text(formatDate(date), style: Theme.of(context).textTheme.titleMedium),
-        IconButton(tooltip: 'Следующий день', onPressed: () => setState(() => offset++), icon: const Icon(Icons.chevron_right)),
+        IconButton(tooltip: context.tr('Следующий день'), onPressed: () => setState(() => offset++), icon: const Icon(Icons.chevron_right)),
       ]),
-      if (offset != 0) TextButton(onPressed: () => setState(() => offset = 0), child: const Text('Сегодня')),
+      if (offset != 0) TextButton(onPressed: () => setState(() => offset = 0), child: Text(context.tr('Сегодня'))),
       for (final slot in slots) PrayerTile(slot: slot, active: slot.time == next),
       const SizedBox(height: 16),
-      Text(schedule.source == ScheduleSource.dumkCache ? 'ДУМК · сохранённое расписание' : 'Расчёт MWL. Не официальное расписание ДУМК. Сверяйте время с местной мечетью.', textAlign: TextAlign.center),
+      Text(context.tr(schedule.source == ScheduleSource.dumkCache ? 'ДУМК · сохранённое расписание' : 'Расчёт MWL. Не официальное расписание ДУМК. Сверяйте время с местной мечетью.'), textAlign: TextAlign.center),
     ]);
   }
 }
@@ -61,37 +63,7 @@ class CountdownCard extends ConsumerWidget {
     final next = ref.watch(nextPrayerProvider);
     final now = ref.watch(clockProvider);
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(24, 32, 24, 28),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            MihrabTokens.emeraldSoft,
-            MihrabTokens.emerald,
-            MihrabTokens.emeraldDeep,
-          ],
-        ),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.elliptical(160, 72),
-          topRight: Radius.elliptical(160, 72),
-          bottomLeft: Radius.circular(MihrabTokens.radiusLg),
-          bottomRight: Radius.circular(MihrabTokens.radiusLg),
-        ),
-        border: Border.all(
-          color: MihrabTokens.gold.withValues(alpha: 0.28),
-          width: 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: MihrabTokens.emeraldDeep.withValues(alpha: 0.45),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
+    return MihrabFrame(
       child: Column(
         children: [
           // Crescent ornament
@@ -111,7 +83,7 @@ class CountdownCard extends ConsumerWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            'СЛЕДУЮЩИЙ НАМАЗ',
+            context.tr('СЛЕДУЮЩИЙ НАМАЗ'),
             style: TextStyle(
               color: MihrabTokens.gold.withValues(alpha: 0.9),
               fontSize: 11,
@@ -121,9 +93,9 @@ class CountdownCard extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            next.kind.label,
+            context.tr(next.kind.label),
             style: const TextStyle(
-              color: Colors.white,
+              color: MihrabTokens.paper,
               fontSize: 30,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.8,
@@ -155,7 +127,7 @@ class CountdownCard extends ConsumerWidget {
             child: Text(
               formatRemaining(next.time.difference(now)),
               style: const TextStyle(
-                color: Colors.white,
+                color: MihrabTokens.paper,
                 fontSize: 46,
                 fontWeight: FontWeight.w300,
                 letterSpacing: 3,
@@ -165,7 +137,7 @@ class CountdownCard extends ConsumerWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'начало в ${formatTime(next.time)}',
+            '${context.tr('начало в')} ${formatTime(next.time)}',
             style: TextStyle(
               color: MihrabTokens.gold.withValues(alpha: 0.85),
               fontSize: 14,
@@ -202,7 +174,7 @@ class PrayerTile extends StatelessWidget {
             ? MihrabTokens.emerald
             : (dark
                 ? MihrabTokens.emerald.withValues(alpha: 0.35)
-                : Colors.white),
+                : MihrabTokens.paper),
         borderRadius: BorderRadius.circular(MihrabTokens.radius),
         border: Border.all(
           color: active
@@ -224,7 +196,7 @@ class PrayerTile extends StatelessWidget {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        textColor: active ? Colors.white : null,
+        textColor: active ? MihrabTokens.paper : null,
         iconColor: active
             ? MihrabTokens.gold
             : (dark ? MihrabTokens.goldSoft : MihrabTokens.emerald),
@@ -241,13 +213,13 @@ class PrayerTile extends StatelessWidget {
             border: Border.all(
               color: active
                   ? MihrabTokens.gold.withValues(alpha: 0.35)
-                  : Colors.transparent,
+                  : MihrabTokens.transparent,
             ),
           ),
           child: Icon(_icon, size: 20),
         ),
         title: Text(
-          slot.kind.label,
+          context.tr(slot.kind.label),
           style: TextStyle(
             fontWeight: active ? FontWeight.w600 : FontWeight.w500,
             letterSpacing: 0.3,
@@ -280,25 +252,3 @@ class PrayerTile extends StatelessWidget {
   }
 }
 
-class _IslamicDivider extends StatelessWidget {
-  const _IslamicDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final color = dark
-        ? MihrabTokens.gold.withValues(alpha: 0.35)
-        : MihrabTokens.emerald.withValues(alpha: 0.25);
-
-    return Row(
-      children: [
-        Expanded(child: Divider(color: color, thickness: 0.8)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Icon(Icons.brightness_1, size: 6, color: color),
-        ),
-        Expanded(child: Divider(color: color, thickness: 0.8)),
-      ],
-    );
-  }
-}

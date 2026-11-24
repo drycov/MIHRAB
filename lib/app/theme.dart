@@ -13,6 +13,8 @@ abstract final class MihrabTokens {
   static const ink = Color(0xFF1A2E28);
   static const muted = Color(0xFF6B7F78);
 
+  static const paper = Colors.white;
+  static const transparent = Colors.transparent;
   static const space = 20.0;
   static const spaceSm = 12.0;
   static const spaceLg = 28.0;
@@ -52,6 +54,8 @@ abstract final class MihrabTheme {
       appBarTheme: AppBarTheme(
         backgroundColor: scheme.surface,
         foregroundColor: scheme.onSurface,
+        actionsIconTheme: IconThemeData(color: scheme.primary),
+        iconTheme: IconThemeData(color: scheme.primary),
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
@@ -62,9 +66,18 @@ abstract final class MihrabTheme {
           letterSpacing: MihrabTokens.letterTitle,
         ),
       ),
+      filledButtonTheme: FilledButtonThemeData(style: FilledButton.styleFrom(
+        backgroundColor: scheme.primary, foregroundColor: scheme.onPrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(MihrabTokens.radius)),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: MihrabTokens.space),
+      )),
+      outlinedButtonTheme: OutlinedButtonThemeData(style: OutlinedButton.styleFrom(
+        foregroundColor: scheme.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(MihrabTokens.radius)),
+      )),
+      textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: scheme.primary)),
       cardTheme: CardThemeData(
         elevation: 0,
-        color: dark ? MihrabTokens.emerald.withValues(alpha: 0.55) : Colors.white,
+        color: dark ? MihrabTokens.emerald.withValues(alpha: 0.55) : MihrabTokens.paper,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(MihrabTokens.radius),
           side: BorderSide(

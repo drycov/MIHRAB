@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/prayer_diary.dart';
 import '../../application/schedule.dart';
@@ -31,7 +32,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
     final dark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('СТАТИСТИКА НАМАЗОВ')),
+      appBar: AppBar(title: Text(context.tr('Статистика намазов'))),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
@@ -77,7 +78,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                 TextButton(
                   onPressed: () =>
                       ref.invalidate(prayerStatisticsProvider(period)),
-                  child: const Text('Повторить'),
+                  child: Text(context.tr('Повторить')),
                 ),
               ],
               data: (s) => _content(context, s),
@@ -120,7 +121,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
             Text(
               '${s.completed} / ${s.total}',
               style: const TextStyle(
-                color: Colors.white,
+                color: MihrabTokens.paper,
                 fontSize: 32,
                 fontWeight: FontWeight.w300,
               ),
@@ -172,7 +173,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
             children: [
               Row(
                 children: [
-                  Expanded(child: Text(status.label)),
+                  Expanded(child: Text(context.tr(status.label))),
                   Text(
                     '${s.count(status)}',
                     style: const TextStyle(

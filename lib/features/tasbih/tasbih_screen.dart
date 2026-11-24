@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/tasbih.dart';
@@ -113,7 +114,7 @@ class TasbihScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ТАСБИХ'),
+        title: Text(context.tr('Тасбих')),
         actions: [
           IconButton(
             tooltip: 'История',
@@ -208,10 +209,8 @@ class TasbihScreen extends ConsumerWidget {
                           style: FilledButton.styleFrom(
                             shape: const CircleBorder(),
                             padding: EdgeInsets.zero,
-                            backgroundColor: dark
-                                ? MihrabTokens.emerald
-                                : MihrabTokens.emerald,
-                            foregroundColor: Colors.white,
+                            backgroundColor: dark ? MihrabTokens.gold : MihrabTokens.emerald,
+                            foregroundColor: dark ? MihrabTokens.background : MihrabTokens.cream,
                           ),
                           onPressed: s.complete
                               ? null
@@ -246,8 +245,7 @@ class TasbihScreen extends ConsumerWidget {
                               Text(
                                 'из ${s.target}',
                                 style: TextStyle(
-                                  color: MihrabTokens.goldSoft
-                                      .withValues(alpha: 0.9),
+                                  color: dark ? MihrabTokens.background : MihrabTokens.cream,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -256,8 +254,7 @@ class TasbihScreen extends ConsumerWidget {
                                 style: TextStyle(
                                   fontSize: 12,
                                   letterSpacing: 1.2,
-                                  color: MihrabTokens.gold
-                                      .withValues(alpha: 0.85),
+                                  color: dark ? MihrabTokens.background : MihrabTokens.cream,
                                 ),
                               ),
                             ],

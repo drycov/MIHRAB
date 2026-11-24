@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter/services.dart';
 import '../../domain/dua.dart';
 import '../../domain/bookmark.dart';
@@ -33,17 +34,17 @@ class _DuaScreenState extends State<DuaScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ДУА И АЗКАРЫ'),
+        title: Text(context.tr('Дуа и азкары')),
         actions: [
           IconButton(
-            tooltip: 'Избранное',
+            tooltip: context.tr('Избранное'),
             icon: Icon(Icons.bookmarks_outlined, color: accent),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const BookmarksScreen()),
             ),
           ),
           IconButton(
-            tooltip: 'Тасбих',
+            tooltip: context.tr('Тасбих'),
             icon: Icon(Icons.touch_app, color: accent),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const TasbihScreen()),

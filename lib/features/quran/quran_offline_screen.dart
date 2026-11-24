@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/quran.dart';
 import '../../domain/quran_search.dart';
@@ -125,7 +126,7 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen> {
     final accent = dark ? MihrabTokens.gold : MihrabTokens.emerald;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('ОФЛАЙН-БИБЛИОТЕКА')),
+      appBar: AppBar(title: Text(context.tr('Офлайн-библиотека'))),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
