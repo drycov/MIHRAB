@@ -8,17 +8,26 @@ import '../domain/reminders.dart';
 import '../domain/prayer_schedule.dart';
 import '../domain/prayer_sound.dart';
 import 'adhan_storage.dart';
+import 'web_bridge.dart';
 
 class Notifications {
   final plugin = FlutterLocalNotificationsPlugin();
   bool initialized = false;
+
   bool get supported =>
-      !kIsWeb &&
-      (defaultTargetPlatform == TargetPlatform.android ||
-          defaultTargetPlatform == TargetPlatform.iOS);
+      WebBridge.isWeb ||
+      (!kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.android ||
+              defaultTargetPlatform == TargetPlatform.iOS));
+
+  bool get isWeb => WebBridge.isWeb;
 
   Future<void> initialize() async {
     if (!supported || initialized) return;
+    if (isWeb) {
+      initialized = true;
+      return;
+    }
     await plugin.initialize(
       const InitializationSettings(
         android: AndroidInitializationSettings('ic_notification'),
@@ -35,6 +44,10 @@ class Notifications {
   Future<bool> requestPermission() async {
     await initialize();
     if (!supported) return false;
+    if (isWeb) {
+      final result = await WebBridge.requestNotifications();
+      return result == 'granted';
+    }
     if (defaultTargetPlatform == TargetPlatform.android) {
       return await plugin
               .resolvePlatformSpecificImplementation<
@@ -53,6 +66,7 @@ class Notifications {
 
   bool get isAndroid =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
   Future<bool?> androidNotificationsEnabled() async {
     if (!isAndroid) return null;
     await initialize();
@@ -128,10 +142,22 @@ class Notifications {
   }
 
   Future<void> preview(PrayerKind kind, PrayerSound sound) async {
-    if (!supported) throw StateError('Проверка доступна на Android и iOS');
-    if (!await requestPermission())
+    if (!supported) {
+      throw StateError('Проверка доступна на Android, iOS и в PWA (браузер)');
+    }
+    if (!await requestPermission()) {
       throw StateError('Нет разрешения на уведомления');
+    }
     final strings = await _strings();
+    if (isWeb) {
+      final ok = await WebBridge.showNotification(
+        title: 'MIHRAB · ${strings.prayer(kind)}',
+        body: strings.preview,
+        tag: 'preview-${kind.name}',
+      );
+      if (!ok) throw StateError('Браузер не показал уведомление');
+      return;
+    }
     await plugin.show(
       900,
       'MIHRAB · ${strings.prayer(kind)}',
@@ -148,11 +174,33 @@ class Notifications {
     await initialize();
     if (!supported) return false;
     final strings = await _strings();
+
+    if (isWeb) {
+      final future = reminders.where((item) => item.time.isAfter(DateTime.now()));
+      final items = <Map<String, Object?>>[
+        for (final item in future)
+          {
+            'id': item.id,
+            'title': strings.title(item),
+            'body': strings.body(item),
+            'atMs': item.time.millisecondsSinceEpoch,
+          },
+      ];
+      if (items.isEmpty) {
+        await WebBridge.clearReminders();
+        return false;
+      }
+      await WebBridge.scheduleReminders(items);
+      // Web cannot guarantee exact OS alarms while the tab is closed.
+      return false;
+    }
+
     var exact = preferExact && await canScheduleExact();
     // iOS limits pending local requests to 64. Keep the earliest across both modules.
     reminders = [...reminders]..sort((a, b) => a.time.compareTo(b.time));
-    if (!isAndroid && reminders.length > 60)
+    if (!isAndroid && reminders.length > 60) {
       reminders = reminders.take(60).toList();
+    }
     final desiredIds =
         reminders
             .where((item) => item.time.isAfter(DateTime.now()))
@@ -174,8 +222,6 @@ class Notifications {
               'profile': item.kind == PrayerKind.fajr ? 'fajr' : 'standard',
             },
       ];
-      // Cancel legacy audible requests before arming a native alarm. The existing
-      // reminder lock serializes foreground and headless schedule replacement.
       for (final row in rows) {
         await plugin.cancel(row['id'] as int);
       }
@@ -225,8 +271,6 @@ class Notifications {
       } on PlatformException catch (error) {
         if (!exact || error.code != 'exact_alarms_not_permitted') rethrow;
         exact = false;
-        // Reconcile native alarms on the next refresh; exact permission revocation
-        // also cancels OS exact alarms. Use an audible system fallback for this request.
         if (nativeIds.contains(item.id)) {
           await plugin.zonedSchedule(
             item.id,
