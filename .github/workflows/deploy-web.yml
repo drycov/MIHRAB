@@ -38,11 +38,7 @@ jobs:
         continue-on-error: true
 
       - name: Build web
-        run: |
-          flutter build web \
-            --release \
-            --base-href "/MIHRAB/" \
-            --web-renderer canvaskit
+        run: flutter build web --release --base-href "/MIHRAB/"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
