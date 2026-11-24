@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../shared/islamic_ornaments.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/clock.dart';
 import '../../application/hijri_settings.dart';
@@ -30,20 +31,20 @@ class RamadanScreen extends ConsumerWidget {
     final current = days.where((d) => d.date == today).firstOrNull;
     final theme = Theme.of(context);
     return Scaffold(appBar:AppBar(title:const Text('Рамадан'),actions:[IconButton(tooltip:'Напоминания Рамадана',icon:const Icon(Icons.notifications_outlined),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const RamadanReminderScreen())))]),
-      body: ListView(padding:const EdgeInsets.all(16),children:[
+      body: ListView(padding:const EdgeInsets.fromLTRB(16,12,16,28),children:[
         Text(city.name,style:theme.textTheme.titleMedium),
         Text('Рамадан ${days.first.hijri.year} г.х.',style:theme.textTheme.headlineSmall),
         Text('${formatDate(days.first.date)} — ${formatDate(days.last.date)}'),
         const SizedBox(height:16),
         if(current != null) ...[
-          Card(child:Padding(padding:const EdgeInsets.all(16),child:Column(
+          IslamicCard(child:Padding(padding:const EdgeInsets.all(16),child:Column(
             crossAxisAlignment:CrossAxisAlignment.start,children:[
               Text('День ${current.hijri.day} из ${days.length}',style:theme.textTheme.titleLarge),
               LinearProgressIndicator(value:current.hijri.day/days.length),
               const SizedBox(height:16),
               FastingCountdown(day:current),
             ]))),
-        ] else Card(child:ListTile(title:const Text('До расчётного начала Рамадана'),
+        ] else IslamicCard(child:ListTile(title:const Text('До расчётного начала Рамадана'),
           subtitle:Text('${days.first.date.difference(today).inDays} дней'))),
         const SizedBox(height:12),
         const Text('Сухур завершается к Фаджру; ифтар начинается с Магриба. Даты предварительные, сверяйте с ДУМК.'),

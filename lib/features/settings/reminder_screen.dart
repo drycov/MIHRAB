@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../shared/islamic_ornaments.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
 import '../../application/reminder_coordinator.dart';
@@ -61,9 +62,9 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Уведомления')),
-    body: SafeArea(child: ListView(padding: const EdgeInsets.all(20), children: [
+    body: SafeArea(child: ListView(padding: const EdgeInsets.fromLTRB(20,12,20,28), children: [
       for (final p in PrayerKind.values.where((p) => p.obligatory))
-        Card(child: Column(children: [
+        IslamicCard(child: Column(children: [
           SwitchListTile(title: Text(p.label), value: enabled.contains(p), onChanged: busy ? null : (v) => setState(() { if (v) { enabled.add(p); } else { enabled.remove(p); } })),
           Padding(padding: const EdgeInsets.symmetric(horizontal:16), child: Row(children: [
             Expanded(child: DropdownButton<PrayerSound>(isExpanded:true, value:sounds[p] ?? PrayerSound.system,

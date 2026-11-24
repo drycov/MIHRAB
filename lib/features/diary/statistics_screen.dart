@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../shared/islamic_ornaments.dart';
 import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/prayer_diary.dart';
@@ -25,7 +26,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>{
     final period=(end:end,length:length);
     final statistics=ref.watch(prayerStatisticsProvider(period));
     return Scaffold(appBar:AppBar(title:Text(context.tr('Статистика намазов'))),
-      body:SafeArea(child:ListView(padding:const EdgeInsets.all(16),children:[
+      body:SafeArea(child:ListView(padding:const EdgeInsets.fromLTRB(16,12,16,28),children:[
         SegmentedButton<int>(segments:const [ButtonSegment(value:7,label:Text('7 дней')),ButtonSegment(value:30,label:Text('30 дней'))],selected:{length},onSelectionChanged:(v)=>setState(()=>length=v.single)),
         SwitchListTile(title:const Text('Включить сегодня'),value:includeToday,onChanged:(v)=>setState(()=>includeToday=v)),
         Text('${formatDate(end.subtract(Duration(days:length-1)))} — ${formatDate(end)}',textAlign:TextAlign.center),
@@ -41,7 +42,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>{
     final colors=theme.colorScheme;
     final palette=<PrayerStatus,Color>{PrayerStatus.onTime:colors.primary,PrayerStatus.qada:colors.tertiary,PrayerStatus.missed:colors.error,PrayerStatus.unmarked:colors.outline};
     return [
-      Card(child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+      IslamicCard(child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
         Text('Выполнено по отметкам: ${s.completed} / ${s.total}',style:theme.textTheme.titleLarge),
         const SizedBox(height:8),
         LinearProgressIndicator(value:s.completion),
@@ -51,14 +52,14 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>{
         if(s.marked==0)const Text('За этот период пока нет записей.'),
       ]))),
       const SizedBox(height:16),
-      Text('Распределение отметок',style:theme.textTheme.titleMedium),
+      const IslamicSectionTitle('Распределение отметок'),
       for(final status in PrayerStatus.values) ...[
         Padding(padding:const EdgeInsets.symmetric(vertical:6),child:Row(children:[Expanded(child:Text(context.tr(status.label))),Text('${s.count(status)}')])),
         LinearProgressIndicator(value:s.count(status)/s.total,color:palette[status]),
       ],
       const SizedBox(height:20),
-      Text('По намазам',style:theme.textTheme.titleMedium),
-      for(final kind in PrayerKind.values.where((k)=>k.obligatory))Card(child:Padding(padding:const EdgeInsets.all(12),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+      const IslamicSectionTitle('По намазам'),
+      for(final kind in PrayerKind.values.where((k)=>k.obligatory))IslamicCard(child:Padding(padding:const EdgeInsets.all(12),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
         Text('${kind.label}: ${s.completedFor(kind)} / ${s.days.length}'),
         const SizedBox(height:8),
         Row(children:[for(final status in PrayerStatus.values)if(s.countFor(kind,status)>0)Expanded(flex:s.countFor(kind,status),child:Container(height:9,color:palette[status]))]),
@@ -66,7 +67,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>{
         Wrap(spacing:10,runSpacing:4,children:[for(final status in PrayerStatus.values)Text('${status.label}: ${s.countFor(kind,status)}',style:theme.textTheme.bodySmall)]),
       ]))),
       const SizedBox(height:16),
-      Text('История по дням',style:theme.textTheme.titleMedium),
+      const IslamicSectionTitle('История по дням'),
       for(final item in s.days.reversed)ListTile(
         title:Text(formatDate(item.date)),
         subtitle:Row(children:[for(final kind in PrayerKind.values.where((k)=>k.obligatory))Expanded(child:Tooltip(message:'${kind.label}: ${item.day.status(kind).label}',child:Container(margin:const EdgeInsets.only(right:3),height:8,color:palette[item.day.status(kind)])))]),

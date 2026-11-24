@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../shared/islamic_ornaments.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
@@ -37,9 +38,9 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Записи азана')),
-    body: SafeArea(child: ListView(padding: const EdgeInsets.all(16), children: [
+    body: SafeArea(child: ListView(padding: const EdgeInsets.fromLTRB(16,12,16,28), children: [
       if (!audio.supported) const ListTile(title: Text('Импорт доступен только на Android и iOS')),
-      for (final profile in AdhanProfile.values) Card(child: Padding(
+      for (final profile in AdhanProfile.values) IslamicCard(child: Padding(
         padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,children:[
           Text(profile.label,style: Theme.of(context).textTheme.titleLarge),
           Text(audio.name(profile) ?? 'Запись не выбрана'),

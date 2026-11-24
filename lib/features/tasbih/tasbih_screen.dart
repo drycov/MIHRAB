@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../shared/islamic_ornaments.dart';
 import '../../l10n/mihrab_strings.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,7 +42,7 @@ class TasbihScreen extends ConsumerWidget{
     final theme=Theme.of(context);
     return Scaffold(appBar:AppBar(title:Text(context.tr('Тасбих')),actions:[
       IconButton(tooltip:'История',icon:const Icon(Icons.history),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const TasbihHistoryScreen())))]),
-      body:SafeArea(child:ListView(padding:const EdgeInsets.all(20),children:[
+      body:SafeArea(child:ListView(padding:const EdgeInsets.fromLTRB(20,12,20,28),children:[
         DropdownButton<Dhikr>(isExpanded:true,value:s.dhikr,items:[for(final d in Dhikr.values)DropdownMenuItem(value:d,child:Text(d.label))],
           onChanged:(d){if(d!=null)configure(context,ref,d,s.target);}),
         if(s.dhikr.arabic.isNotEmpty)Text(s.dhikr.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:theme.textTheme.headlineMedium),
@@ -91,8 +92,8 @@ class TasbihHistoryScreen extends ConsumerWidget{
         if(await helper.confirm(context,'Удалить историю завершённых сессий?')&&context.mounted){
           await helper.run(context,ref.read(tasbihProvider.notifier).clearHistory);
         }
-      })]),body:SafeArea(child:ListView(padding:const EdgeInsets.all(16),children:[
-        Card(child:ListTile(title:Text('Сессий: ${history.length}'),subtitle:Text('Повторений в сохранённых сессиях: ${history.fold<int>(0,(sum,s)=>sum+s.target)}'))),
+      })]),body:SafeArea(child:ListView(padding:const EdgeInsets.fromLTRB(16,12,16,28),children:[
+        IslamicCard(child:ListTile(title:Text('Сессий: ${history.length}'),subtitle:Text('Повторений в сохранённых сессиях: ${history.fold<int>(0,(sum,s)=>sum+s.target)}'))),
         if(history.isEmpty)const ListTile(title:Text('История пока пуста')),
         for(final item in history)ListTile(leading:const Icon(Icons.check_circle_outline),title:Text(item.dhikr.label),subtitle:Text(MaterialLocalizations.of(context).formatMediumDate(item.completedAt.toLocal())),trailing:Text('${item.target}')),
         const Text('Хранятся последние 100 завершённых сессий.'),
