@@ -82,3 +82,5 @@ UI rules: [docs/UI_GUIDE.md](docs/UI_GUIDE.md).
 ## Privacy and store preparation
 
 [Privacy policy](docs/privacy-policy.md) · [Store listing draft and release gates](docs/store-metadata.md). Web deployments include `privacy.html`; verify the live HTTPS URL before submission.
+
+Publication assets (separate from Flutter runtime): [store-assets/](store-assets/README.md).
