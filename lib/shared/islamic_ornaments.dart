@@ -143,7 +143,6 @@ class IslamicCard extends StatelessWidget {
     final dark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: margin,
-      padding: padding,
       decoration: BoxDecoration(
         color: highlighted
             ? MihrabTokens.emerald
@@ -168,7 +167,12 @@ class IslamicCard extends StatelessWidget {
               ]
             : null,
       ),
-      child: child,
+      child: Material(
+        type: MaterialType.transparency,
+        borderRadius: BorderRadius.circular(MihrabTokens.radius),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(padding: padding, child: child),
+      ),
     );
   }
 }
