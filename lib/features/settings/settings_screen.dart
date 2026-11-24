@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'reminder_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
 import '../../domain/prayer_schedule.dart';
@@ -16,6 +17,7 @@ class SettingsScreen extends ConsumerWidget {
         onChanged: (v) { if (v != null) controller.city(v); }),
       SwitchListTile(title: const Text('Ханафитский Аср'), value: settings.hanafi, onChanged: controller.hanafi),
       SwitchListTile(title: const Text('Светлая тема'), value: settings.light, onChanged: controller.light),
+      ListTile(leading: const Icon(Icons.notifications_outlined), title: const Text('Уведомления'), onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const ReminderScreen()))),
       const ListTile(title: Text('Метод расчёта'), subtitle: Text('Muslim World League (MWL)')),
     ]);
   }
