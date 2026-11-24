@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'pwa_settings_card.dart';
+import 'firebase_screen.dart';
 import 'web_push_screen.dart';
 import '../../application/locale.dart';
 import '../../l10n/mihrab_strings.dart';
@@ -173,6 +174,8 @@ class SettingsScreen extends ConsumerWidget {
           const PwaSettingsCard(),
           card([ListTile(title: const Text('Web Push'), leading: const Icon(Icons.notifications_outlined), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const WebPushScreen())))]),
         ],
+        sectionTitle('Firebase'),
+        card([ListTile(title: const Text('Firebase / FCM'), leading: const Icon(Icons.notifications_outlined), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const FirebaseScreen())))]),
         const SizedBox(height: 24),
         Text(
           'MIHRAB',

@@ -14,3 +14,9 @@ build/
 *.p12
 *.pfx
 *.mobileprovision
+
+# Local Firebase provisioning files (not service account credentials)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+firebase-defines.local.json
+*service-account*.json
