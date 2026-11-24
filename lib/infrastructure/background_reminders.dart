@@ -28,7 +28,7 @@ void reminderDispatcher() {
         final plan = ReminderPlanner.plan(city, DateTime.now(),
           hanafi: prefs.getBool('hanafi') ?? true, enabled: config.enabled,
           minutesBefore: config.lead, repository: LocalScheduleRepository(prefs));
-        await Notifications().replace(plan, preferExact: config.exact);
+        await Notifications().replace(plan, preferExact: config.exact, sounds: config.sounds);
         final now = DateTime.now().toUtc().toIso8601String();
         await prefs.setString('reminder_last_background_success', now);
         await prefs.setString('reminder_last_success', now);

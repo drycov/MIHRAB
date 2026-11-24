@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/prayer_schedule.dart';
+import '../domain/prayer_sound.dart';
 import '../domain/reminders.dart';
 import '../infrastructure/notifications.dart';
 import '../infrastructure/reminder_lock.dart';
@@ -18,10 +19,10 @@ class ReminderCoordinator {
 
   Future<String> refresh() => _enqueue(null);
 
-  Future<String> apply(Set<PrayerKind> enabled, int lead, bool exact) =>
-      _enqueue((enabled: Set<PrayerKind>.of(enabled), lead: lead, exact: exact));
+  Future<String> apply(Set<PrayerKind> enabled, int lead, bool exact, {Map<PrayerKind, PrayerSound>? sounds}) =>
+      _enqueue((enabled: Set<PrayerKind>.of(enabled), lead: lead, exact: exact, sounds: sounds == null ? null : Map<PrayerKind, PrayerSound>.of(sounds)));
 
-  Future<String> _enqueue(({Set<PrayerKind> enabled, int lead, bool exact})? update) {
+  Future<String> _enqueue(({Set<PrayerKind> enabled, int lead, bool exact, Map<PrayerKind, PrayerSound>? sounds})? update) {
     return _queue.run(() async {
       final service = ref.read(notificationsProvider);
       if (!service.supported) return 'Уведомления недоступны на этой платформе';
@@ -34,7 +35,7 @@ class ReminderCoordinator {
       return ReminderLock.run(() async {
       await prefs.reload();
       final config = update == null ? ReminderPreferences.read(prefs) :
-          ReminderPreferences(enabled: update.enabled, lead: update.lead, exact: update.exact);
+          ReminderPreferences(enabled: update.enabled, lead: update.lead, exact: update.exact, sounds: update.sounds ?? ReminderPreferences.read(prefs)?.sounds ?? const {});
       if (config == null) return 'Уведомления не настроены';
       final enabled = config.enabled;
       final lead = config.lead;
@@ -44,7 +45,7 @@ class ReminderCoordinator {
       final settings = ref.read(settingsProvider);
       final plan = ReminderPlanner.plan(settings.city, DateTime.now(), hanafi: settings.hanafi,
         enabled: enabled, minutesBefore: lead, repository: ref.read(scheduleRepositoryProvider));
-      final exact = await service.replace(plan, preferExact: preferExact);
+      final exact = await service.replace(plan, preferExact: preferExact, sounds: config.sounds);
       await prefs.setString('reminder_last_success', DateTime.now().toUtc().toIso8601String());
       return 'Запланировано: ${plan.length}${service.isAndroid && plan.isNotEmpty ? (exact ? ' · точный режим' : ' · приблизительный режим') : ''}';
       });
