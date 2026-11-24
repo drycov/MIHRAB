@@ -1,0 +1,22 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {webcrypto} from 'node:crypto';
+import {b64,unb64,encryptPayload} from '../src/push.mjs';
+import {payload} from '../src/dispatcher.mjs';
+globalThis.crypto ??= webcrypto;
+test('base64url roundtrip',()=>assert.deepEqual(unb64(b64(Uint8Array.of(255,0,128))),Uint8Array.of(255,0,128)));
+test('encrypted record header and receiver decrypt',async()=>{
+ const enc=new TextEncoder(),pair=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']);
+ const pub=new Uint8Array(await crypto.subtle.exportKey('raw',pair.publicKey)),auth=crypto.getRandomValues(new Uint8Array(16));
+ const msg={body:'Fajr'},record=await encryptPayload({keys:{p256dh:b64(pub),auth:b64(auth)}},msg);
+ assert.equal(new DataView(record.buffer).getUint32(16),4096);assert.equal(record[20],65);
+ const sender=record.slice(21,86),remote=await crypto.subtle.importKey('raw',sender,{name:'ECDH',namedCurve:'P-256'},false,[]);
+ const shared=await crypto.subtle.deriveBits({name:'ECDH',public:remote},pair.privateKey,256);
+ const derive=async(ikm,salt,info,length)=>crypto.subtle.deriveBits({name:'HKDF',hash:'SHA-256',salt,info},await crypto.subtle.importKey('raw',ikm,'HKDF',false,['deriveBits']),length);
+ const info=Uint8Array.from([...enc.encode('WebPush: info\0'),...pub,...sender]);
+ const ikm=await derive(shared,auth,info,256),salt=record.slice(0,16);
+ const key=await derive(ikm,salt,enc.encode('Content-Encoding: aes128gcm\0'),128),nonce=await derive(ikm,salt,enc.encode('Content-Encoding: nonce\0'),96);
+ const decoded=new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv:nonce},await crypto.subtle.importKey('raw',key,'AES-GCM',false,['decrypt']),record.slice(86)));
+ assert.equal(decoded.at(-1),2);assert.deepEqual(JSON.parse(new TextDecoder().decode(decoded.slice(0,-1))),msg);
+});
+test('localized payload',()=>assert.equal(payload({kind:'fajr',locale:'ar',reminder_id:100000000,lead:0}).body,'الفجر'));

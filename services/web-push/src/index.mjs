@@ -1,3 +1,4 @@
+import {dispatch} from './dispatcher.mjs';
 import {validSubscription, validSchedule} from './validation.mjs';
 
 const hash = async value => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))), b => b.toString(16).padStart(2,'0')).join('');
@@ -34,7 +35,7 @@ export default {
     });
     const json = (value,status=200)=>new Response(JSON.stringify(value),{status,headers});
     const path = new URL(request.url).pathname;
-    if (path === '/health' && request.method === 'GET') return json({status:'ok',deliveryEnabled:false});
+    if (path === '/health' && request.method === 'GET') return json({status:'ok',deliveryEnabled:env.ENABLE_DELIVERY==='true' && env.ENABLE_REGISTRATION==='true' && !!env.VAPID_PRIVATE_KEY && !!env.VAPID_PUBLIC_KEY && !!env.VAPID_SUBJECT});
     if (!origin || !allowed.includes(origin)) return json({error:'origin_not_allowed'},403);
     if (request.method === 'OPTIONS') return new Response(null,{status:204,headers});
     // Closed by default. An edge rate limit and verified consent are required before enabling.
@@ -89,6 +90,6 @@ export default {
       env.DB.prepare('DELETE FROM subscriptions WHERE expires_at<=?').bind(at),
       env.DB.prepare('DELETE FROM scheduled_notifications WHERE due_at<?').bind(at-7*86400000)
     ]);
-    // Delivery intentionally disabled until VAPID encryption transport and consent UI are verified.
+    await dispatch(env,at);
   }
 };
