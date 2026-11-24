@@ -1,0 +1,2 @@
+# MIHRAB launcher icon
+Emerald #103D32 and gold #D9BD85, mihrab arch and crescent. Android API 26+ adaptive background/foreground; API 33+ monochrome layer; vector fallback for older devices. Existing density PNGs are retained but anydpi resources take precedence on supported Android versions. iOS source artwork is branding/mihrab-icon.svg; the existing AppIcon PNG catalog is not replaced in this revision. Export opaque RGB PNGs for each Contents.json size before iOS distribution. Verify launcher masks and themed icon on actual devices.
