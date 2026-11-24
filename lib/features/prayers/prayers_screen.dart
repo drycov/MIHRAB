@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/clock.dart';
 import '../../application/hijri_settings.dart';
@@ -34,21 +35,21 @@ class _PrayersScreenState extends ConsumerState<PrayersScreen> {
     final slots = schedule.slots;
     final next = ref.watch(nextPrayerProvider.select((p) => p.time));
     return ListView(padding: const EdgeInsets.all(MihrabTokens.space), children: [
-      Row(children: [const Icon(Icons.location_on_outlined), const SizedBox(width: 8), Expanded(child: Text(city.name))]),
+      Row(children: [const Icon(Icons.location_on_outlined), const SizedBox(width: 8), Expanded(child: Text(context.tr(city.name)))]),
       Text(HijriCalendar.fromGregorian(DateTime(key.year,key.month,key.day), adjustment: ref.watch(hijriAdjustmentProvider)).label, textAlign: TextAlign.center),
       const SizedBox(height: 24),
       const CountdownCard(),
-      ListTile(leading: const Icon(Icons.fact_check_outlined), title: const Text('Дневник намазов'), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DiaryScreen()))),
+      ListTile(leading: const Icon(Icons.fact_check_outlined), title: Text(context.tr('Дневник намазов')), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DiaryScreen()))),
       const SizedBox(height: 24),
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        IconButton(tooltip: 'Предыдущий день', onPressed: () => setState(() => offset--), icon: const Icon(Icons.chevron_left)),
+        IconButton(tooltip: context.tr('Предыдущий день'), onPressed: () => setState(() => offset--), icon: const Icon(Icons.chevron_left)),
         Text(formatDate(date), style: Theme.of(context).textTheme.titleMedium),
-        IconButton(tooltip: 'Следующий день', onPressed: () => setState(() => offset++), icon: const Icon(Icons.chevron_right)),
+        IconButton(tooltip: context.tr('Следующий день'), onPressed: () => setState(() => offset++), icon: const Icon(Icons.chevron_right)),
       ]),
-      if (offset != 0) TextButton(onPressed: () => setState(() => offset = 0), child: const Text('Сегодня')),
+      if (offset != 0) TextButton(onPressed: () => setState(() => offset = 0), child: Text(context.tr('Сегодня'))),
       for (final slot in slots) PrayerTile(slot: slot, active: slot.time == next),
       const SizedBox(height: 16),
-      Text(schedule.source == ScheduleSource.dumkCache ? 'ДУМК · сохранённое расписание' : 'Расчёт MWL. Не официальное расписание ДУМК. Сверяйте время с местной мечетью.', textAlign: TextAlign.center),
+      Text(context.tr(schedule.source == ScheduleSource.dumkCache ? 'ДУМК · сохранённое расписание' : 'Расчёт MWL. Не официальное расписание ДУМК. Сверяйте время с местной мечетью.'), textAlign: TextAlign.center),
     ]);
   }
 }
@@ -111,7 +112,7 @@ class CountdownCard extends ConsumerWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            'СЛЕДУЮЩИЙ НАМАЗ',
+            context.tr('СЛЕДУЮЩИЙ НАМАЗ'),
             style: TextStyle(
               color: MihrabTokens.gold.withValues(alpha: 0.9),
               fontSize: 11,
@@ -121,7 +122,7 @@ class CountdownCard extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            next.kind.label,
+            context.tr(next.kind.label),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 30,
@@ -165,7 +166,7 @@ class CountdownCard extends ConsumerWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'начало в ${formatTime(next.time)}',
+            '${context.tr('начало в')} ${formatTime(next.time)}',
             style: TextStyle(
               color: MihrabTokens.gold.withValues(alpha: 0.85),
               fontSize: 14,
@@ -247,7 +248,7 @@ class PrayerTile extends StatelessWidget {
           child: Icon(_icon, size: 20),
         ),
         title: Text(
-          slot.kind.label,
+          context.tr(slot.kind.label),
           style: TextStyle(
             fontWeight: active ? FontWeight.w600 : FontWeight.w500,
             letterSpacing: 0.3,

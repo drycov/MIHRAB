@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import '../application/locale.dart';
+import '../l10n/mihrab_strings.dart';
 import '../application/reminder_coordinator.dart';
 import '../application/schedule.dart';
 import '../application/widget_sync.dart';
@@ -20,6 +23,9 @@ class MihrabApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) => MaterialApp(
     title: 'MIHRAB',
+    locale: ref.watch(localeProvider),
+    supportedLocales: supportedMihrabLocales,
+    localizationsDelegates: GlobalMaterialLocalizations.delegates,
     debugShowCheckedModeBanner: false,
     theme: MihrabTheme.build(Brightness.light),
     darkTheme: MihrabTheme.build(Brightness.dark),
@@ -100,7 +106,7 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
         ),
         actions: [
           IconButton(
-            tooltip: 'Рамадан',
+            tooltip: context.tr('Рамадан'),
             icon: Icon(
               Icons.nightlight_round,
               color: dark ? MihrabTokens.gold : MihrabTokens.emerald,
@@ -122,7 +128,7 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
                 child: ListTile(
                   dense: true,
                   title: Text(
-                    reminderError!,
+                    context.tr(reminderError!),
                     style: const TextStyle(fontSize: 13),
                   ),
                   trailing: IconButton(
@@ -146,31 +152,31 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
         onDestinationSelected: (value) => setState(() => index = value),
-        destinations: const [
+        destinations: [
           NavigationDestination(
             icon: Icon(Icons.access_time),
             selectedIcon: Icon(Icons.access_time_filled),
-            label: 'Намаз',
+            label: context.tr('Намаз'),
           ),
           NavigationDestination(
             icon: Icon(Icons.explore_outlined),
             selectedIcon: Icon(Icons.explore),
-            label: 'Кибла',
+            label: context.tr('Кибла'),
           ),
           NavigationDestination(
             icon: Icon(Icons.calendar_month_outlined),
             selectedIcon: Icon(Icons.calendar_month),
-            label: 'Календарь',
+            label: context.tr('Календарь'),
           ),
           NavigationDestination(
             icon: Icon(Icons.menu_book_outlined),
             selectedIcon: Icon(Icons.menu_book),
-            label: 'Коран',
+            label: context.tr('Коран'),
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined),
             selectedIcon: Icon(Icons.settings),
-            label: 'Настройки',
+            label: context.tr('Настройки'),
           ),
         ],
       ),

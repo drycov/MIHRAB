@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/quran.dart';
 import '../../domain/quran_search.dart';
@@ -59,7 +60,7 @@ class _QuranOfflineScreenState extends ConsumerState<QuranOfflineScreen>{
   @override
   void dispose(){cancel=true;super.dispose();}
   @override
-  Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('Офлайн-библиотека')),body:SafeArea(child:ListView(padding:const EdgeInsets.all(16),children:[
+  Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:Text(context.tr('Офлайн-библиотека'))),body:SafeArea(child:ListView(padding:const EdgeInsets.all(16),children:[
     DropdownButton<QuranTranslation>(isExpanded:true,value:translation,items:[for(final t in QuranTranslation.values)DropdownMenuItem(value:t,child:Text(t.label))],onChanged:busy?null:(t){if(t!=null){setState((){translation=t;hits=[];downloaded=0;});refresh();}}),
     Text('Сохранено сур: $downloaded / 114'),
     LinearProgressIndicator(value:downloaded/114),

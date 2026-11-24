@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/bookmarks.dart';
 import '../../domain/bookmark.dart';
@@ -54,7 +55,7 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen>{
     final selected=collection==null||collection==''||library.collections.contains(collection)?collection:null;
     final rows=library.items.where((b)=>(selected==null||b.collection==selected)&&(kind==null||b.kind==kind)&&
       '${b.title} ${b.reference} ${b.collection}'.toLowerCase().contains(query)).toList();
-    return Scaffold(appBar:AppBar(title:const Text('Избранное'),actions:[IconButton(tooltip:'Новая коллекция',onPressed:createCollection,icon:const Icon(Icons.create_new_folder_outlined))]),
+    return Scaffold(appBar:AppBar(title:Text(context.tr('Избранное')),actions:[IconButton(tooltip:'Новая коллекция',onPressed:createCollection,icon:const Icon(Icons.create_new_folder_outlined))]),
       body:SafeArea(child:Column(children:[
         Padding(padding:const EdgeInsets.all(12),child:TextField(decoration:const InputDecoration(prefixIcon:Icon(Icons.search),hintText:'Поиск закладок'),onChanged:(v)=>setState(()=>query=v.trim().toLowerCase()))),
         Padding(padding:const EdgeInsets.symmetric(horizontal:12),child:DropdownButton<String>(isExpanded:true,value:selected??'__all__',items:[

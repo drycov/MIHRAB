@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/prayer_diary.dart';
@@ -36,9 +37,9 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen>{
     final today=DateTime.utc(key.year,key.month,key.day);
     final date=selected==null||selected!.isAfter(today)?today:selected!;
     final supported=!kIsWeb&&(defaultTargetPlatform==TargetPlatform.android||defaultTargetPlatform==TargetPlatform.iOS||defaultTargetPlatform==TargetPlatform.macOS);
-    if(!supported)return Scaffold(appBar:AppBar(title:const Text('Дневник намазов')),body:const Center(child:Text('Локальный дневник недоступен на этой платформе')));
+    if(!supported)return Scaffold(appBar:AppBar(title:Text(context.tr('Дневник намазов'))),body:const Center(child:Text('Локальный дневник недоступен на этой платформе')));
     final day=ref.watch(diaryDayProvider(date));
-    return Scaffold(appBar:AppBar(title:const Text('Дневник намазов'),actions:[IconButton(tooltip:'Статистика',icon:const Icon(Icons.bar_chart),onPressed:busy?null:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const StatisticsScreen())))]),
+    return Scaffold(appBar:AppBar(title:Text(context.tr('Дневник намазов')),actions:[IconButton(tooltip:'Статистика',icon:const Icon(Icons.bar_chart),onPressed:busy?null:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const StatisticsScreen())))]),
       body:SafeArea(child:ListView(padding:const EdgeInsets.all(16),children:[
         Row(mainAxisAlignment:MainAxisAlignment.spaceBetween,children:[
           IconButton(tooltip:'Предыдущий день',onPressed:busy||!date.isAfter(DateTime.utc(2000))?null:()=>setState(()=>selected=date.subtract(const Duration(days:1))),icon:const Icon(Icons.chevron_left)),
@@ -48,10 +49,10 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen>{
           }),
           IconButton(tooltip:'Следующий день',onPressed:busy||!date.isBefore(today)?null:()=>setState(()=>selected=date.add(const Duration(days:1))),icon:const Icon(Icons.chevron_right)),
         ]),
-        if(date!=today)TextButton(onPressed:busy?null:()=>setState(()=>selected=null),child:const Text('Сегодня')),
+        if(date!=today)TextButton(onPressed:busy?null:()=>setState(()=>selected=null),child:Text(context.tr('Сегодня'))),
         ...day.when(
           loading:()=> <Widget>[const LinearProgressIndicator()],
-          error:(e,s)=> <Widget>[const Text('Не удалось открыть дневник'),TextButton(onPressed:()=>ref.invalidate(diaryDayProvider(date)),child:const Text('Повторить'))],
+          error:(e,s)=> <Widget>[const Text('Не удалось открыть дневник'),TextButton(onPressed:()=>ref.invalidate(diaryDayProvider(date)),child:Text(context.tr('Повторить')))],
           data:(value)=> <Widget>[
             Card(child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
               Text('Выполнено ${value.completed} из 5',style:Theme.of(context).textTheme.headlineSmall),
@@ -63,7 +64,7 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen>{
             for(final kind in PrayerKind.values.where((k)=>k.obligatory))
               Card(child:Padding(padding:const EdgeInsets.all(12),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
                 Text('${kind.label} · ${kind.arabic}',style:Theme.of(context).textTheme.titleMedium),
-                DropdownButton<PrayerStatus>(isExpanded:true,value:value.status(kind),items:[for(final status in PrayerStatus.values)DropdownMenuItem(value:status,child:Text(status.label))],
+                DropdownButton<PrayerStatus>(isExpanded:true,value:value.status(kind),items:[for(final status in PrayerStatus.values)DropdownMenuItem(value:status,child:Text(context.tr(status.label)))],
                   onChanged:busy?null:(status){if(status!=null)mark(date,kind,status);}),
               ]))),
           ]),

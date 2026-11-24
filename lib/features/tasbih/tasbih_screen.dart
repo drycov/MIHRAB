@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/tasbih.dart';
@@ -38,7 +39,7 @@ class TasbihScreen extends ConsumerWidget{
     final s=ref.watch(tasbihProvider);
     final c=ref.read(tasbihProvider.notifier);
     final theme=Theme.of(context);
-    return Scaffold(appBar:AppBar(title:const Text('Тасбих'),actions:[
+    return Scaffold(appBar:AppBar(title:Text(context.tr('Тасбих')),actions:[
       IconButton(tooltip:'История',icon:const Icon(Icons.history),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const TasbihHistoryScreen())))]),
       body:SafeArea(child:ListView(padding:const EdgeInsets.all(20),children:[
         DropdownButton<Dhikr>(isExpanded:true,value:s.dhikr,items:[for(final d in Dhikr.values)DropdownMenuItem(value:d,child:Text(d.label))],

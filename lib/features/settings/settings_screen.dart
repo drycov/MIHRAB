@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../application/locale.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'reminder_screen.dart';
 import 'adhan_screen.dart';
 import '../onboarding/onboarding_screen.dart';
@@ -12,6 +14,7 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
     final settings = ref.watch(settingsProvider);
     final controller = ref.read(settingsProvider.notifier);
     final theme = Theme.of(context);
@@ -53,11 +56,29 @@ class SettingsScreen extends ConsumerWidget {
         MihrabTokens.spaceLg,
       ),
       children: [
-        sectionTitle('Место и расчёт'),
+        sectionTitle(context.tr('Язык')),
+        card([
+          ListTile(title: Text(context.tr('Язык')), trailing: DropdownButton<String>(
+            value: locale?.languageCode ?? 'system',
+            items: [
+              DropdownMenuItem(value:'system',child:Text(context.tr('Системный язык'))),
+              const DropdownMenuItem(value:'ru',child:Text('Русский')),
+              const DropdownMenuItem(value:'kk',child:Text('Қазақша')),
+              const DropdownMenuItem(value:'ar',child:Text('العربية')),
+              const DropdownMenuItem(value:'en',child:Text('English')),
+            ],
+            onChanged:(value) async {
+              if(value==null)return;
+              try{await ref.read(localeProvider.notifier).change(value=='system'?null:value);}
+              catch(_){if(context.mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(context.tr('Не удалось сохранить язык'))));}
+            },
+          )),
+        ]),
+        sectionTitle(context.tr('Место и расчёт')),
         card([
           ListTile(
-            title: const Text('Город'),
-            subtitle: Text(settings.city.name),
+            title: Text(context.tr('Город')),
+            subtitle: Text(context.tr(settings.city.name)),
             trailing: DropdownButton<int>(
               value: settings.cityIndex,
               underline: const SizedBox.shrink(),
@@ -65,7 +86,7 @@ class SettingsScreen extends ConsumerWidget {
                 for (var i = 0; i < City.all.length; i++)
                   DropdownMenuItem(
                     value: i,
-                    child: Text(City.all[i].name),
+                    child: Text(context.tr(City.all[i].name)),
                   ),
               ],
               onChanged: (v) {
@@ -75,36 +96,36 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const Divider(height: 1, indent: 16, endIndent: 16),
           SwitchListTile(
-            title: const Text('Ханафитский Аср'),
-            subtitle: const Text('Мазхаб Абу Ханифы'),
+            title: Text(context.tr('Ханафитский Аср')),
+            subtitle: Text(context.tr('Мазхаб Абу Ханифы')),
             value: settings.hanafi,
             onChanged: controller.hanafi,
           ),
           const Divider(height: 1, indent: 16, endIndent: 16),
-          const ListTile(
-            title: Text('Метод расчёта'),
+          ListTile(
+            title: Text(context.tr('Метод расчёта')),
             subtitle: Text('Muslim World League (MWL)'),
           ),
         ]),
-        sectionTitle('Оформление'),
+        sectionTitle(context.tr('Оформление')),
         card([
           SwitchListTile(
-            title: const Text('Светлая тема'),
+            title: Text(context.tr('Светлая тема')),
             subtitle: Text(
-              settings.light ? 'Пергамент и изумруд' : 'Ночная мечеть',
+              context.tr(settings.light ? 'Пергамент и изумруд' : 'Ночная мечеть'),
             ),
             value: settings.light,
             onChanged: controller.light,
           ),
         ]),
-        sectionTitle('Напоминания'),
+        sectionTitle(context.tr('Напоминания')),
         card([
           ListTile(
             leading: Icon(
               Icons.notifications_outlined,
               color: dark ? MihrabTokens.gold : MihrabTokens.emerald,
             ),
-            title: const Text('Уведомления'),
+            title: Text(context.tr('Уведомления')),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const ReminderScreen()),
@@ -116,21 +137,21 @@ class SettingsScreen extends ConsumerWidget {
               Icons.library_music_outlined,
               color: dark ? MihrabTokens.gold : MihrabTokens.emerald,
             ),
-            title: const Text('Записи азана'),
+            title: Text(context.tr('Записи азана')),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const AdhanScreen()),
             ),
           ),
         ]),
-        sectionTitle('Прочее'),
+        sectionTitle(context.tr('Прочее')),
         card([
           ListTile(
             leading: Icon(
               Icons.tune,
               color: dark ? MihrabTokens.gold : MihrabTokens.emerald,
             ),
-            title: const Text('Первоначальная настройка'),
+            title: Text(context.tr('Первоначальная настройка')),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(

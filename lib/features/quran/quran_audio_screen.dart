@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
@@ -88,7 +89,7 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen> with Widget
     final playing=playback==PlayerState.playing;
     final paused=playback==PlayerState.paused;
     
-    return Scaffold(appBar:AppBar(title:const Text('Аудио Корана')),body:SafeArea(child:ListView(padding:const EdgeInsets.all(20),children:[
+    return Scaffold(appBar:AppBar(title:Text(context.tr('Аудио Корана'))),body:SafeArea(child:ListView(padding:const EdgeInsets.all(20),children:[
       Text(widget.surah.name,textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:Theme.of(context).textTheme.headlineLarge),
       Text(widget.surah.transliteration,textAlign:TextAlign.center),
       const SizedBox(height:20),

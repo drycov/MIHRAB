@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/mihrab_strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/prayer_diary.dart';
 import '../../application/schedule.dart';
@@ -23,7 +24,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>{
     final end=includeToday?today:today.subtract(const Duration(days:1));
     final period=(end:end,length:length);
     final statistics=ref.watch(prayerStatisticsProvider(period));
-    return Scaffold(appBar:AppBar(title:const Text('Статистика намазов')),
+    return Scaffold(appBar:AppBar(title:Text(context.tr('Статистика намазов'))),
       body:SafeArea(child:ListView(padding:const EdgeInsets.all(16),children:[
         SegmentedButton<int>(segments:const [ButtonSegment(value:7,label:Text('7 дней')),ButtonSegment(value:30,label:Text('30 дней'))],selected:{length},onSelectionChanged:(v)=>setState(()=>length=v.single)),
         SwitchListTile(title:const Text('Включить сегодня'),value:includeToday,onChanged:(v)=>setState(()=>includeToday=v)),
@@ -31,7 +32,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>{
         const SizedBox(height:12),
         ...statistics.when(
           loading:()=> <Widget>[const LinearProgressIndicator()],
-          error:(_,__)=> <Widget>[const Text('Не удалось загрузить статистику'),TextButton(onPressed:()=>ref.invalidate(prayerStatisticsProvider(period)),child:const Text('Повторить'))],
+          error:(_,__)=> <Widget>[const Text('Не удалось загрузить статистику'),TextButton(onPressed:()=>ref.invalidate(prayerStatisticsProvider(period)),child:Text(context.tr('Повторить')))],
           data:(s)=>_content(context,s)),
       ])));
   }
@@ -52,7 +53,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>{
       const SizedBox(height:16),
       Text('Распределение отметок',style:theme.textTheme.titleMedium),
       for(final status in PrayerStatus.values) ...[
-        Padding(padding:const EdgeInsets.symmetric(vertical:6),child:Row(children:[Expanded(child:Text(status.label)),Text('${s.count(status)}')])),
+        Padding(padding:const EdgeInsets.symmetric(vertical:6),child:Row(children:[Expanded(child:Text(context.tr(status.label))),Text('${s.count(status)}')])),
         LinearProgressIndicator(value:s.count(status)/s.total,color:palette[status]),
       ],
       const SizedBox(height:20),
