@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
 import '../../infrastructure/adhan_audio.dart';
@@ -47,6 +48,8 @@ class _AdhanScreenState extends ConsumerState<AdhanScreen> {
           Wrap(spacing:8,runSpacing:8,children:[
             OutlinedButton.icon(onPressed:busy || !audio.supported ? null : () => run(() async {await audio.import(profile);}),icon:const Icon(Icons.folder_open),label:const Text('Выбрать')),
             FilledButton.tonalIcon(onPressed:busy || audio.name(profile)==null ? null : () => run(()=>audio.play(profile)),icon:const Icon(Icons.play_arrow),label:const Text('Слушать')),
+            if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+              OutlinedButton.icon(onPressed:busy || audio.name(profile)==null ? null : () => run(()=>audio.playNative(profile)),icon:const Icon(Icons.play_circle),label:const Text('Фоновое прослушивание')),
             OutlinedButton.icon(onPressed:busy || !audio.supported ? null : () => run(audio.stop),icon:const Icon(Icons.stop),label:const Text('Стоп')),
             TextButton(onPressed:busy || audio.name(profile)==null ? null : () => run(()=>audio.remove(profile)),child:const Text('Удалить')),
           ]),
