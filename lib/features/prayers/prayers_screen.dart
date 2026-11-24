@@ -9,6 +9,7 @@ import '../../domain/prayer_schedule.dart';
 import '../../domain/schedule_repository.dart';
 import '../../app/theme.dart';
 import '../../shared/format.dart';
+import '../diary/diary_screen.dart';
 
 class PrayersScreen extends ConsumerStatefulWidget {
   const PrayersScreen({super.key});
@@ -31,6 +32,7 @@ class _PrayersScreenState extends ConsumerState<PrayersScreen> {
       Text(HijriCalendar.fromGregorian(DateTime(key.year,key.month,key.day), adjustment: ref.watch(hijriAdjustmentProvider)).label, textAlign: TextAlign.center),
       const SizedBox(height: 24),
       const CountdownCard(),
+      ListTile(leading: const Icon(Icons.fact_check_outlined), title: const Text('Дневник намазов'), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DiaryScreen()))),
       const SizedBox(height: 24),
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         IconButton(tooltip: 'Предыдущий день', onPressed: () => setState(() => offset--), icon: const Icon(Icons.chevron_left)),
