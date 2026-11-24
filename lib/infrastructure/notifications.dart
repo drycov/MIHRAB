@@ -67,7 +67,7 @@ class Notifications {
       }
     }
     for (final item in previous) {
-      if (item.id >= 1000 && item.id < 1120 && !desiredIds.contains(item.id)) {
+      if (ReminderPlanner.ownsId(item.id) && !desiredIds.contains(item.id)) {
         await plugin.cancel(item.id);
       }
     }

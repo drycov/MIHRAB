@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
 import '../../application/reminder_coordinator.dart';
+import '../../application/reminder_preferences.dart';
 import '../../domain/prayer_schedule.dart';
 
 class ReminderScreen extends ConsumerStatefulWidget {
@@ -19,11 +20,17 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
   void initState() {
     super.initState();
     final prefs = ref.read(preferencesProvider);
-    final saved = prefs.getStringList('reminder_prayers') ?? [];
-    enabled = PrayerKind.values.where((p) => p.obligatory && saved.contains(p.name)).toSet();
-    preferExact = prefs.getBool('reminder_exact') ?? false;
-    final stored = prefs.getInt('reminder_lead') ?? 0;
-    lead = [0,5,10,15,30].contains(stored) ? stored : 0;
+    try {
+      final config = ReminderPreferences.read(prefs);
+      enabled = config?.enabled.toSet() ?? {};
+      preferExact = config?.exact ?? false;
+      lead = config?.lead ?? 0;
+    } catch (_) {
+      enabled = {};
+      preferExact = false;
+      lead = 0;
+      status = 'Настройки уведомлений повреждены. Выберите параметры и примените повторно.';
+    }
   }
   Future<void> save() async {
     setState(() { busy = true; status = null; });
