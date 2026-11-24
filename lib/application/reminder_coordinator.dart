@@ -45,6 +45,7 @@ class ReminderCoordinator {
       final plan = ReminderPlanner.plan(settings.city, DateTime.now(), hanafi: settings.hanafi,
         enabled: enabled, minutesBefore: lead, repository: ref.read(scheduleRepositoryProvider));
       final exact = await service.replace(plan, preferExact: preferExact);
+      await prefs.setString('reminder_last_success', DateTime.now().toUtc().toIso8601String());
       return 'Запланировано: ${plan.length}${service.isAndroid && plan.isNotEmpty ? (exact ? ' · точный режим' : ' · приблизительный режим') : ''}';
       });
     });

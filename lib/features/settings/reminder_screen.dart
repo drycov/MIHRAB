@@ -4,6 +4,7 @@ import '../../application/settings.dart';
 import '../../application/reminder_coordinator.dart';
 import '../../application/reminder_preferences.dart';
 import '../../domain/prayer_schedule.dart';
+import 'reminder_diagnostics_screen.dart';
 
 class ReminderScreen extends ConsumerStatefulWidget {
   const ReminderScreen({super.key});
@@ -56,6 +57,7 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
       DropdownButton<int>(value: lead, items: [for (final m in [0,5,10,15,30]) DropdownMenuItem(value: m, child: Text(m == 0 ? 'Нет' : 'За $m мин.'))], onChanged: busy ? null : (v) { if (v != null) setState(() => lead = v); }),
       FilledButton(onPressed: busy ? null : save, child: Text(busy ? 'Сохранение…' : 'Применить')),
       if (status != null) Text(status!),
+      ListTile(leading: const Icon(Icons.monitor_heart_outlined), title: const Text('Диагностика уведомлений'), onTap: busy ? null : () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const ReminderDiagnosticsScreen()))),
       const Text('Расписание на шесть календарных дней обновляется при открытии приложения. Android может задерживать доставку. Используется системный звук, не запись азана.'),
     ]),
   );
