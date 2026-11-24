@@ -9,6 +9,7 @@ import '../../application/settings.dart';
 import '../../domain/qibla.dart';
 import '../../app/theme.dart';
 import '../../shared/islamic_ornaments.dart';
+import '../../infrastructure/web_bridge.dart';
 
 class QiblaScreen extends ConsumerStatefulWidget {
   const QiblaScreen({super.key});
@@ -27,6 +28,35 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
       error = null;
     });
     try {
+      if (kIsWeb) {
+        // Prefer browser geolocation through PWA bridge (clear errors / HTTPS).
+        try {
+          final pos = await WebBridge.getPosition();
+          if (mounted) {
+            setState(() {
+              position = Position(
+                longitude: pos.lng,
+                latitude: pos.lat,
+                timestamp: DateTime.now(),
+                accuracy: pos.accuracy,
+                altitude: 0,
+                altitudeAccuracy: 0,
+                heading: 0,
+                headingAccuracy: 0,
+                speed: 0,
+                speedAccuracy: 0,
+              );
+            });
+          }
+          return;
+        } catch (e) {
+          // Fall through to Geolocator if bridge missing.
+          if (e is String) {
+            throw StateError(e);
+          }
+        }
+      }
+
       if (!await Geolocator.isLocationServiceEnabled()) {
         throw StateError('Включите геолокацию');
       }
@@ -46,14 +76,14 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
       );
       if (mounted) setState(() => position = result);
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(
-          () =>
-              error =
-                  e is StateError
-                      ? e.message.toString()
-                      : 'Не удалось определить местоположение',
+          () => error =
+              e is StateError
+                  ? e.message.toString()
+                  : 'Не удалось определить местоположение',
         );
+      }
     } finally {
       if (mounted) setState(() => loading = false);
     }
@@ -126,6 +156,19 @@ class _QiblaScreenState extends ConsumerState<QiblaScreen> {
           TextButton(
             onPressed: loading ? null : () => setState(() => position = null),
             child: Text(context.tr('Использовать город')),
+          ),
+        if (kIsWeb)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              context.tr(
+                'В браузере нужен HTTPS и разрешение на геолокацию. Компас доступен на телефоне.',
+              ),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: dark ? MihrabTokens.goldSoft : MihrabTokens.muted,
+                  ),
+            ),
           ),
         if (error != null)
           Padding(
@@ -253,7 +296,6 @@ class _CompassPainter extends CustomPainter {
       t.paint(canvas, p - Offset(t.width / 2, t.height / 2));
     }
 
-    // Kaaba marker on ring
     final kaabaAngle =
         ((heading == null ? bearing : Qibla.relative(bearing, heading!))) *
         math.pi /
