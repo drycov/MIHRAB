@@ -55,6 +55,27 @@ self.addEventListener('activate', event => {
     await self.clients.claim();
   })());
 });
+self.addEventListener('push', event => {
+  event.waitUntil((async () => {
+    let data = {};
+    try { data = event.data?.json() || {}; } catch (_) {}
+    const lead = Number.isInteger(data.lead) && data.lead > 0 ? ' · −' + data.lead + ' min' : '';
+    await self.registration.showNotification('MIHRAB', {
+      body: (typeof data.body === 'string' ? data.body.slice(0,120) : 'Prayer reminder') + lead,
+      tag: typeof data.tag === 'string' ? data.tag.slice(0,80) : 'mihrab-prayer',
+      icon: new URL('icons/Icon-192.png',self.registration.scope).href
+    });
+  })());
+});
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil((async () => {
+    const windows = await self.clients.matchAll({type:'window',includeUncontrolled:true});
+    const client = windows.find(c=>c.url.startsWith(self.registration.scope));
+    if(client) await client.focus();
+    else await self.clients.openWindow(self.registration.scope);
+  })());
+});
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
