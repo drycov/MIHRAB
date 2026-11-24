@@ -14,7 +14,7 @@ class WidgetSync {
   final Ref ref;
   Future<void> _tail=Future.value();
   Future<void> refresh(){
-    if(kIsWeb||defaultTargetPlatform!=TargetPlatform.android)return Future.value();
+    if(kIsWeb||(defaultTargetPlatform!=TargetPlatform.android&&defaultTargetPlatform!=TargetPlatform.iOS))return Future.value();
     final task=_tail.then((_)async{
       final key=ref.read(localDayProvider);
       final day=DateTime.utc(key.year,key.month,key.day);
