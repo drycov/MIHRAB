@@ -3,6 +3,8 @@ import '../application/reminder_coordinator.dart';
 import '../application/schedule.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../application/settings.dart';
+import '../application/onboarding.dart';
+import '../features/onboarding/onboarding_screen.dart';
 import '../features/prayers/prayers_screen.dart';
 import '../features/settings/settings_screen.dart';
 import 'theme.dart';
@@ -18,7 +20,7 @@ class MihrabApp extends ConsumerWidget {
     theme: MihrabTheme.build(Brightness.light),
     darkTheme: MihrabTheme.build(Brightness.dark),
     themeMode: ref.watch(settingsProvider.select((s) => s.light)) ? ThemeMode.light : ThemeMode.dark,
-    home: const AppShell(),
+    home: ref.watch(onboardingProvider) ? const AppShell() : const OnboardingScreen(),
   );
 }
 class AppShell extends ConsumerStatefulWidget {
