@@ -36,6 +36,17 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
   final subscriptions = <StreamSubscription<dynamic>>[];
   bool busy = false, active = true;
   String? error;
+  Future<bool>? diskAvailability;
+  String? diskAvailabilityKey;
+
+  Future<bool> availability() {
+    final key=repository.key(widget.surah.number,verse,reciter);
+    if(diskAvailabilityKey!=key || diskAvailability==null){
+      diskAvailabilityKey=key;
+      diskAvailability=QuranDisk.contains(key);
+    }
+    return diskAvailability!;
+  }
   int generation = 0;
 
   @override
@@ -350,9 +361,7 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
               ),
             if (QuranDisk.supported)
               FutureBuilder<bool>(
-                future: QuranDisk.contains(
-                  repository.key(widget.surah.number, verse, reciter),
-                ),
+                future: availability(),
                 builder: (context, snapshot) {
                   final saved = snapshot.data == true;
                   return Padding(
@@ -361,11 +370,10 @@ class _QuranAudioScreenState extends ConsumerState<QuranAudioScreen>
                       onPressed: busy || saved
                           ? null
                           : () => action(
-                                () => repository.cache(
-                                  widget.surah.number,
-                                  verse,
-                                  reciter,
-                                ),
+                                () async {
+                                  await repository.cache(widget.surah.number,verse,reciter);
+                                  diskAvailability=null;
+                                },
                               ),
                       icon: Icon(saved ? Icons.check : Icons.download),
                       label: Text(
