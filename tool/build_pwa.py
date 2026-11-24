@@ -3,6 +3,7 @@
 import hashlib
 import json
 import sys
+import subprocess
 from pathlib import Path
 from urllib.parse import quote
 
@@ -11,6 +12,8 @@ required = ["index.html", "flutter_bootstrap.js", "main.dart.js", "manifest.json
 for name in required:
     if not (root / name).is_file():
         raise SystemExit(f"Missing release asset: {name}")
+# Regenerate PWA icons from the same master before computing cache hashes.
+subprocess.run([sys.executable, str(Path(__file__).with_name('generate_web_icons.py')), str(root)], check=True)
 # Only deploy artifacts, not remote Quran/audio API responses or user data.
 paths = sorted(p for p in root.rglob("*") if p.is_file()
                and p.name not in {"mihrab-sw.js", "flutter_service_worker.js"}
