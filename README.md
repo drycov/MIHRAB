@@ -78,3 +78,7 @@ CI and Vercel default to Flutter 3.50.1 (Dart 3.14.0); use the same SDK locally.
 ## Design
 
 UI rules: [docs/UI_GUIDE.md](docs/UI_GUIDE.md).
+
+## Privacy and store preparation
+
+[Privacy policy](docs/privacy-policy.md) · [Store listing draft and release gates](docs/store-metadata.md). Web deployments include `privacy.html`; verify the live HTTPS URL before submission.
