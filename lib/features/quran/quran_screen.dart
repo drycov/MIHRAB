@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/settings.dart';
 import '../dua/dua_screen.dart';
+import '../tasbih/tasbih_screen.dart';
 import '../../domain/quran.dart';
 import '../../infrastructure/quran_repository.dart';
 
@@ -24,7 +25,7 @@ class _QuranScreenState extends ConsumerState<QuranScreen>{
   Widget build(BuildContext context){
     final catalog=ref.watch(quranCatalogProvider);
     final prefs=ref.watch(preferencesProvider);
-    return Scaffold(appBar:AppBar(title:const Text('Коран'),actions:[IconButton(tooltip:'Дуа и азкары',icon:const Icon(Icons.auto_stories),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const DuaScreen())))]),
+    return Scaffold(appBar:AppBar(title:const Text('Коран'),actions:[IconButton(tooltip:'Тасбих',icon:const Icon(Icons.touch_app),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const TasbihScreen()))),IconButton(tooltip:'Дуа и азкары',icon:const Icon(Icons.auto_stories),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const DuaScreen())))]),
       body:SafeArea(child:Column(children:[
         Padding(padding:const EdgeInsets.all(16),child:TextField(
           decoration:const InputDecoration(prefixIcon:Icon(Icons.search),hintText:'Название или номер суры'),

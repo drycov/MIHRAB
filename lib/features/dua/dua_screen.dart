@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../domain/dua.dart';
+import '../tasbih/tasbih_screen.dart';
 
 class DuaScreen extends StatefulWidget {
   const DuaScreen({super.key});
@@ -14,7 +15,7 @@ class _DuaScreenState extends State<DuaScreen>{
   Widget build(BuildContext context){
     final filtered=duas.where((d)=>(category==null||d.category==category)&&
       [d.title,d.meaning,d.transliteration,d.arabic].any((s)=>s.toLowerCase().contains(query))).toList();
-    return Scaffold(appBar:AppBar(title:const Text('Дуа и азкары')),
+    return Scaffold(appBar:AppBar(title:const Text('Дуа и азкары'),actions:[IconButton(tooltip:'Тасбих',icon:const Icon(Icons.touch_app),onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const TasbihScreen())))]),
       body:SafeArea(child:Column(children:[
         Padding(padding:const EdgeInsets.all(16),child:TextField(
           decoration:const InputDecoration(prefixIcon:Icon(Icons.search),hintText:'Поиск дуа и азкаров'),
